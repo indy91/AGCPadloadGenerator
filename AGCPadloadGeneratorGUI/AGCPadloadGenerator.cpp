@@ -13,8 +13,11 @@ int  ELP82(double mjd, double *r);
 #define BODY_MOON 1
 
 const double R_Moon = 1.73809e6;			///< Radius of the moon
-const double R_Earth = 6.3780e6;			///< Radius of the moon
+const double R_Earth = 6373338.0;			///< Radius of the Earth at the launch pad
 const double LBS2KG = 0.453592;				///< Pound mass to kilograms
+const double w_Earth = 7.29211515e-05;
+const double a_Fisher = 6373338.0;		//Semi-major axis of Fisher ellipsoid, should be 6378166.0
+const double b_Fisher = 6373338.0;		//Semi-minor axis of Fisher ellipsoid, should be 6356784.0
 
 VECTOR3 rhmul(const MATRIX3 &A, const VECTOR3 &b)	//For the left handed Orbiter matrizes, A is left handed, b is right handed, result is right handed
 {
@@ -287,6 +290,17 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	WRENDPOS = 10000.0*0.3048;	// 10000 ft
 	WRENDVEL = 10.0*0.3048;		// 10 ft/s
 	TLAND = 0.0;
+
+	BLOCKI.T_ATL = 1400.0;
+	BLOCKI.lat_ATL = 28.29028886*RAD;
+	BLOCKI.lng_ATL = -19.5*RAD;
+	BLOCKI.T_PAC = 30921.42;
+	BLOCKI.lat_PAC = 30.04649677*RAD;
+	BLOCKI.lng_PAC = -171.0*RAD;
+	BLOCKI.e_SPS1 = 0.5934490037;
+	BLOCKI.a_SPS1 = 15487553.0;
+	BLOCKI.e_SPS2 = 0.999071629063702; // 0.999071629;
+	BLOCKI.a_SPS2 = 6891085630.5;
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -397,6 +411,66 @@ void AGCPadloadGenerator::RunLGC()
 	for (unsigned i = 0;i < arr.size();i++)
 	{
 		WriteEMEM(arr[i].address, arr[i].value, false);
+	}
+
+	myfile.close();
+}
+
+void AGCPadloadGenerator::RunBlockI()
+{
+	if (Pad == "LC-39A")
+	{
+		PadLat = 28.60842222;
+		PadLong = 279.3958666;
+		PadAlt = 89.4; // 124.0;
+	}
+	else if (Pad == "LC-34")
+	{
+		PadLat = 28.5217969;
+		PadLong = 279.4387535;
+		PadAlt = 5.66;
+	}
+	else
+	{
+		return;
+	}
+
+	//MJD of preceding July 1st, midnight
+	double AGCEphemTEphemZero, A_Z0;
+	int Epoch;
+
+	if (RopeName == "Corona261")
+	{
+		AGCEphemTEphemZero = 39307.0;
+		Epoch = 1967;
+		A_Z0 = HANGLE(Epoch, Epoch - 1, 182); //July 1st
+	}
+	else if (RopeName == "Solarium055")
+	{
+		AGCEphemTEphemZero = 39672.0;
+		Epoch = 1968;
+		A_Z0 = HANGLE(Epoch, Epoch - 1, 182); //July 1st. 278.368527*RAD;
+	}
+	else
+	{
+		return;
+	}
+
+	double brcsmjd = MJDOfNBYEpoch(Epoch);
+	PrelaunchMJD = floor(LaunchMJD);
+
+	BLOCKI.DTEPOCH = Solarium055DTEPOCHCalculation(A_Z0, AGCEphemTEphemZero, PrelaunchMJD, PadLong*RAD);
+
+	SolariumDefaults();
+
+	myfile.open("Padload.txt");
+
+	//End
+	std::sort(arr.begin(), arr.end());
+
+	for (unsigned i = 0; i < arr.size(); i++)
+	{
+		WriteEMEM(arr[i].address, arr[i].value, true);
 	}
 
 	myfile.close();
@@ -709,7 +783,7 @@ void AGCPadloadGenerator::Luminary131Defaults()
 	SaveEMEM(02021, iTemp2);
 
 	//RLS
-	RLS = CalculateRLS(LSLat*RAD, LSLng*RAD, LSAlt, R_Moon);
+	RLS = r_from_latlong(LSLat*RAD, LSLng*RAD, LSAlt, BODY_MOON, 1);
 	DoubleToBuffer(RLS.x, 27, iTemp, iTemp2);
 	SaveEMEM(02022, iTemp);
 	SaveEMEM(02023, iTemp2);
@@ -1114,7 +1188,8 @@ void AGCPadloadGenerator::CMCDefaults()
 	SaveEMEM(02024, iTemp2);
 
 	//RLS
-	RLS = CalculateRLS(LSLat*RAD, LSLng*RAD, LSAlt, R_Moon);
+
+	RLS = r_from_latlong(LSLat*RAD, LSLng*RAD, LSAlt, BODY_MOON, 1);
 	DoubleToBuffer(RLS.x, 27, iTemp, iTemp2);
 	SaveEMEM(02025, iTemp);
 	SaveEMEM(02026, iTemp2);
@@ -1805,7 +1880,7 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	SaveEMEM(01342, iTemp);
 	SaveEMEM(01343, iTemp2);
 	//DVTHRESH
-	iTemp = SingleToBuffer(DVTHRESH, -2);
+	iTemp = SingleToBuffer(DVTHRESH / 100.0, -2);
 	SaveEMEM(01344, iTemp);
 	//Horizalt
 	DoubleToBuffer(HORIZALT, 29, iTemp, iTemp2);
@@ -2000,6 +2075,57 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(03402, iTemp);
 	SaveEMEM(03403, iTemp2);
+}
+
+MATRIX3 AGCPadloadGenerator::SolariumEarthFixedToSM(double lat, double lng, double azi)
+{
+	VECTOR3 R_P = r_from_latlong(lat, lng);
+	VECTOR3 REFS6 = unit(-R_P);
+	VECTOR3 E = unit(crossp(REFS6, _V(0, 0, 1)));
+	VECTOR3 S = unit(crossp(E, REFS6));
+	VECTOR3 REFS0 = E * sin(azi) + S * cos(azi);
+	VECTOR3 REFS3 = unit(crossp(REFS6, REFS0));
+	MATRIX3 REFS = _M(-REFS6.x, -REFS6.y, -REFS6.z, REFS3.x, REFS3.y, REFS3.z, REFS0.x, REFS0.y, REFS0.z);
+	return REFS;
+}
+
+double AGCPadloadGenerator::Solarium055DTEPOCHCalculation(double A_Z0, double MJD_0, double MJD_L, double lng)
+{
+	double t0 = (MJD_L - MJD_0) * 24 * 3600;
+	return fmod(A_Z0 + w_Earth * t0 + lng, PI2) / w_Earth;
+}
+
+double AGCPadloadGenerator::HANGLE(int E, int Y, int D)
+{
+	int XN;
+	static const double A = 0.0929;
+	static const double B = 8640184.542;
+	static const double W1 = 1.720217954160054e-2;
+	double C, T, DE, BHA, DI, DELTA;
+
+	XN = (E - 1901) / 4;
+	C = -86400.0*(double)(E - 1900) - 74.164;
+	T = 2 * C / (-B - sqrt(B*B - 4 * A*C));
+	DE = 36525.0*T - 365.0*(double)(E - 1900) + 0.5 - (double)XN;
+	if (Y == E)
+	{
+		DI = D;
+	}
+	else
+	{
+		int X = Y % 4;
+		if (X == 0)
+		{
+			DI = D - 366.0;
+		}
+		else
+		{
+			DI = D - 365.0;
+		}
+	}
+	DELTA = DI - DE;
+	BHA = PI2 / 3.6 + W1 * DELTA;
+	return BHA;
 }
 
 MATRIX3 AGCPadloadGenerator::CalculateEarthTransformationMatrix(double t_M, double A_Z0, double w_E)
@@ -2554,7 +2680,370 @@ int AGCPadloadGenerator::agcCelBody_RH(int Cel, double mjd, int Flags, VECTOR3 *
 	return ret;
 }
 
-VECTOR3 AGCPadloadGenerator::CalculateRLS(double lat, double lng, double alt, double rad)
+VECTOR3 AGCPadloadGenerator::r_from_latlong(double lat, double lng)
 {
-	return _V(cos(lat)*cos(lng), cos(lat)*sin(lng), sin(lat))*(rad + alt);
+	return _V(cos(lng)*cos(lat), sin(lng)*cos(lat), sin(lat));
+}
+
+VECTOR3 AGCPadloadGenerator::r_from_latlong(double lat, double lng, double alt, int P, int F)
+{
+	//P = 0 for earth, 1 = for moon
+	//F = 0 for launch pad or landing site radius, 1 = for Fisher ellipsoid or mean lunar radius
+
+	VECTOR3 R_P;
+	double gamma, SINL, r0;
+
+	if (P == BODY_EARTH)
+	{
+		gamma = pow(b_Fisher / a_Fisher, 2);
+	}
+	else
+	{
+		gamma = 1.0;
+	}
+
+	R_P = unit(_V(cos(lng)*cos(lat), sin(lng)*cos(lat), gamma*sin(lat)));
+	SINL = R_P.z;
+
+	if (P == BODY_EARTH)
+	{
+		if (F == 1)
+		{
+			r0 = sqrt(b_Fisher*b_Fisher / (1.0 - (1.0 - pow(b_Fisher / a_Fisher, 2))*(1.0 - pow(SINL, 2))));
+		}
+		else
+		{
+			r0 = R_Earth;
+		}
+	}
+	else
+	{
+		r0 = R_Moon; //TBD: landing site radius
+	}
+	return R_P * (r0 + alt);
+}
+
+void AGCPadloadGenerator::BlockIDefaults()
+{
+
+}
+
+void AGCPadloadGenerator::CoronaDefaults()
+{
+
+}
+
+void AGCPadloadGenerator::SolariumDefaults()
+{
+	//IMU COMPENSATION
+	//Gyro bias drift
+	//GBIASX
+	SaveEMEM(0744, 0);
+	//GBIASY
+	SaveEMEM(0745, 0);
+	//GBIASZ
+	SaveEMEM(0746, 0);
+	//Acceleration-sensitive gyro drift along the input axis
+	//ADIAX
+	SaveEMEM(0747, 0);
+	//ADIAY
+	SaveEMEM(0750, 0);
+	//ADIAZ
+	SaveEMEM(0751, 0);
+	//Acceleration-sensitive gyro drift along the sin-reference axis
+	//ADSRAX
+	SaveEMEM(0752, 0);
+	//ADSRAY
+	SaveEMEM(0753, 0);
+	//ADSRAZ
+	SaveEMEM(0754, 0);
+	//PIPA bias factor
+	//PBIASX
+	SaveEMEM(0736, 0);
+	//PBIASY
+	SaveEMEM(0740, 0);
+	//PBIASZ
+	SaveEMEM(0742, 0);
+	//PIPA scale factor
+	//PIPASCFX
+	SaveEMEM(0737, 0);
+	//PIPASCFY
+	SaveEMEM(0741, 0);
+	//PIPASCFZ
+	SaveEMEM(0743, 0);
+
+	//PRELAUNCH ALIGNMENT
+	//DTEPOCH
+	DoubleToBuffer(BLOCKI.DTEPOCH*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01073, iTemp);
+	SaveEMEM(01074, iTemp2);
+	//VAZ - Azimuth of vehicle z-axis east of north
+	dTemp = -90.0;
+	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
+	SaveEMEM(01352, iTemp);
+	SaveEMEM(01353, iTemp2);
+	//LATITUDE - Geodetic latitude of launch pad
+	DoubleToBuffer(PadLat / 360.0, 0, iTemp, iTemp2);
+	SaveEMEM(01314, iTemp);
+	SaveEMEM(01315, iTemp2);
+	//AZIMUTH - Azimuth of ??? z-axis east of north
+	DoubleToBuffer(LaunchAzimuth / 360.0, 0, iTemp, iTemp2);
+	SaveEMEM(01316, iTemp);
+	SaveEMEM(01317, iTemp2);
+	//POLYENTR - Transfer to ??? routine
+	SaveEMEM(01573, 05554);
+	//POLYEND - Transfer at end of polynomial
+	SaveEMEM(01613, 04024);
+	//POLYCOEF
+	SaveEMEM(01575, 01);
+	SaveEMEM(01576, 013453);
+	SaveEMEM(01577, 017);
+	SaveEMEM(01600, 034652);
+	SaveEMEM(01601, 01603);
+	SaveEMEM(01602, 035205);
+	SaveEMEM(01603, 01231);
+	SaveEMEM(01604, 014015);
+	SaveEMEM(01605, 064174);
+	SaveEMEM(01606, 040131);
+	SaveEMEM(01607, 017216);
+	SaveEMEM(01610, 014327);
+	SaveEMEM(01611, 071614);
+	SaveEMEM(01612, 064244);
+
+	//TROLL - Time from liftoff at which roll monitor begins
+	dTemp = 9.0; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01562, iTemp);
+	SaveEMEM(01563, iTemp2);
+
+	//TPITCH - Time from liftoff at which pitch monitor begins
+	dTemp = 10.7; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01564, iTemp);
+	SaveEMEM(01565, iTemp2);
+
+	//TENDPITCH - Time pitch monitor is on
+	dTemp = 134.0; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01566, iTemp);
+	SaveEMEM(01567, iTemp2);
+
+	//MAXROLL - FInal roll angle minus initial roll angle
+	dTemp = 18.0; //Degrees
+	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
+	SaveEMEM(01702, iTemp);
+	SaveEMEM(01703, iTemp2);
+
+	//1/RLLRTE - One over desired roll rate
+	dTemp = 1.0; //Degrees per second
+	DoubleToBuffer(dTemp * 100.0 *360.0, 28, iTemp, iTemp2);
+	SaveEMEM(01700, iTemp);
+	SaveEMEM(01701, iTemp2);
+
+	//TTUMON - Nominal time from end of pitch monitor to start of tumble monitor
+	dTemp = 43.35; //Seconds
+	iTemp = SingleToBuffer(dTemp*100.0, 14);
+	SaveEMEM(01572, iTemp);
+
+	//TAZ - Azimuth of landmark 1 at launch site
+	dTemp = 309.6 - 360.0; //Degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01346, iTemp);
+
+	//TAZ+1 - Azimuth of landmark 2 at launch site
+	dTemp = 270.0 - 360.0; //Degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01347, iTemp);
+
+	//TEL - Elevation of landmark 1 at launch site
+	dTemp = -0.1; //Degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01350, iTemp);
+
+	//TEL+1 - Elevation of landmark 2 at launch site
+	dTemp = 0.0; //Degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01351, iTemp);
+
+	//TATLAN1 - Nominal flight time to Atlantic target
+	dTemp = BLOCKI.T_ATL; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01617, iTemp);
+	SaveEMEM(01620, iTemp2);
+
+	MATRIX3 REFS = SolariumEarthFixedToSM(PadLat*RAD, PadLong*RAD, LaunchAzimuth*RAD);
+
+	//RTATLAN1 - Post-LET abort target vector at lif-off + TATLAN1 in IMU coordinates assuming the platform goes inertial
+	VECTOR3 RATL = unit(r_from_latlong(BLOCKI.lat_ATL, BLOCKI.lng_ATL + w_Earth * BLOCKI.T_ATL, 0.0, 0, 0));
+	VECTOR3 RN = mul(REFS, RATL);
+	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
+	SaveEMEM(01621, iTemp);
+	SaveEMEM(01622, iTemp2);
+	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
+	SaveEMEM(01623, iTemp);
+	SaveEMEM(01624, iTemp2);
+	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
+	SaveEMEM(01625, iTemp);
+	SaveEMEM(01626, iTemp2);
+
+	//TPACIF1 - Nominal flight time to pacific target
+	dTemp = BLOCKI.T_PAC; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01627, iTemp);
+	SaveEMEM(01630, iTemp2);
+
+	//RTPACIF1 - Post-LET abort target vector at lif-off + TPACIF1 in IMU coordinates assuming the platform goes inertial
+	VECTOR3 RPAC = unit(r_from_latlong(BLOCKI.lat_PAC, BLOCKI.lng_PAC + w_Earth * BLOCKI.T_PAC, 0.0, 0, 0));
+	RN = mul(REFS, RPAC);
+	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
+	SaveEMEM(01631, iTemp);
+	SaveEMEM(01632, iTemp2);
+	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
+	SaveEMEM(01633, iTemp);
+	SaveEMEM(01634, iTemp2);
+	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
+	SaveEMEM(01635, iTemp);
+	SaveEMEM(01636, iTemp2);
+
+	//UNITW
+	
+	VECTOR3 UNITW = mul(REFS, _V(0, 0, 1));
+	DoubleToBuffer(UNITW.x, 1, iTemp, iTemp2);
+	SaveEMEM(01043, iTemp);
+	SaveEMEM(01044, iTemp2);
+	DoubleToBuffer(UNITW.y, 1, iTemp, iTemp2);
+	SaveEMEM(01045, iTemp);
+	SaveEMEM(01046, iTemp2);
+	DoubleToBuffer(UNITW.z, 1, iTemp, iTemp2);
+	SaveEMEM(01047, iTemp);
+	SaveEMEM(01050, iTemp2);
+
+	//RN - Position vector at GRR
+	VECTOR3 R_L = r_from_latlong(PadLat*RAD, PadLong*RAD, PadAlt, BODY_EARTH, 0);
+	
+	RN = mul(REFS, R_L);
+	DoubleToBuffer(RN.x, 25, iTemp, iTemp2);
+	SaveEMEM(0765, iTemp);
+	SaveEMEM(0766, iTemp2);
+	DoubleToBuffer(RN.y, 25, iTemp, iTemp2);
+	SaveEMEM(0767, iTemp);
+	SaveEMEM(0770, iTemp2);
+	DoubleToBuffer(RN.z, 25, iTemp, iTemp2);
+	SaveEMEM(0771, iTemp);
+	SaveEMEM(0772, iTemp2);
+
+	//MISSION CONTROL PROGRAM
+
+	//TDECAY - effective thrust decay time
+	dTemp = -0.49; //seconds
+	iTemp = SingleToBuffer(dTemp * 100, 14);
+	SaveEMEM(01560, iTemp);
+
+	//DELTAT - Value of computing interval
+	dTemp = 2.0; //Seconds
+	DoubleToBuffer(dTemp*100.0, 9, iTemp, iTemp2);
+	SaveEMEM(01027, iTemp);
+	SaveEMEM(01030, iTemp2);
+
+	//NSHIFT - Average G routine scaling constant
+	SaveEMEM(01040, 077772);
+
+	//XSHIFT - Average G routine scaling constant
+	SaveEMEM(01041, 011);
+
+	//ESQ(VR) - eccentricity squared for SPS1 burn
+	DoubleToBuffer(BLOCKI.e_SPS1*BLOCKI.e_SPS1, 4, iTemp, iTemp2);
+	SaveEMEM(01546, iTemp);
+	SaveEMEM(01547, iTemp2);
+
+	//ESQ(VR)+2 - eccentricity squared for SPS2 burn
+	DoubleToBuffer(BLOCKI.e_SPS2*BLOCKI.e_SPS2, 4, iTemp, iTemp2);
+	SaveEMEM(01550, iTemp);
+	SaveEMEM(01551, iTemp2);
+
+	//SEMILAT - semi-latus rectum for SPS1 burn
+	dTemp = BLOCKI.a_SPS1*(1.0 - pow(BLOCKI.e_SPS1, 2));
+	DoubleToBuffer(dTemp, 27, iTemp, iTemp2);
+	SaveEMEM(01552, iTemp);
+	SaveEMEM(01553, iTemp2);
+
+	//SEMILAT+2 - semi-latus rectum for SPS2 burn
+	dTemp = BLOCKI.a_SPS2*(1.0 - pow(BLOCKI.e_SPS2, 2));
+	DoubleToBuffer(dTemp, 27, iTemp, iTemp2);
+	SaveEMEM(01554, iTemp);
+	SaveEMEM(01555, iTemp2);
+
+	//TFFMIN - Time-to-free-fall at which to ??? SPS2 ignition in 2 minutes
+	dTemp = 687.0; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01676, iTemp);
+	SaveEMEM(01677, iTemp2);
+
+	//TFFNOM - Value of TFF to use to compute time-off coast if the TT is not computable
+	dTemp = 16200.0; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01720, iTemp);
+	SaveEMEM(01721, iTemp2);
+
+	//CGY - SPS1 C.G. rotation around S/C Y-axis
+	dTemp = 0.0229; //radians
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01704, iTemp);
+	SaveEMEM(01705, iTemp2);
+
+	//CGY+2 - SPS2 C.G. rotation around S/C Y-axis
+	dTemp = 0.0297; //radians
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01706, iTemp);
+	SaveEMEM(01707, iTemp2);
+
+	//CGZ - SPS1 C.G. rotation around S/C Z-axis
+	dTemp = 0.0833; //radians
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01710, iTemp);
+	SaveEMEM(01711, iTemp2);
+
+	//CGZ+2 - SPS2 C.G. rotation around S/C Z-axis
+	dTemp = 0.0995; //radians
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01712, iTemp);
+	SaveEMEM(01713, iTemp2);
+
+	//ATDT - SPS1 integratied initial thrust acceleration magnitude
+	dTemp = 9.589; // m/s
+	DoubleToBuffer(dTemp / 100.0, 5, iTemp, iTemp2);
+	SaveEMEM(01714, iTemp);
+	SaveEMEM(01715, iTemp2);
+
+	//ATDT+2 - SPS2 integratied initial thrust acceleration magnitude
+	dTemp = 30.48; // m/s
+	DoubleToBuffer(dTemp / 100.0, 5, iTemp, iTemp2);
+	SaveEMEM(01716, iTemp);
+	SaveEMEM(01717, iTemp2);
+
+	//S2SWITCH - switch to re-compute SPS2 burn attitude
+	SaveEMEM(01722, 0);
+
+	//REFSWITCH - switch to force 280k ft free fall reference
+	SaveEMEM(01723, 0);
+
+	//REDOSPS1 - switch to repeat SPS1 at SPS2 ignition
+	SaveEMEM(01724, 0);
+
+	//ANGLEX, Y, Z - desired cold soak gimbal angles
+	dTemp = 53.23; //degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01673, iTemp);
+
+	dTemp = 278.99 - 360.0; //degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01674, iTemp);
+
+	dTemp = 13.19; //degrees
+	iTemp = SingleToBuffer(dTemp / 180.0, 0);
+	SaveEMEM(01675, iTemp);
+
+	//UPTIME - Time to incorporate 1st RVT update
+	SaveEMEM(01671, 037777);
+	SaveEMEM(01672, 037777);
 }

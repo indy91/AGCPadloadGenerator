@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "AGCPadloadGeneratorGUIDlg.h"
 #include "LGCPadloadGenerator.h"
+#include "BlockIPadloadGenerator.h"
 
 // MainMenuDialog-Dialog
 
@@ -17,6 +18,7 @@ MainMenuDialog::MainMenuDialog(CWnd* pParent /*=nullptr*/)
 {
 	cmc_form = NULL;
 	lgc_form = NULL;
+	blockI_form = NULL;
 }
 
 MainMenuDialog::~MainMenuDialog()
@@ -31,6 +33,11 @@ MainMenuDialog::~MainMenuDialog()
 		delete lgc_form;
 		lgc_form = NULL;
 	}
+	if (blockI_form)
+	{
+		delete blockI_form;
+		blockI_form = NULL;
+	}
 }
 
 void MainMenuDialog::DoDataExchange(CDataExchange* pDX)
@@ -42,6 +49,7 @@ void MainMenuDialog::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(MainMenuDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &MainMenuDialog::OnBnClickedCMC)
 	ON_BN_CLICKED(IDC_BUTTON2, &MainMenuDialog::OnBnClickedLGC)
+	ON_BN_CLICKED(IDC_BUTTON3, &MainMenuDialog::OnBnClickedBlockI)
 END_MESSAGE_MAP()
 
 
@@ -62,6 +70,17 @@ void MainMenuDialog::OnBnClickedLGC()
 	{
 		lgc_form = new LGCPadloadGenerator(this);
 		lgc_form->DoModal();
+	}
+	//lgc_form->ShowWindow(SW_SHOW);
+}
+
+
+void MainMenuDialog::OnBnClickedBlockI()
+{
+	if (blockI_form == NULL)
+	{
+		blockI_form = new BlockIPadloadGenerator(this);
+		blockI_form->DoModal();
 	}
 	//lgc_form->ShowWindow(SW_SHOW);
 }

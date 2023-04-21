@@ -51,6 +51,9 @@
     <ClInclude Include="pch.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="BlockIPadloadGenerator.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AGCPadloadGeneratorGUI.cpp">
@@ -75,6 +78,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="LGCPadloadGenerator.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockIPadloadGenerator.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,12 +20,28 @@ struct EMEM
 	}
 };
 
+struct BlockIData
+{
+	//Interval between the launch vector passed through the inertial z-x plane and the time the AGC clock was zeroed at midnight of launch date
+	double DTEPOCH;
+	//Atlantic abourt site
+	double T_ATL,  lat_ATL, lng_ATL;
+	//Pacific abort site
+	double T_PAC, lat_PAC, lng_PAC;
+
+	//SPS-1
+	double e_SPS1, a_SPS1;
+	//SPS-2
+	double e_SPS2, a_SPS2;
+};
+
 class AGCPadloadGenerator
 {
 public:
 	AGCPadloadGenerator();
 	~AGCPadloadGenerator();
 
+	void RunBlockI();
 	void RunCMC();
 	void RunLGC();
 
@@ -62,6 +78,9 @@ public:
 	double WRENDPOS;
 	//P20 W-Matrix initial velocity error, m
 	double WRENDVEL;
+
+	BlockIData BLOCKI;
+
 protected:
 	void SaveEMEM(int address, int value);
 	void WriteEMEM(int address, int value, bool cmc);
@@ -72,9 +91,14 @@ protected:
 	int agcCelBody_RH(int Cel, double mjd, int Flags, VECTOR3 *Pos = NULL, VECTOR3 *Vel = NULL);
 	int agcCelBody_LH(int Cel, double mjd, int Flags, VECTOR3 *Pos = NULL, VECTOR3 *Vel = NULL);
 
-	VECTOR3 CalculateRLS(double lat, double lng, double alt, double rad);
 	MATRIX3 CalculateEarthTransformationMatrix(double t_M, double A_Z0, double w_E);
 	MATRIX3 CalculateMoonTransformationMatrix(double t_M, double B_0, double B_dot, double Omega_I0, double Omega_I_dot, double F_0, double F_dot, double cosI, double sinI);
+	VECTOR3 r_from_latlong(double lat, double lng);
+	VECTOR3 r_from_latlong(double lat, double lng, double alt, int P, int F);
+
+	MATRIX3 SolariumEarthFixedToSM(double lat, double lng, double azi);
+	double Solarium055DTEPOCHCalculation(double A_Z0, double MJD_0, double MJD_L, double lng);
+	double HANGLE(int E, int Y, int D);
 
 	std::vector<EMEM> arr;
 	std::ofstream myfile, debugfile;
@@ -84,6 +108,7 @@ protected:
 
 	int iTemp, iTemp2, iTemp3;
 	double dTemp;
+
 
 	//Same addresses for all CMCs
 	void CMCDefaults();
@@ -100,6 +125,10 @@ protected:
 	void LGCDefaults();
 	void Luminary131Defaults();
 
+	//
+	void BlockIDefaults();
+	void CoronaDefaults();
+	void SolariumDefaults();
 
 	Earth earth;
 };

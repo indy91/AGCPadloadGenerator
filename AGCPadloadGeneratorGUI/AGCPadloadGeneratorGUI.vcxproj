@@ -192,6 +192,7 @@
     <ClInclude Include="AGCPadloadGenerator.h" />
     <ClInclude Include="AGCPadloadGeneratorGUI.h" />
     <ClInclude Include="AGCPadloadGeneratorGUIDlg.h" />
+    <ClInclude Include="BlockIPadloadGenerator.h" />
     <ClInclude Include="Earth.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="LGCPadloadGenerator.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="AGCPadloadGenerator.cpp" />
     <ClCompile Include="AGCPadloadGeneratorGUI.cpp" />
     <ClCompile Include="AGCPadloadGeneratorGUIDlg.cpp" />
+    <ClCompile Include="BlockIPadloadGenerator.cpp" />
     <ClCompile Include="Earth.cpp" />
     <ClCompile Include="ELP82.cpp" />
     <ClCompile Include="LGCPadloadGenerator.cpp" />
