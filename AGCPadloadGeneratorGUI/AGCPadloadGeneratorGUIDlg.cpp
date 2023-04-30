@@ -100,6 +100,9 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	MissionBox.AddString(L"Apollo 10");
 	MissionBox.AddString(L"Apollo 11");
 	MissionBox.AddString(L"Apollo 12");
+	MissionBox.AddString(L"Apollo 13");
+	MissionBox.AddString(L"Apollo 14");
+	MissionBox.AddString(L"Apollo 15");
 	MissionBox.SetCurSel(0);
 
 	TLANDBox.SetWindowText(L"4.5");
@@ -293,12 +296,26 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		HORIZALTBox.SetWindowTextW(L"24000");
 		break;
 	case 7: //Apollo 13
+		Launchpad.SetCurSel(1); //LC-39A
+		RTEDBox.SetWindowTextW(L"1.6602637");
 		HORIZALTBox.SetWindowTextW(L"24000");
 		break;
 	case 8: //Apollo 14
+		Launchpad.SetCurSel(1); //LC-39A
+		RTEDBox.SetWindowTextW(L"1.6602637");
 		HORIZALTBox.SetWindowTextW(L"28000");
 		break;
 	case 9: //Apollo 15
+		RopeNameBox.SetCurSel(5); //Artemis 72
+		EphemerisSpanBox.SetWindowTextW(L"14.5");
+		LaunchMJDInput.SetWindowTextW(L"41158.565277778");
+		Launchpad.SetCurSel(1); //LC-39A
+		RTEDBox.SetWindowTextW(L"1.6602637");
+		LSAltitudeBox.SetWindowTextW(L"-3550.284");
+		LSLatitudeBox.SetWindowTextW(L"26.074");
+		LSLongitudeBox.SetWindowTextW(L"3.654");
+		EMSAltBox.SetWindowTextW(L"297431.0");
+		LaunchAzimuthBox.SetWindowTextW(L"80.08868");
 		HORIZALTBox.SetWindowTextW(L"28000");
 		break;
 	case 10: //Apollo 16

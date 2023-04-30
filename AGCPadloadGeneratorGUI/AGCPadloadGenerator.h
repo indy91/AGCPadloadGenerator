@@ -25,7 +25,7 @@ struct BlockIData
 	//Interval between the launch vector passed through the inertial z-x plane and the time the AGC clock was zeroed at midnight of launch date
 	double DTEPOCH;
 	//Atlantic abourt site
-	double T_ATL,  lat_ATL, lng_ATL;
+	double T_ATL, lat_ATL, lng_ATL;
 	//Pacific abort site
 	double T_PAC, lat_PAC, lng_PAC;
 
@@ -37,6 +37,14 @@ struct BlockIData
 
 class AGCPadloadGenerator
 {
+	enum Launchpad
+	{
+		LC39A,
+		LC39B,
+		LC34,
+		LC37B
+	};
+
 public:
 	AGCPadloadGenerator();
 	~AGCPadloadGenerator();
@@ -61,7 +69,7 @@ public:
 	double WORBPOS;
 	//Initial velocity error for landmark tracking, m/s
 	double WORBVEL;
-	double PadLat, PadLong, PadAlt;
+	double PadLat, PadLong, PadAlt, PadAzimuth;
 	//Optical alignment target
 	double TAZEL[4];
 	double TEPHEM;
@@ -109,6 +117,7 @@ protected:
 	int iTemp, iTemp2, iTemp3;
 	double dTemp;
 
+	void SetPadData(Launchpad pad);
 
 	//Same addresses for all CMCs
 	void CMCDefaults();

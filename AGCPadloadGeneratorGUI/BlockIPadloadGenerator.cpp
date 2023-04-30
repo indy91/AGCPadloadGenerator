@@ -33,6 +33,12 @@ void BlockIPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT7, SPS2EccentricityBox);
 	DDX_Control(pDX, IDC_EDIT5, SPS1SMABox);
 	DDX_Control(pDX, IDC_EDIT8, SPS2SMABox);
+	DDX_Control(pDX, IDC_EDIT3, TAtlanticBox);
+	DDX_Control(pDX, IDC_EDIT10, TPacificBox);
+	DDX_Control(pDX, IDC_EDIT6, AtlanticLatitudeBox);
+	DDX_Control(pDX, IDC_EDIT9, AtlanticLongitudeBox);
+	DDX_Control(pDX, IDC_EDIT11, PacificLatitudeBox);
+	DDX_Control(pDX, IDC_EDIT12, PacificLongitudeBox);
 }
 
 
@@ -78,6 +84,12 @@ void BlockIPadloadGenerator::OnBnClickedOk()
 	agc.BLOCKI.a_SPS1 = Utilities::Text2Double(&SPS1SMABox);
 	agc.BLOCKI.e_SPS2 = Utilities::Text2Double(&SPS2EccentricityBox);
 	agc.BLOCKI.a_SPS2 = Utilities::Text2Double(&SPS2SMABox);
+	agc.BLOCKI.T_ATL = Utilities::Text2Double(&TAtlanticBox);
+	agc.BLOCKI.lat_ATL = Utilities::Text2Double(&AtlanticLatitudeBox);
+	agc.BLOCKI.lng_ATL = Utilities::Text2Double(&AtlanticLongitudeBox);
+	agc.BLOCKI.T_PAC = Utilities::Text2Double(&TPacificBox);
+	agc.BLOCKI.lat_PAC = Utilities::Text2Double(&PacificLatitudeBox);
+	agc.BLOCKI.lng_PAC = Utilities::Text2Double(&PacificLongitudeBox);
 
 	Launchpad.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -97,30 +109,51 @@ void BlockIPadloadGenerator::OnCbnSelchangeCombo3()
 	{
 	case 1: //AS-202
 		RopeNameBox.SetCurSel(0); //Corona 261
+		Launchpad.SetCurSel(0); //LC-34
 		LaunchMJDInput.SetWindowTextW(L"39362.719120");
 		LaunchAzimuthBox.SetWindowTextW(L"105.0");
 		SPS1EccentricityBox.SetWindowTextW(L"0.10988556");
 		SPS2EccentricityBox.SetWindowTextW(L"0.25341222");
 		SPS1SMABox.SetWindowTextW(L"6855280.0");
 		SPS2SMABox.SetWindowTextW(L"8623082.5");
+		TAtlanticBox.SetWindowTextW(L"1400.0");
+		AtlanticLatitudeBox.SetWindowTextW(L"4.0");
+		AtlanticLongitudeBox.SetWindowTextW(L"-31.0");
+		TPacificBox.SetWindowTextW(L"5648.0");
+		PacificLatitudeBox.SetWindowTextW(L"17.25");
+		PacificLongitudeBox.SetWindowTextW(L"170.0");
 		break;
 	case 2: //Apollo 4
 		RopeNameBox.SetCurSel(1); //Solarium 55
+		Launchpad.SetCurSel(1); //LC-39A
 		LaunchMJDInput.SetWindowTextW(L"39803.5");
 		LaunchAzimuthBox.SetWindowTextW(L"72.0");
 		SPS1EccentricityBox.SetWindowTextW(L"0.5934490037");
 		SPS2EccentricityBox.SetWindowTextW(L"0.999071629063702");
 		SPS1SMABox.SetWindowTextW(L"15487553.0");
 		SPS2SMABox.SetWindowTextW(L"6891085630.5");
+		TAtlanticBox.SetWindowTextW(L"1400.0");
+		TPacificBox.SetWindowTextW(L"30921.42");
+		AtlanticLatitudeBox.SetWindowTextW(L"28.29028886");
+		AtlanticLongitudeBox.SetWindowTextW(L"-19.5");
+		PacificLatitudeBox.SetWindowTextW(L"30.04649677");
+		PacificLongitudeBox.SetWindowTextW(L"-171.0");
 		break;
 	case 3: //Apollo 6
 		RopeNameBox.SetCurSel(1); //Solarium 55
+		Launchpad.SetCurSel(1); //LC-39A
 		LaunchMJDInput.SetWindowTextW(L"39950.5");
 		LaunchAzimuthBox.SetWindowTextW(L"72.0");
 		SPS1EccentricityBox.SetWindowTextW(L"0.63429326");
 		SPS2EccentricityBox.SetWindowTextW(L"1.0164386");
 		SPS1SMABox.SetWindowTextW(L"17512783.0");
 		SPS2SMABox.SetWindowTextW(L"-390049424.0");
+		TAtlanticBox.SetWindowTextW(L"1400.0");
+		AtlanticLatitudeBox.SetWindowTextW(L"28.29028886");
+		AtlanticLongitudeBox.SetWindowTextW(L"-19.5");
+		TPacificBox.SetWindowTextW(L"30921.42");
+		PacificLatitudeBox.SetWindowTextW(L"30.04649677");
+		PacificLongitudeBox.SetWindowTextW(L"-171.0");
 		break;
 	}
 }

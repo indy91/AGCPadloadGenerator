@@ -292,11 +292,11 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	TLAND = 0.0;
 
 	BLOCKI.T_ATL = 1400.0;
-	BLOCKI.lat_ATL = 28.29028886*RAD;
-	BLOCKI.lng_ATL = -19.5*RAD;
+	BLOCKI.lat_ATL = 28.29028886;
+	BLOCKI.lng_ATL = -19.5;
 	BLOCKI.T_PAC = 30921.42;
-	BLOCKI.lat_PAC = 30.04649677*RAD;
-	BLOCKI.lng_PAC = -171.0*RAD;
+	BLOCKI.lat_PAC = 30.04649677;
+	BLOCKI.lng_PAC = -171.0;
 	BLOCKI.e_SPS1 = 0.5934490037;
 	BLOCKI.a_SPS1 = 15487553.0;
 	BLOCKI.e_SPS2 = 0.999071629063702; // 0.999071629;
@@ -420,15 +420,11 @@ void AGCPadloadGenerator::RunBlockI()
 {
 	if (Pad == "LC-39A")
 	{
-		PadLat = 28.60842222;
-		PadLong = 279.3958666;
-		PadAlt = 89.4; // 124.0;
+		SetPadData(Launchpad::LC39A);
 	}
 	else if (Pad == "LC-34")
 	{
-		PadLat = 28.5217969;
-		PadLong = 279.4387535;
-		PadAlt = 5.66;
+		SetPadData(Launchpad::LC34);
 	}
 	else
 	{
@@ -461,7 +457,14 @@ void AGCPadloadGenerator::RunBlockI()
 
 	BLOCKI.DTEPOCH = Solarium055DTEPOCHCalculation(A_Z0, AGCEphemTEphemZero, PrelaunchMJD, PadLong*RAD);
 
-	SolariumDefaults();
+	if (RopeName == "Corona261")
+	{
+		CoronaDefaults();
+	}
+	else
+	{
+		SolariumDefaults();
+	}
 
 	myfile.open("Padload.txt");
 
@@ -480,25 +483,11 @@ void AGCPadloadGenerator::RunCMC()
 {
 	if (Pad == "LC-39A")
 	{
-		PadLat = 28.60842218;
-		PadLong = 279.3958666;
-		PadAlt = 89.4;
-
-		TAZEL[0] = 253.192 - 360.0;
-		TAZEL[1] = -2.0112;
-		TAZEL[2] = 291.187 - 360.0;
-		TAZEL[3] = -2.0158;
+		SetPadData(Launchpad::LC39A);
 	}
 	else if (Pad == "LC-34")
 	{
-		PadLat = 28.5217969;
-		PadLong = 279.4387535;
-		PadAlt = 5.66;
-
-		TAZEL[0] = 309.6 - 360.0;
-		TAZEL[1] = -0.1;
-		TAZEL[2] = 270.0 - 360.0;
-		TAZEL[3] = 0.0;
+		SetPadData(Launchpad::LC34);
 	}
 	else
 	{
@@ -581,6 +570,42 @@ void AGCPadloadGenerator::RunCMC()
 	}
 
 	myfile.close();
+}
+
+void AGCPadloadGenerator::SetPadData(Launchpad pad)
+{
+	if (pad == Launchpad::LC39A)
+	{
+		PadLat = 28.60842218;
+		PadLong = 279.3958666;
+		PadAlt = 89.4;
+		PadAzimuth = -90.0;
+
+		TAZEL[0] = 253.192 - 360.0;
+		TAZEL[1] = -2.0112;
+		TAZEL[2] = 291.187 - 360.0;
+		TAZEL[3] = -2.0158;
+	}
+	else if (pad == Launchpad::LC39B)
+	{
+
+	}
+	else if (pad == Launchpad::LC34)
+	{
+		PadLat = 28.5217969;
+		PadLong = 279.4387535;
+		PadAlt = 5.66;
+		PadAzimuth = -80.0;
+
+		TAZEL[0] = 309.6 - 360.0;
+		TAZEL[1] = -0.1;
+		TAZEL[2] = 270.0 - 360.0;
+		TAZEL[3] = 0.0;
+	}
+	else
+	{
+
+	}
 }
 
 void AGCPadloadGenerator::LGCDefaults()
@@ -2725,16 +2750,6 @@ VECTOR3 AGCPadloadGenerator::r_from_latlong(double lat, double lng, double alt, 
 
 void AGCPadloadGenerator::BlockIDefaults()
 {
-
-}
-
-void AGCPadloadGenerator::CoronaDefaults()
-{
-
-}
-
-void AGCPadloadGenerator::SolariumDefaults()
-{
 	//IMU COMPENSATION
 	//Gyro bias drift
 	//GBIASX
@@ -2778,7 +2793,7 @@ void AGCPadloadGenerator::SolariumDefaults()
 	SaveEMEM(01073, iTemp);
 	SaveEMEM(01074, iTemp2);
 	//VAZ - Azimuth of vehicle z-axis east of north
-	dTemp = -90.0;
+	dTemp = PadAzimuth;
 	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
 	SaveEMEM(01352, iTemp);
 	SaveEMEM(01353, iTemp2);
@@ -2828,18 +2843,6 @@ void AGCPadloadGenerator::SolariumDefaults()
 	SaveEMEM(01566, iTemp);
 	SaveEMEM(01567, iTemp2);
 
-	//MAXROLL - FInal roll angle minus initial roll angle
-	dTemp = 18.0; //Degrees
-	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
-	SaveEMEM(01702, iTemp);
-	SaveEMEM(01703, iTemp2);
-
-	//1/RLLRTE - One over desired roll rate
-	dTemp = 1.0; //Degrees per second
-	DoubleToBuffer(dTemp * 100.0 *360.0, 28, iTemp, iTemp2);
-	SaveEMEM(01700, iTemp);
-	SaveEMEM(01701, iTemp2);
-
 	//TTUMON - Nominal time from end of pitch monitor to start of tumble monitor
 	dTemp = 43.35; //Seconds
 	iTemp = SingleToBuffer(dTemp*100.0, 14);
@@ -2871,66 +2874,11 @@ void AGCPadloadGenerator::SolariumDefaults()
 	SaveEMEM(01617, iTemp);
 	SaveEMEM(01620, iTemp2);
 
-	MATRIX3 REFS = SolariumEarthFixedToSM(PadLat*RAD, PadLong*RAD, LaunchAzimuth*RAD);
-
-	//RTATLAN1 - Post-LET abort target vector at lif-off + TATLAN1 in IMU coordinates assuming the platform goes inertial
-	VECTOR3 RATL = unit(r_from_latlong(BLOCKI.lat_ATL, BLOCKI.lng_ATL + w_Earth * BLOCKI.T_ATL, 0.0, 0, 0));
-	VECTOR3 RN = mul(REFS, RATL);
-	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
-	SaveEMEM(01621, iTemp);
-	SaveEMEM(01622, iTemp2);
-	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
-	SaveEMEM(01623, iTemp);
-	SaveEMEM(01624, iTemp2);
-	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
-	SaveEMEM(01625, iTemp);
-	SaveEMEM(01626, iTemp2);
-
 	//TPACIF1 - Nominal flight time to pacific target
 	dTemp = BLOCKI.T_PAC; //Seconds
 	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
 	SaveEMEM(01627, iTemp);
 	SaveEMEM(01630, iTemp2);
-
-	//RTPACIF1 - Post-LET abort target vector at lif-off + TPACIF1 in IMU coordinates assuming the platform goes inertial
-	VECTOR3 RPAC = unit(r_from_latlong(BLOCKI.lat_PAC, BLOCKI.lng_PAC + w_Earth * BLOCKI.T_PAC, 0.0, 0, 0));
-	RN = mul(REFS, RPAC);
-	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
-	SaveEMEM(01631, iTemp);
-	SaveEMEM(01632, iTemp2);
-	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
-	SaveEMEM(01633, iTemp);
-	SaveEMEM(01634, iTemp2);
-	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
-	SaveEMEM(01635, iTemp);
-	SaveEMEM(01636, iTemp2);
-
-	//UNITW
-	
-	VECTOR3 UNITW = mul(REFS, _V(0, 0, 1));
-	DoubleToBuffer(UNITW.x, 1, iTemp, iTemp2);
-	SaveEMEM(01043, iTemp);
-	SaveEMEM(01044, iTemp2);
-	DoubleToBuffer(UNITW.y, 1, iTemp, iTemp2);
-	SaveEMEM(01045, iTemp);
-	SaveEMEM(01046, iTemp2);
-	DoubleToBuffer(UNITW.z, 1, iTemp, iTemp2);
-	SaveEMEM(01047, iTemp);
-	SaveEMEM(01050, iTemp2);
-
-	//RN - Position vector at GRR
-	VECTOR3 R_L = r_from_latlong(PadLat*RAD, PadLong*RAD, PadAlt, BODY_EARTH, 0);
-	
-	RN = mul(REFS, R_L);
-	DoubleToBuffer(RN.x, 25, iTemp, iTemp2);
-	SaveEMEM(0765, iTemp);
-	SaveEMEM(0766, iTemp2);
-	DoubleToBuffer(RN.y, 25, iTemp, iTemp2);
-	SaveEMEM(0767, iTemp);
-	SaveEMEM(0770, iTemp2);
-	DoubleToBuffer(RN.z, 25, iTemp, iTemp2);
-	SaveEMEM(0771, iTemp);
-	SaveEMEM(0772, iTemp2);
 
 	//MISSION CONTROL PROGRAM
 
@@ -2972,6 +2920,140 @@ void AGCPadloadGenerator::SolariumDefaults()
 	DoubleToBuffer(dTemp, 27, iTemp, iTemp2);
 	SaveEMEM(01554, iTemp);
 	SaveEMEM(01555, iTemp2);
+}
+
+void AGCPadloadGenerator::CoronaDefaults()
+{
+	BlockIDefaults();
+
+	MATRIX3 REFS = SolariumEarthFixedToSM(PadLat*RAD, PadLong*RAD, LaunchAzimuth*RAD);
+
+	//RTATLAN1 - Post-LET abort target vector at lif-off + TATLAN1 in IMU coordinates assuming the platform goes inertial
+	VECTOR3 RATL = unit(r_from_latlong(BLOCKI.lat_ATL*RAD, BLOCKI.lng_ATL*RAD + w_Earth * BLOCKI.T_ATL, 0.0, 0, 0));
+	VECTOR3 RN = mul(REFS, RATL);
+	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
+	SaveEMEM(01621, iTemp);
+	SaveEMEM(01622, iTemp2);
+	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
+	SaveEMEM(01623, iTemp);
+	SaveEMEM(01624, iTemp2);
+	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
+	SaveEMEM(01625, iTemp);
+	SaveEMEM(01626, iTemp2);
+
+	//RTPACIF1 - Post-LET abort target vector at lif-off + TPACIF1 in IMU coordinates assuming the platform goes inertial
+	VECTOR3 RPAC = unit(r_from_latlong(BLOCKI.lat_PAC*RAD, BLOCKI.lng_PAC*RAD + w_Earth * BLOCKI.T_PAC, 0.0, 0, 0));
+	RN = mul(REFS, RPAC);
+	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
+	SaveEMEM(01631, iTemp);
+	SaveEMEM(01632, iTemp2);
+	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
+	SaveEMEM(01633, iTemp);
+	SaveEMEM(01634, iTemp2);
+	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
+	SaveEMEM(01635, iTemp);
+	SaveEMEM(01636, iTemp2);
+
+	//UNITW
+
+	VECTOR3 UNITW = mul(REFS, _V(0, 0, 1));
+	DoubleToBuffer(UNITW.x, 1, iTemp, iTemp2);
+	SaveEMEM(01043, iTemp);
+	SaveEMEM(01044, iTemp2);
+	DoubleToBuffer(UNITW.y, 1, iTemp, iTemp2);
+	SaveEMEM(01045, iTemp);
+	SaveEMEM(01046, iTemp2);
+	DoubleToBuffer(UNITW.z, 1, iTemp, iTemp2);
+	SaveEMEM(01047, iTemp);
+	SaveEMEM(01050, iTemp2);
+
+	//RN - Position vector at GRR
+	VECTOR3 R_L = r_from_latlong(PadLat*RAD, PadLong*RAD, PadAlt, BODY_EARTH, 0);
+
+	RN = mul(REFS, R_L);
+	DoubleToBuffer(RN.x, 24, iTemp, iTemp2);
+	SaveEMEM(0765, iTemp);
+	SaveEMEM(0766, iTemp2);
+	DoubleToBuffer(RN.y, 24, iTemp, iTemp2);
+	SaveEMEM(0767, iTemp);
+	SaveEMEM(0770, iTemp2);
+	DoubleToBuffer(RN.z, 24, iTemp, iTemp2);
+	SaveEMEM(0771, iTemp);
+	SaveEMEM(0772, iTemp2);
+}
+
+void AGCPadloadGenerator::SolariumDefaults()
+{
+	BlockIDefaults();
+
+	//MAXROLL - FInal roll angle minus initial roll angle
+	dTemp = 18.0; //Degrees
+	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
+	SaveEMEM(01702, iTemp);
+	SaveEMEM(01703, iTemp2);
+
+	//1/RLLRTE - One over desired roll rate
+	dTemp = 1.0; //Degrees per second
+	DoubleToBuffer(dTemp * 100.0 *360.0, 28, iTemp, iTemp2);
+	SaveEMEM(01700, iTemp);
+	SaveEMEM(01701, iTemp2);
+
+	MATRIX3 REFS = SolariumEarthFixedToSM(PadLat*RAD, PadLong*RAD, LaunchAzimuth*RAD);
+
+	//RTATLAN1 - Post-LET abort target vector at lif-off + TATLAN1 in IMU coordinates assuming the platform goes inertial
+	VECTOR3 RATL = unit(r_from_latlong(BLOCKI.lat_ATL*RAD, BLOCKI.lng_ATL*RAD + w_Earth * BLOCKI.T_ATL, 0.0, 0, 0));
+	VECTOR3 RN = mul(REFS, RATL);
+	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
+	SaveEMEM(01621, iTemp);
+	SaveEMEM(01622, iTemp2);
+	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
+	SaveEMEM(01623, iTemp);
+	SaveEMEM(01624, iTemp2);
+	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
+	SaveEMEM(01625, iTemp);
+	SaveEMEM(01626, iTemp2);
+
+	//RTPACIF1 - Post-LET abort target vector at lif-off + TPACIF1 in IMU coordinates assuming the platform goes inertial
+	VECTOR3 RPAC = unit(r_from_latlong(BLOCKI.lat_PAC*RAD, BLOCKI.lng_PAC*RAD + w_Earth * BLOCKI.T_PAC, 0.0, 0, 0));
+	RN = mul(REFS, RPAC);
+	DoubleToBuffer(RN.x, 1, iTemp, iTemp2);
+	SaveEMEM(01631, iTemp);
+	SaveEMEM(01632, iTemp2);
+	DoubleToBuffer(RN.y, 1, iTemp, iTemp2);
+	SaveEMEM(01633, iTemp);
+	SaveEMEM(01634, iTemp2);
+	DoubleToBuffer(RN.z, 1, iTemp, iTemp2);
+	SaveEMEM(01635, iTemp);
+	SaveEMEM(01636, iTemp2);
+
+	//UNITW
+	
+	VECTOR3 UNITW = mul(REFS, _V(0, 0, 1));
+	DoubleToBuffer(UNITW.x, 1, iTemp, iTemp2);
+	SaveEMEM(01043, iTemp);
+	SaveEMEM(01044, iTemp2);
+	DoubleToBuffer(UNITW.y, 1, iTemp, iTemp2);
+	SaveEMEM(01045, iTemp);
+	SaveEMEM(01046, iTemp2);
+	DoubleToBuffer(UNITW.z, 1, iTemp, iTemp2);
+	SaveEMEM(01047, iTemp);
+	SaveEMEM(01050, iTemp2);
+
+	//RN - Position vector at GRR
+	VECTOR3 R_L = r_from_latlong(PadLat*RAD, PadLong*RAD, PadAlt, BODY_EARTH, 0);
+	
+	RN = mul(REFS, R_L);
+	DoubleToBuffer(RN.x, 25, iTemp, iTemp2);
+	SaveEMEM(0765, iTemp);
+	SaveEMEM(0766, iTemp2);
+	DoubleToBuffer(RN.y, 25, iTemp, iTemp2);
+	SaveEMEM(0767, iTemp);
+	SaveEMEM(0770, iTemp2);
+	DoubleToBuffer(RN.z, 25, iTemp, iTemp2);
+	SaveEMEM(0771, iTemp);
+	SaveEMEM(0772, iTemp2);
+
+	//MISSION CONTROL PROGRAM	
 
 	//TFFMIN - Time-to-free-fall at which to ??? SPS2 ignition in 2 minutes
 	dTemp = 687.0; //Seconds

@@ -36,4 +36,10 @@ public:
 	CEdit SPS2EccentricityBox;
 	CEdit SPS1SMABox;
 	CEdit SPS2SMABox;
+	CEdit TAtlanticBox;
+	CEdit TPacificBox;
+	CEdit AtlanticLatitudeBox;
+	CEdit AtlanticLongitudeBox;
+	CEdit PacificLatitudeBox;
+	CEdit PacificLongitudeBox;
 };
