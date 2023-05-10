@@ -122,6 +122,21 @@ void BlockIPadloadGenerator::OnCbnSelchangeCombo3()
 		TPacificBox.SetWindowTextW(L"5648.0");
 		PacificLatitudeBox.SetWindowTextW(L"17.25");
 		PacificLongitudeBox.SetWindowTextW(L"170.0");
+
+		//Temporary, until there is input boxes
+		agc.BLOCKI.TROLL = 8.0;
+		agc.BLOCKI.TPITCH = 10.0;
+		agc.BLOCKI.TENDPITCH = 126.0;
+
+		//Measured from local vertical
+		agc.BLOCKI.POLYCOFF[0] = 8.99456725e1 - 90.0 - 33.0; //Measured from zero, offset by 33° for the IMU
+		agc.BLOCKI.POLYCOFF[1] = 6.05731859e-4;
+		agc.BLOCKI.POLYCOFF[2] = -3.33462947e-3;
+		agc.BLOCKI.POLYCOFF[3] = -1.8166406e-4;
+		agc.BLOCKI.POLYCOFF[4] = 3.17822761e-6;
+		agc.BLOCKI.POLYCOFF[5] = -1.88355082e-8;
+		agc.BLOCKI.POLYCOFF[6] = 3.93873259e-11;
+
 		break;
 	case 2: //Apollo 4
 		RopeNameBox.SetCurSel(1); //Solarium 55
@@ -138,6 +153,15 @@ void BlockIPadloadGenerator::OnCbnSelchangeCombo3()
 		AtlanticLongitudeBox.SetWindowTextW(L"-19.5");
 		PacificLatitudeBox.SetWindowTextW(L"30.04649677");
 		PacificLongitudeBox.SetWindowTextW(L"-171.0");
+
+		//Temporary, until there is input boxes
+		agc.BLOCKI.POLYCOFF[0] = 0.4788289;
+		agc.BLOCKI.POLYCOFF[1] = 0.3411991e-1;
+		agc.BLOCKI.POLYCOFF[2] = 0.1178593e-1;
+		agc.BLOCKI.POLYCOFF[3] = 0.5318752e-4;
+		agc.BLOCKI.POLYCOFF[4] = -0.2937101e-5;
+		agc.BLOCKI.POLYCOFF[5] = 0.232939e-7;
+		agc.BLOCKI.POLYCOFF[6] = -0.5793149e-10;
 		break;
 	case 3: //Apollo 6
 		RopeNameBox.SetCurSel(1); //Solarium 55
@@ -154,6 +178,15 @@ void BlockIPadloadGenerator::OnCbnSelchangeCombo3()
 		TPacificBox.SetWindowTextW(L"30921.42");
 		PacificLatitudeBox.SetWindowTextW(L"30.04649677");
 		PacificLongitudeBox.SetWindowTextW(L"-171.0");
+
+		//Temporary, until there is input boxes
+		agc.BLOCKI.POLYCOFF[0] = 0.4788289;
+		agc.BLOCKI.POLYCOFF[1] = 0.3411991e-1;
+		agc.BLOCKI.POLYCOFF[2] = 0.1178593e-1;
+		agc.BLOCKI.POLYCOFF[3] = 0.5318752e-4;
+		agc.BLOCKI.POLYCOFF[4] = -0.2937101e-5;
+		agc.BLOCKI.POLYCOFF[5] = 0.232939e-7;
+		agc.BLOCKI.POLYCOFF[6] = -0.5793149e-10;
 		break;
 	}
 }

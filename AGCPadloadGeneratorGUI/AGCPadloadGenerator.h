@@ -33,6 +33,15 @@ struct BlockIData
 	double e_SPS1, a_SPS1;
 	//SPS-2
 	double e_SPS2, a_SPS2;
+
+	//Time from lift-off at which roll monitor begins
+	double TROLL;
+	//Time from lift-off at which pitch monitor begins
+	double TPITCH;
+	//Time pitch monitor is on
+	double TENDPITCH;
+	//Pitch polynomial
+	double POLYCOFF[7];
 };
 
 class AGCPadloadGenerator

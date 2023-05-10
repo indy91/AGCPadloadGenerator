@@ -301,6 +301,9 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKI.a_SPS1 = 15487553.0;
 	BLOCKI.e_SPS2 = 0.999071629063702; // 0.999071629;
 	BLOCKI.a_SPS2 = 6891085630.5;
+	BLOCKI.TROLL = 9.0;
+	BLOCKI.TPITCH = 10.7;
+	BLOCKI.TENDPITCH = 134.0;
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -2809,36 +2812,21 @@ void AGCPadloadGenerator::BlockIDefaults()
 	SaveEMEM(01573, 05554);
 	//POLYEND - Transfer at end of polynomial
 	SaveEMEM(01613, 04024);
-	//POLYCOEF
-	SaveEMEM(01575, 01);
-	SaveEMEM(01576, 013453);
-	SaveEMEM(01577, 017);
-	SaveEMEM(01600, 034652);
-	SaveEMEM(01601, 01603);
-	SaveEMEM(01602, 035205);
-	SaveEMEM(01603, 01231);
-	SaveEMEM(01604, 014015);
-	SaveEMEM(01605, 064174);
-	SaveEMEM(01606, 040131);
-	SaveEMEM(01607, 017216);
-	SaveEMEM(01610, 014327);
-	SaveEMEM(01611, 071614);
-	SaveEMEM(01612, 064244);
 
 	//TROLL - Time from liftoff at which roll monitor begins
-	dTemp = 9.0; //Seconds
+	dTemp = BLOCKI.TROLL; //Seconds
 	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
 	SaveEMEM(01562, iTemp);
 	SaveEMEM(01563, iTemp2);
 
 	//TPITCH - Time from liftoff at which pitch monitor begins
-	dTemp = 10.7; //Seconds
+	dTemp = BLOCKI.TPITCH; //Seconds
 	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
 	SaveEMEM(01564, iTemp);
 	SaveEMEM(01565, iTemp2);
 
 	//TENDPITCH - Time pitch monitor is on
-	dTemp = 134.0; //Seconds
+	dTemp = BLOCKI.TENDPITCH; //Seconds
 	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
 	SaveEMEM(01566, iTemp);
 	SaveEMEM(01567, iTemp2);
@@ -2893,12 +2881,6 @@ void AGCPadloadGenerator::BlockIDefaults()
 	SaveEMEM(01027, iTemp);
 	SaveEMEM(01030, iTemp2);
 
-	//NSHIFT - Average G routine scaling constant
-	SaveEMEM(01040, 077772);
-
-	//XSHIFT - Average G routine scaling constant
-	SaveEMEM(01041, 011);
-
 	//ESQ(VR) - eccentricity squared for SPS1 burn
 	DoubleToBuffer(BLOCKI.e_SPS1*BLOCKI.e_SPS1, 4, iTemp, iTemp2);
 	SaveEMEM(01546, iTemp);
@@ -2925,6 +2907,26 @@ void AGCPadloadGenerator::BlockIDefaults()
 void AGCPadloadGenerator::CoronaDefaults()
 {
 	BlockIDefaults();
+
+	//POLYCOEF
+	int tempaddr = 01575;
+	for (int N = 0; N < 7; N++)
+	{
+		dTemp = BLOCKI.POLYCOFF[N] / (180.0*pow(100.0, N))*pow(2, 14 * N - 4);
+		DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+		SaveEMEM(tempaddr, iTemp);
+		SaveEMEM(tempaddr + 1, iTemp2);
+		tempaddr += 2;
+	}
+
+	//NSHIFT - Average G routine scaling constant
+	SaveEMEM(01040, 077772);
+
+	//XSHIFT - Average G routine scaling constant
+	SaveEMEM(01041, 011);
+
+	//CALCG - Preload CADR of CALCGEAR
+	SaveEMEM(01042, 061652);
 
 	MATRIX3 REFS = SolariumEarthFixedToSM(PadLat*RAD, PadLong*RAD, LaunchAzimuth*RAD);
 
@@ -2980,11 +2982,34 @@ void AGCPadloadGenerator::CoronaDefaults()
 	DoubleToBuffer(RN.z, 24, iTemp, iTemp2);
 	SaveEMEM(0771, iTemp);
 	SaveEMEM(0772, iTemp2);
+
+	//TCOAST - Time from SPS1 cutoff to maneuver to SPS2 attitude
+	dTemp = 3163.67; //Seconds
+	DoubleToBuffer(dTemp*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(01556, iTemp);
+	SaveEMEM(01557, iTemp2);
 }
 
 void AGCPadloadGenerator::SolariumDefaults()
 {
 	BlockIDefaults();
+
+	//POLYCOEF
+	int tempaddr = 01575;
+	for (int N = 0; N < 7; N++)
+	{
+		dTemp = BLOCKI.POLYCOFF[N] / (360.0*pow(100.0, N))*pow(2, 14 * N - 4);
+		DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+		SaveEMEM(tempaddr, iTemp);
+		SaveEMEM(tempaddr + 1, iTemp2);
+		tempaddr += 2;
+	}
+
+	//NSHIFT - Average G routine scaling constant
+	SaveEMEM(01040, 077772);
+
+	//XSHIFT - Average G routine scaling constant
+	SaveEMEM(01041, 011);
 
 	//MAXROLL - FInal roll angle minus initial roll angle
 	dTemp = 18.0; //Degrees
