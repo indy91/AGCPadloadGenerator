@@ -65,4 +65,6 @@ public:
 	CEdit ALTVARBox;
 	CEdit WRENDPOSBox;
 	CEdit WRENDVELBox;
+	CEdit RMAXBox;
+	CEdit VMAXBox;
 };

@@ -95,6 +95,10 @@ public:
 	double WRENDPOS;
 	//P20 W-Matrix initial velocity error, m
 	double WRENDVEL;
+	//P20 W-Matrix maximum position deviation that gets processed automatically, m
+	double RMAX;
+	//P20 W-Matrix maximum velocity deviation that gets processed automatically, m
+	double VMAX;
 
 	BlockIData BLOCKI;
 
@@ -132,7 +136,7 @@ protected:
 	void CMCDefaults();
 
 	//Colossus
-	void Colossus237Defaults();
+	void Colossus237_249_Defaults(bool Is249);
 	//Comanche
 	void Comanche55Defaults();
 	void Comanche67Defaults();

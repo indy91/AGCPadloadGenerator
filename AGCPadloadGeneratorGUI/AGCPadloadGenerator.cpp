@@ -289,6 +289,8 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	ALTVAR = 1.52168e-5;		// rad^2
 	WRENDPOS = 10000.0*0.3048;	// 10000 ft
 	WRENDVEL = 10.0*0.3048;		// 10 ft/s
+	RMAX = 2000.0*0.3048;		// 2000 ft
+	VMAX = 2.0*0.3048;			// 2 ft/s
 	TLAND = 0.0;
 
 	BLOCKI.T_ATL = 1400.0;
@@ -522,11 +524,11 @@ void AGCPadloadGenerator::RunCMC()
 
 		if (RopeName == "Colossus237")
 		{
-			Colossus237Defaults();
+			Colossus237_249_Defaults(false);
 		}
 		else
 		{
-			//TBD
+			Colossus237_249_Defaults(true);
 		}
 	}
 	else if (RopeName == "Comanche055" || RopeName == "Comanche067")
@@ -673,10 +675,10 @@ void AGCPadloadGenerator::LGCDefaults()
 	iTemp = SingleToBuffer(15.0 / 1000.0, -5);
 	SaveEMEM(02003, iTemp);
 	//RMAX
-	iTemp = SingleToBuffer(2000.0*0.3048, 19);
+	iTemp = SingleToBuffer(RMAX, 19);
 	SaveEMEM(02004, iTemp);
 	//VMAX
-	iTemp = SingleToBuffer(2.0*0.3048 / 100.0, 7);
+	iTemp = SingleToBuffer(VMAX / 100.0, 7);
 	SaveEMEM(02005, iTemp);
 
 	//HIASCENT
@@ -1186,6 +1188,35 @@ void AGCPadloadGenerator::CMCDefaults()
 	iTemp = SingleToBuffer(CDUCHKWD * 100.0, 14);
 	SaveEMEM(01341, iTemp);
 
+	//WRENDPOS
+	iTemp = SingleToBuffer(WRENDPOS, 19);
+	SaveEMEM(02000, iTemp);
+	//WRENDVEL
+	iTemp = SingleToBuffer(WRENDVEL / 100.0, 0);
+	SaveEMEM(02001, iTemp);
+
+	//RMAX
+	if (RMAX > 0)
+	{
+		iTemp = SingleToBuffer(RMAX, 19);
+		SaveEMEM(02002, iTemp);
+	}
+	else
+	{
+		SaveEMEM(02002, 077776);
+	}
+
+	//VMAX
+	if (VMAX > 0)
+	{
+		iTemp = SingleToBuffer(VMAX / 100.0, 7);
+		SaveEMEM(02003, iTemp);
+	}
+	else
+	{
+		SaveEMEM(02003, 077776);
+	}
+
 	//WORBPOS
 	iTemp = SingleToBuffer(WORBPOS, 19);
 	SaveEMEM(02004, iTemp);
@@ -1278,9 +1309,17 @@ void AGCPadloadGenerator::CMCDefaults()
 	SaveEMEM(03006, 042757);
 }
 
-void AGCPadloadGenerator::Colossus237Defaults()
+void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 {
 	CMCDefaults();
+
+	if (Is249)
+	{
+		//EMDOT
+		dTemp = SPS_THRUST / SPS_ISP;
+		iTemp = SingleToBuffer(dTemp / 100.0, 3);
+		SaveEMEM(0110, iTemp);
+	}
 
 	//PIPTIME
 	double PIPTIME = (LaunchMJD - PrelaunchMJD)*8.64e6;
@@ -1301,16 +1340,6 @@ void AGCPadloadGenerator::Colossus237Defaults()
 	//ALTVAR
 	iTemp = SingleToBuffer(ALTVAR, -16);
 	SaveEMEM(01356, iTemp);
-	//WRENDPOS
-	iTemp = SingleToBuffer(WRENDPOS, 19);
-	SaveEMEM(02000, iTemp);
-	//WRENDVEL
-	iTemp = SingleToBuffer(WRENDVEL / 100.0, 0);
-	SaveEMEM(02001, iTemp);
-	//RMAX
-	SaveEMEM(02002, 077776);
-	//VMAX
-	SaveEMEM(02003, 077776);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -1353,7 +1382,10 @@ void AGCPadloadGenerator::Colossus237Defaults()
 	SaveEMEM(03023, 01000);
 	SaveEMEM(03024, 0232);
 
-	//TBD: PACTOFF, YACTOFF
+	//PACTOFF
+	SaveEMEM(03025, 077676);
+	//YACTOFF
+	SaveEMEM(03026, 070);
 
 	//AP0
 	SaveEMEM(03027, 010000);
@@ -1381,7 +1413,50 @@ void AGCPadloadGenerator::Colossus237Defaults()
 	//DAPDATR2
 	SaveEMEM(03067, 01111);
 
-	//TBD: Mass
+	//LEMMASS
+	SaveEMEM(03073, 0);
+	//CSMMASS
+	SaveEMEM(03074, 016024);
+
+	//POLYNUM
+	SaveEMEM(03261, 05);
+	SaveEMEM(03262, 077777);
+	SaveEMEM(03263, 047314);
+	SaveEMEM(03264, 026);
+	SaveEMEM(03265, 021213);
+	SaveEMEM(03266, 0573);
+	SaveEMEM(03267, 011306);
+	SaveEMEM(03270, 077256);
+	SaveEMEM(03271, 063275);
+	SaveEMEM(03272, 0);
+	SaveEMEM(03273, 0);
+	SaveEMEM(03274, 0);
+	SaveEMEM(03275, 0);
+	SaveEMEM(03276, 0);
+	SaveEMEM(03277, 0);
+
+	//SATRLRT
+	SaveEMEM(03300, 0);
+	SaveEMEM(03301, 012144);
+	//RPSTART
+	dTemp = 11.85*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03302, iTemp);
+	//RPSTOP
+	dTemp = -147.25*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03303, iTemp);
+
+	//LAT(SPL)
+	dTemp = 26.48 / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(03400, iTemp);
+	SaveEMEM(03401, iTemp2);
+	//LNG(SPL)
+	dTemp = -17.05 / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(03402, iTemp);
+	SaveEMEM(03403, iTemp2);
 
 	//ECSTEER
 	SaveEMEM(03424, 010000);
@@ -1454,19 +1529,6 @@ void AGCPadloadGenerator::Comanche55Defaults()
 	SaveEMEM(01776, 0);
 	//E32C3IRM
 	SaveEMEM(01777, 0);
-
-	//WRENDPOS
-	iTemp = SingleToBuffer(WRENDPOS, 19);
-	SaveEMEM(02000, iTemp);
-	//WRENDVEL
-	iTemp = SingleToBuffer(WRENDVEL / 100.0, 0);
-	SaveEMEM(02001, iTemp);
-	//RMAX
-	iTemp = SingleToBuffer(2000.0*0.3048, 19);
-	SaveEMEM(02002, iTemp);
-	//VMAX
-	iTemp = SingleToBuffer(2.0*0.3048 / 100.0, 7);
-	SaveEMEM(02003, iTemp);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -1663,19 +1725,6 @@ void AGCPadloadGenerator::Comanche67Defaults()
 	SaveEMEM(01776, 0);
 	//E32C3IRM
 	SaveEMEM(01777, 0);
-
-	//WRENDPOS
-	iTemp = SingleToBuffer(WRENDPOS, 19);
-	SaveEMEM(02000, iTemp);
-	//WRENDVEL
-	iTemp = SingleToBuffer(WRENDVEL / 100.0, 0);
-	SaveEMEM(02001, iTemp);
-	//RMAX
-	iTemp = SingleToBuffer(2000.0*0.3048, 19);
-	SaveEMEM(02002, iTemp);
-	//VMAX
-	iTemp = SingleToBuffer(2.0*0.3048 / 100.0, 7);
-	SaveEMEM(02003, iTemp);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -1935,16 +1984,6 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	SaveEMEM(01770, 0233);
 	//SHAFTSF
 	SaveEMEM(01771, 0476);
-	//WRENDPOS
-	iTemp = SingleToBuffer(WRENDPOS, 19);
-	SaveEMEM(02000, iTemp);
-	//WRENDVEL
-	iTemp = SingleToBuffer(WRENDVEL / 100.0, 0);
-	SaveEMEM(02001, iTemp);
-	//RMAX
-	SaveEMEM(02002, 023);
-	//VMAX
-	SaveEMEM(02003, 01);
 
 	//DTF
 	dTemp = 0.3*100.0; //0.3 seconds

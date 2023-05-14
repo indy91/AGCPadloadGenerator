@@ -44,6 +44,8 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT13, ALTVARBox);
 	DDX_Control(pDX, IDC_EDIT14, WRENDPOSBox);
 	DDX_Control(pDX, IDC_EDIT15, WRENDVELBox);
+	DDX_Control(pDX, IDC_EDIT16, RMAXBox);
+	DDX_Control(pDX, IDC_EDIT17, VMAXBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -120,6 +122,8 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	ALTVARBox.SetWindowText(L"1.52168e-5");
 	WRENDPOSBox.SetWindowText(L"3048");
 	WRENDVELBox.SetWindowText(L"3.048");
+	RMAXBox.SetWindowText(L"2000");
+	VMAXBox.SetWindowText(L"2");
 
 	return TRUE;
 }
@@ -182,6 +186,8 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.ALTVAR = Utilities::Text2Double(&ALTVARBox);
 	agc.WRENDPOS = Utilities::Text2Double(&WRENDPOSBox);
 	agc.WRENDVEL = Utilities::Text2Double(&WRENDVELBox);
+	agc.RMAX = Utilities::Text2Double(&RMAXBox)*0.3048;
+	agc.VMAX = Utilities::Text2Double(&VMAXBox)*0.3048;
 
 	Launchpad.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -218,6 +224,8 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	ALTVARBox.SetWindowText(L"1.52168e-5");
 	WRENDPOSBox.SetWindowText(L"3048");
 	WRENDVELBox.SetWindowText(L"3.048");
+	RMAXBox.SetWindowText(L"2000");
+	VMAXBox.SetWindowText(L"2");
 
 	switch (MissionBox.GetCurSel())
 	{
@@ -239,17 +247,19 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALTVARBox.SetWindowText(L"1e-6");
 		WRENDPOSBox.SetWindowText(L"1000");
 		WRENDVELBox.SetWindowText(L"1");
+		RMAXBox.SetWindowText(L"-1");
+		VMAXBox.SetWindowText(L"-1");
 		break;
 	case 2: //Apollo 8
 		RopeNameBox.SetCurSel(0); //Colossus 237
 		EphemerisSpanBox.SetWindowTextW(L"10.5");
-		LaunchMJDInput.SetWindowTextW(L"40140.62690972");
+		LaunchMJDInput.SetWindowTextW(L"40211.53541666666");
 		Launchpad.SetCurSel(1); //LC-39A
 		RTEDBox.SetWindowTextW(L"1.6602637");
 		LSAltitudeBox.SetWindowTextW(L"-1518.64");
 		LSLatitudeBox.SetWindowTextW(L"2.6317");
 		LSLongitudeBox.SetWindowTextW(L"34.0253");
-		EMSAltBox.SetWindowTextW(L"284643");
+		EMSAltBox.SetWindowTextW(L"297431");
 		LaunchAzimuthBox.SetWindowTextW(L"72.124");
 		HORIZALTBox.SetWindowTextW(L"18000");
 		ALTVARBox.SetWindowText(L"1e-6");
@@ -257,6 +267,11 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		WRENDVELBox.SetWindowText(L"1");
 		break;
 	case 3: //Apollo 9
+		RopeNameBox.SetCurSel(1); //Colossus 249
+		LaunchMJDInput.SetWindowTextW(L"40283.666667");
+		Launchpad.SetCurSel(1); //LC-39A
+		RTEDBox.SetWindowTextW(L"1.69107");
+		EMSAltBox.SetWindowTextW(L"284643");
 		LaunchAzimuthBox.SetWindowTextW(L"72.0");
 		CDUCHKWDBox.SetWindowTextW(L"0");
 		HORIZALTBox.SetWindowTextW(L"18000");
