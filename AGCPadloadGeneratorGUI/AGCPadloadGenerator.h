@@ -44,6 +44,34 @@ struct BlockIData
 	double POLYCOFF[7];
 };
 
+struct BlockIIData
+{
+	double CSMMass; //lbs
+	double LMMass;  //lbs
+	double TotalMass; //lbs
+
+	//P20 W-Matrix initial position error, ft
+	double WRENDPOS;
+	//P20 W-Matrix initial velocity error, ft/s
+	double WRENDVEL;
+	//P20 W-Matrix maximum position deviation that gets processed automatically, ft
+	double RMAX;
+	//P20 W-Matrix maximum velocity deviation that gets processed automatically, ft/s
+	double VMAX;
+
+	//LGC Only
+	double WSHAFT;
+	double WTRUN;
+	double SHAFTVAR;
+	double TRUNVAR;
+	double WSURFPOS;
+	double WSURFVEL;
+	double HIASCENT;
+	double AGSK;
+	double ROLLTIME;
+	double PITCHTIME;
+};
+
 class AGCPadloadGenerator
 {
 	enum Launchpad
@@ -91,21 +119,14 @@ public:
 	double HORIZALT;
 	//Alternate line-of-sight variance, P20, rad^2
 	double ALTVAR;
-	//P20 W-Matrix initial position error, m
-	double WRENDPOS;
-	//P20 W-Matrix initial velocity error, m
-	double WRENDVEL;
-	//P20 W-Matrix maximum position deviation that gets processed automatically, m
-	double RMAX;
-	//P20 W-Matrix maximum velocity deviation that gets processed automatically, m
-	double VMAX;
 
 	BlockIData BLOCKI;
+	BlockIIData BLOCKII;
 
 protected:
 	void SaveEMEM(int address, int value);
 	void WriteEMEM(int address, int value, bool cmc);
-	void AGCCorrectionVectors(std::string rope, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC);
+	void AGCCorrectionVectors(std::string rope, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance);
 	void AGCEphemeris(double T0, int Epoch, double TEphem0, double Span);
 
 	int clbkEphemeris(int body, double mjd, int req, double *ret);
@@ -145,9 +166,10 @@ protected:
 
 	//Same addresses for all LGCs
 	void LGCDefaults();
+	void Sundance306Defaults();
 	void Luminary131Defaults();
 
-	//
+	//Block I
 	void BlockIDefaults();
 	void CoronaDefaults();
 	void SolariumDefaults();

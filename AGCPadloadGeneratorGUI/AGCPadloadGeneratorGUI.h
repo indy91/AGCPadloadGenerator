@@ -30,4 +30,5 @@ public:
 namespace Utilities
 {
 	double Text2Double(CEdit *ed);
+	void Double2Text(double val, CEdit *ed, int length);
 }

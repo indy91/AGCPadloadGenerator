@@ -33,6 +33,24 @@ void LGCPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT3, LSLatitudeBox);
 	DDX_Control(pDX, IDC_EDIT4, LSLongitudeBox);
 	DDX_Control(pDX, IDC_EDIT5, LSAltitudeBox);
+	DDX_Control(pDX, IDC_EDIT6, LMMassBox);
+	DDX_Control(pDX, IDC_EDIT7, CSMMassBox);
+	DDX_Control(pDX, IDC_EDIT10, TotalMassBox);
+	DDX_Control(pDX, IDC_CHECK1, DockedBox);
+	DDX_Control(pDX, IDC_EDIT11, WRENDPOSBox);
+	DDX_Control(pDX, IDC_EDIT12, WRENDVELBox);
+	DDX_Control(pDX, IDC_EDIT13, WSHAFTBox);
+	DDX_Control(pDX, IDC_EDIT14, WTRUNBox);
+	DDX_Control(pDX, IDC_EDIT15, RMAXBox);
+	DDX_Control(pDX, IDC_EDIT18, VMAXBox);
+	DDX_Control(pDX, IDC_EDIT19, SHAFTVARBox);
+	DDX_Control(pDX, IDC_EDIT20, TRUNVARBox);
+	DDX_Control(pDX, IDC_EDIT21, WSURFPOSBox);
+	DDX_Control(pDX, IDC_EDIT22, WSURFVELBox);
+	DDX_Control(pDX, IDC_EDIT16, HIASCENTBox);
+	DDX_Control(pDX, IDC_EDIT23, AGSKBox);
+	DDX_Control(pDX, IDC_EDIT24, ROLLTIMEBox);
+	DDX_Control(pDX, IDC_EDIT25, PITCHTIMEBox);
 }
 
 
@@ -41,6 +59,9 @@ BEGIN_MESSAGE_MAP(LGCPadloadGenerator, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &LGCPadloadGenerator::OnCbnSelchangeCombo1)
 	ON_CBN_SELCHANGE(IDC_COMBO2, &LGCPadloadGenerator::OnCbnSelchangeCombo2)
 	ON_BN_CLICKED(IDCANCEL, &LGCPadloadGenerator::OnBnClickedCancel)
+	ON_EN_CHANGE(IDC_EDIT6, &LGCPadloadGenerator::OnEnChangeEdit6)
+	ON_EN_CHANGE(IDC_EDIT7, &LGCPadloadGenerator::OnEnChangeEdit7)
+	ON_BN_CLICKED(IDC_CHECK1, &LGCPadloadGenerator::OnBnClickedCheck1)
 END_MESSAGE_MAP()
 
 BOOL LGCPadloadGenerator::OnInitDialog()
@@ -55,8 +76,9 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	MissionBox.AddString(L"Apollo 13");
 	MissionBox.SetCurSel(0);
 
+	RopeNameBox.AddString(L"Sundance306");
 	RopeNameBox.AddString(L"Luminary131R1");
-	RopeNameBox.SetCurSel(0);
+	RopeNameBox.SetCurSel(1);
 
 	T504LMBox.SetWindowText(L"4.5");
 	UNITWBox.SetWindowText(L"-0.5");
@@ -65,6 +87,26 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	LSAltitudeBox.SetWindowText(L"0.0");
 	EphemerisSpanBox.SetWindowText(L"14.5");
 	LaunchMJDInput.SetWindowText(L"0.0");
+	LMMassBox.SetWindowText(L"33872.3");
+	CSMMassBox.SetWindowText(L"37580.3");
+	TotalMassBox.SetWindowText(L"33872.3");
+	HIASCENTBox.SetWindowText(L"10900.0");
+
+	WRENDPOSBox.SetWindowText(L"10000");
+	WRENDVELBox.SetWindowText(L"10");
+	WSHAFTBox.SetWindowText(L"15");
+	WTRUNBox.SetWindowText(L"15");
+	RMAXBox.SetWindowText(L"2000");
+	VMAXBox.SetWindowText(L"2");
+	WSURFPOSBox.SetWindowText(L"0");
+	WSURFVELBox.SetWindowText(L"0");
+	SHAFTVARBox.SetWindowText(L"1");
+	TRUNVARBox.SetWindowText(L"1");
+
+	AGSKBox.SetWindowText(L"100.0");
+
+	ROLLTIMEBox.SetWindowText(L"6.0");
+	PITCHTIMEBox.SetWindowText(L"6.0");
 
 	return TRUE;
 }
@@ -80,6 +122,23 @@ void LGCPadloadGenerator::OnBnClickedOk()
 	agc.LSLng = Utilities::Text2Double(&LSLongitudeBox);
 	agc.LSAlt = Utilities::Text2Double(&LSAltitudeBox);
 	agc.EphemerisSpan = Utilities::Text2Double(&EphemerisSpanBox);
+	agc.BLOCKII.LMMass = Utilities::Text2Double(&LMMassBox);
+	agc.BLOCKII.CSMMass = Utilities::Text2Double(&CSMMassBox);
+	agc.BLOCKII.TotalMass = Utilities::Text2Double(&TotalMassBox);
+	agc.BLOCKII.HIASCENT = Utilities::Text2Double(&HIASCENTBox);
+	agc.BLOCKII.WRENDPOS = Utilities::Text2Double(&WRENDPOSBox);
+	agc.BLOCKII.WRENDVEL = Utilities::Text2Double(&WRENDVELBox);
+	agc.BLOCKII.WSHAFT = Utilities::Text2Double(&WSHAFTBox);
+	agc.BLOCKII.WTRUN = Utilities::Text2Double(&WTRUNBox);
+	agc.BLOCKII.RMAX = Utilities::Text2Double(&RMAXBox);
+	agc.BLOCKII.VMAX = Utilities::Text2Double(&VMAXBox);
+	agc.BLOCKII.WSURFPOS = Utilities::Text2Double(&WSURFPOSBox);
+	agc.BLOCKII.WSURFVEL = Utilities::Text2Double(&WSURFVELBox);
+	agc.BLOCKII.SHAFTVAR = Utilities::Text2Double(&SHAFTVARBox);
+	agc.BLOCKII.TRUNVAR = Utilities::Text2Double(&TRUNVARBox);
+	agc.BLOCKII.AGSK = Utilities::Text2Double(&AGSKBox);
+	agc.BLOCKII.ROLLTIME = Utilities::Text2Double(&ROLLTIMEBox);
+	agc.BLOCKII.PITCHTIME = Utilities::Text2Double(&PITCHTIMEBox);
 
 	RopeNameBox.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -91,19 +150,39 @@ void LGCPadloadGenerator::OnBnClickedOk()
 
 void LGCPadloadGenerator::OnCbnSelchangeCombo1()
 {
-	RopeNameBox.GetLBText(RopeNameBox.GetCurSel(), RopeNameValue);
+	UpdateRopeSpecificEditFields();
 	UpdateData(FALSE);
 }
-
 
 void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 {
 	MissionBox.GetLBText(MissionBox.GetCurSel(), MissionNameValue);
 	UpdateData(FALSE);
 
+	DockedBox.SetCheck(BST_UNCHECKED);
+	ROLLTIMEBox.SetWindowText(L"6.0");
+	PITCHTIMEBox.SetWindowText(L"6.0");
+
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Apollo 9
+		RopeNameBox.SetCurSel(0); //Sundance 306
+		LaunchMJDInput.SetWindowTextW(L"40283.666667");
+		LMMassBox.SetWindowTextW(L"32401.2");
+		CSMMassBox.SetWindowTextW(L"30052.6");
+		HIASCENTBox.SetWindowTextW(L"10145.4");
+		DockedBox.SetCheck(BST_CHECKED);
+		WRENDPOSBox.SetWindowTextW(L"1000.0");
+		WRENDVELBox.SetWindowTextW(L"1.0");
+		WSHAFTBox.SetWindowTextW(L"5.0");
+		WTRUNBox.SetWindowTextW(L"5.0");
+		RMAXBox.SetWindowTextW(L"5000.0");
+		VMAXBox.SetWindowTextW(L"5.0");
+		SHAFTVARBox.SetWindowTextW(L"1.0");
+		TRUNVARBox.SetWindowTextW(L"1.0");
+		AGSKBox.SetWindowTextW(L"40.0");
+		ROLLTIMEBox.SetWindowTextW(L"6.95");
+		PITCHTIMEBox.SetWindowTextW(L"6.43");
 		break;
 	case 2: //Apollo 10
 		break;
@@ -120,16 +199,79 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		LSLongitudeBox.SetWindowTextW(L"-23.391933");
 		break;
 	case 5: //Apollo 13
+		RopeNameBox.SetCurSel(1); //Luminary 131R1
 		LaunchMJDInput.SetWindowText(L"40687.8006944444444");
 		LSLatitudeBox.SetWindowText(L"-3.6686");
 		LSLongitudeBox.SetWindowText(L"-17.4842");
 		LSAltitudeBox.SetWindowText(L"-1405.0");
+		LMMassBox.SetWindowTextW(L"32401.2");
+		CSMMassBox.SetWindowTextW(L"30052.6");
+		DockedBox.SetCheck(BST_UNCHECKED);
+		HIASCENTBox.SetWindowText(L"10900.0");
+		WRENDPOSBox.SetWindowTextW(L"10000.0");
+		WRENDVELBox.SetWindowTextW(L"10.0");
+		WSHAFTBox.SetWindowTextW(L"15.0");
+		WTRUNBox.SetWindowTextW(L"15.0");
+		RMAXBox.SetWindowTextW(L"2000.0");
+		VMAXBox.SetWindowTextW(L"2.0");
+		WSURFPOSBox.SetWindowText(L"0");
+		WSURFVELBox.SetWindowText(L"0");
+		SHAFTVARBox.SetWindowTextW(L"1.0");
+		TRUNVARBox.SetWindowTextW(L"1.0");
+		AGSKBox.SetWindowText(L"100.0");
 		break;
 	}
+
+	UpdateTotalMass();
+	UpdateRopeSpecificEditFields();
 }
 
 
 void LGCPadloadGenerator::OnBnClickedCancel()
 {
 	CDialogEx::OnCancel();
+}
+
+
+void LGCPadloadGenerator::OnEnChangeEdit6()
+{
+	UpdateTotalMass();
+}
+
+void LGCPadloadGenerator::OnEnChangeEdit7()
+{
+	UpdateTotalMass();
+}
+
+void LGCPadloadGenerator::OnBnClickedCheck1()
+{
+	UpdateTotalMass();
+}
+
+void LGCPadloadGenerator::UpdateTotalMass()
+{
+	double TotalMass = 0.0;
+
+	TotalMass += Utilities::Text2Double(&LMMassBox);
+
+	if (DockedBox.GetCheck())
+	{
+		TotalMass += Utilities::Text2Double(&CSMMassBox);
+	}
+
+	Utilities::Double2Text(TotalMass, &TotalMassBox, 1);
+}
+
+void LGCPadloadGenerator::UpdateRopeSpecificEditFields()
+{
+	if (RopeNameBox.GetCurSel() == 0)
+	{
+		WSURFPOSBox.SetReadOnly(true);
+		WSURFVELBox.SetReadOnly(true);
+	}
+	else
+	{
+		WSURFPOSBox.SetReadOnly(false);
+		WSURFVELBox.SetReadOnly(false);
+	}
 }

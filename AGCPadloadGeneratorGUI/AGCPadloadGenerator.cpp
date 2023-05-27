@@ -287,10 +287,6 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	DVTHRESH = 2.0*0.3048;		// 2 ft/s
 	HORIZALT = 28000.0;			// 28000 m
 	ALTVAR = 1.52168e-5;		// rad^2
-	WRENDPOS = 10000.0*0.3048;	// 10000 ft
-	WRENDVEL = 10.0*0.3048;		// 10 ft/s
-	RMAX = 2000.0*0.3048;		// 2000 ft
-	VMAX = 2.0*0.3048;			// 2 ft/s
 	TLAND = 0.0;
 
 	BLOCKI.T_ATL = 1400.0;
@@ -306,6 +302,24 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKI.TROLL = 9.0;
 	BLOCKI.TPITCH = 10.7;
 	BLOCKI.TENDPITCH = 134.0;
+
+	BLOCKII.CSMMass = 0.0;
+	BLOCKII.LMMass = 0.0;
+	BLOCKII.TotalMass = 0.0;
+	BLOCKII.WRENDPOS = 10000.0;	// 10000 ft
+	BLOCKII.WRENDVEL = 10.0;	// 10 ft/s
+	BLOCKII.WSHAFT = 15.0; //mr
+	BLOCKII.WTRUN = 15.0; //mr
+	BLOCKII.RMAX = 2000.0;		// 2000 ft
+	BLOCKII.VMAX = 2.0;			// 2 ft/s
+	BLOCKII.SHAFTVAR = 1.0;
+	BLOCKII.TRUNVAR = 1.0;
+	BLOCKII.WSURFPOS = 0.0;
+	BLOCKII.WSURFVEL = 0.0;
+	BLOCKII.HIASCENT = 10900.0; //lbs
+	BLOCKII.AGSK = 100.0; //hours
+	BLOCKII.ROLLTIME = 6.0; //deg
+	BLOCKII.PITCHTIME = 6.0; //deg
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -357,7 +371,7 @@ void AGCPadloadGenerator::RunLGC()
 
 		if (RopeName == "Sundance306")
 		{
-			//TBD
+			Sundance306Defaults();
 		}
 		else
 		{
@@ -404,7 +418,7 @@ void AGCPadloadGenerator::RunLGC()
 	SaveEMEM(01707, iTemp2);
 	SaveEMEM(01710, iTemp3);
 
-	AGCCorrectionVectors(RopeName, AGCEphemStartTime, T_UNITW, T_504LM, false);
+	AGCCorrectionVectors(RopeName, AGCEphemStartTime, T_UNITW, T_504LM, false, RopeName == "Sundance306");
 
 	//End
 	std::sort(arr.begin(), arr.end());
@@ -563,7 +577,7 @@ void AGCPadloadGenerator::RunCMC()
 	SaveEMEM(01707, iTemp2);
 	SaveEMEM(01710, iTemp3);
 
-	AGCCorrectionVectors(RopeName, AGCEphemStartTime, T_UNITW, T_504LM, true);
+	AGCCorrectionVectors(RopeName, AGCEphemStartTime, T_UNITW, T_504LM, true, false);
 	AGCEphemeris(AGCEphemStartTime, Epoch, AGCEphemTEphemZero, EphemerisSpan);
 
 	//End
@@ -616,9 +630,9 @@ void AGCPadloadGenerator::SetPadData(Launchpad pad)
 void AGCPadloadGenerator::LGCDefaults()
 {
 	//MASS
-	iTemp = SingleToBuffer(33872.3*LBS2KG, 16);
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
 	SaveEMEM(01243, iTemp);
-	SaveEMEM(01244, 0);
+	SaveEMEM(01244, 0); //To load or not to load
 
 	//PBIASX
 	SaveEMEM(01452, 0);
@@ -663,33 +677,33 @@ void AGCPadloadGenerator::LGCDefaults()
 	SaveEMEM(01705, 0);
 
 	//WRENDPOS
-	iTemp = SingleToBuffer(10000.0*0.3048, 14);
+	iTemp = SingleToBuffer(BLOCKII.WRENDPOS*0.3048, 14);
 	SaveEMEM(02000, iTemp);
 	//WRENDVEL
-	iTemp = SingleToBuffer(10.0*0.3048 / 100.0, 0);
+	iTemp = SingleToBuffer(BLOCKII.WRENDVEL*0.3048 / 100.0, 0);
 	SaveEMEM(02001, iTemp);
 	//WSHAFT
-	iTemp = SingleToBuffer(15.0 / 1000.0, -5);
+	iTemp = SingleToBuffer(BLOCKII.WSHAFT / 1000.0, -5);
 	SaveEMEM(02002, iTemp);
 	//WTRUN
-	iTemp = SingleToBuffer(15.0 / 1000.0, -5);
+	iTemp = SingleToBuffer(BLOCKII.WTRUN / 1000.0, -5);
 	SaveEMEM(02003, iTemp);
 	//RMAX
-	iTemp = SingleToBuffer(RMAX, 19);
+	iTemp = SingleToBuffer(BLOCKII.RMAX*0.3048, 19);
 	SaveEMEM(02004, iTemp);
 	//VMAX
-	iTemp = SingleToBuffer(VMAX / 100.0, 7);
+	iTemp = SingleToBuffer(BLOCKII.VMAX*0.3048 / 100.0, 7);
 	SaveEMEM(02005, iTemp);
 
 	//HIASCENT
-	iTemp = SingleToBuffer(10900.0*LBS2KG, 16);
+	iTemp = SingleToBuffer(BLOCKII.HIASCENT*LBS2KG, 16);
 	SaveEMEM(03000, iTemp);
 
 	//ROLLTIME
-	iTemp = SingleToBuffer(6.0 / 0.2*100.0, 14); //6° converted to 0.2°/s speed
+	iTemp = SingleToBuffer(BLOCKII.ROLLTIME / 0.2*100.0, 14); //6° converted to 0.2°/s speed
 	SaveEMEM(03001, iTemp);
 	//PITTIME
-	iTemp = SingleToBuffer(6.0 / 0.2*100.0, 14); //6° converted to 0.2°/s speed
+	iTemp = SingleToBuffer(BLOCKII.PITCHTIME / 0.2*100.0, 14); //6° converted to 0.2°/s speed
 	SaveEMEM(03002, iTemp);
 	//DKTRAP
 	iTemp = SingleToBuffer(-1.4 / 360.0, -3);
@@ -723,6 +737,73 @@ void AGCPadloadGenerator::LGCDefaults()
 	SaveEMEM(03403, iTemp2);
 }
 
+void AGCPadloadGenerator::Sundance306Defaults()
+{
+	LGCDefaults();
+
+	//DUMPCNT
+	SaveEMEM(0333, 010000);
+
+	//PHSPRDT2 - restart protection during P00
+	SaveEMEM(01057, 013000);
+
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(01335, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(01336, iTemp);
+
+	//SHAFTVAR
+	iTemp = SingleToBuffer(BLOCKII.SHAFTVAR*1e-6, -12);
+	SaveEMEM(02006, iTemp);
+	//TRUNVAR
+	iTemp = SingleToBuffer(BLOCKII.TRUNVAR*1e-6, -12);
+	SaveEMEM(02007, iTemp);
+
+	//AGSK
+	DoubleToBuffer(BLOCKII.AGSK*3600.0*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(02016, iTemp);
+	SaveEMEM(02017, iTemp2);
+
+	//RANGEVAR
+	DoubleToBuffer(1.111111111e-5, -12, iTemp, iTemp2);
+	SaveEMEM(02364, iTemp);
+	SaveEMEM(02365, iTemp2);
+	//RATEVAR
+	DoubleToBuffer(1.877777000e-5, -12, iTemp, iTemp2);
+	SaveEMEM(02366, iTemp);
+	SaveEMEM(02367, iTemp2);
+	//RVARMIN
+	SaveEMEM(02370, 0);
+	SaveEMEM(02371, 0);
+	iTemp = SingleToBuffer(66.0, 12);
+	SaveEMEM(02372, iTemp);
+	//VVARMIN
+	SaveEMEM(02373, 0);
+	iTemp = SingleToBuffer(1.7445e-6, -12);
+	SaveEMEM(02374, iTemp);
+
+	//AOTAZ
+	iTemp = SingleToBuffer(-60.0 / 360.0, -1, true);
+	SaveEMEM(03404, iTemp);
+	iTemp = SingleToBuffer(0.0 / 360.0, -1, true);
+	SaveEMEM(03405, iTemp);
+	iTemp = SingleToBuffer(60.0 / 360.0, -1, true);
+	SaveEMEM(03406, iTemp);
+	//AOTEL
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03407, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03410, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03411, iTemp);
+
+	//ZOOMTIME
+	iTemp = SingleToBuffer(26.0*100.0, 14);
+	SaveEMEM(03421, iTemp);
+}
+
 void AGCPadloadGenerator::Luminary131Defaults()
 {
 	LGCDefaults();
@@ -735,10 +816,10 @@ void AGCPadloadGenerator::Luminary131Defaults()
 	SaveEMEM(0106, 0);
 
 	//LEMMASS
-	iTemp = SingleToBuffer(33872.3*LBS2KG, 16);
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
 	SaveEMEM(01326, iTemp);
 	//CSMMASS
-	iTemp = SingleToBuffer(37580.3*LBS2KG, 16);
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01327, iTemp);
 
 	//E3J22R3M
@@ -801,14 +882,14 @@ void AGCPadloadGenerator::Luminary131Defaults()
 	SaveEMEM(02007, 0);
 
 	//SHAFTVAR
-	iTemp = SingleToBuffer(1.0e-6, -12);
+	iTemp = SingleToBuffer(BLOCKII.SHAFTVAR*1e-6, -12);
 	SaveEMEM(02010, iTemp);
 	//TRUNVAR
-	iTemp = SingleToBuffer(1.0e-6, -12);
+	iTemp = SingleToBuffer(BLOCKII.TRUNVAR*1e-6, -12);
 	SaveEMEM(02011, iTemp);
 
 	//AGSK
-	DoubleToBuffer(100.0*3600.0*100.0, 28, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.AGSK*3600.0*100.0, 28, iTemp, iTemp2);
 	SaveEMEM(02020, iTemp);
 	SaveEMEM(02021, iTemp2);
 
@@ -1189,16 +1270,16 @@ void AGCPadloadGenerator::CMCDefaults()
 	SaveEMEM(01341, iTemp);
 
 	//WRENDPOS
-	iTemp = SingleToBuffer(WRENDPOS, 19);
+	iTemp = SingleToBuffer(BLOCKII.WRENDPOS, 19);
 	SaveEMEM(02000, iTemp);
 	//WRENDVEL
-	iTemp = SingleToBuffer(WRENDVEL / 100.0, 0);
+	iTemp = SingleToBuffer(BLOCKII.WRENDVEL / 100.0, 0);
 	SaveEMEM(02001, iTemp);
 
 	//RMAX
-	if (RMAX > 0)
+	if (BLOCKII.RMAX > 0)
 	{
-		iTemp = SingleToBuffer(RMAX, 19);
+		iTemp = SingleToBuffer(BLOCKII.RMAX*0.3048, 19);
 		SaveEMEM(02002, iTemp);
 	}
 	else
@@ -1207,9 +1288,9 @@ void AGCPadloadGenerator::CMCDefaults()
 	}
 
 	//VMAX
-	if (VMAX > 0)
+	if (BLOCKII.VMAX > 0)
 	{
-		iTemp = SingleToBuffer(VMAX / 100.0, 7);
+		iTemp = SingleToBuffer(BLOCKII.VMAX*0.3048 / 100.0, 7);
 		SaveEMEM(02003, iTemp);
 	}
 	else
@@ -2219,7 +2300,7 @@ MATRIX3 AGCPadloadGenerator::CalculateMoonTransformationMatrix(double t_M, doubl
 	return mul(M4, mul(M3, mul(M2, M1)));
 }
 
-void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC)
+void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance)
 {
 	MATRIX3 R, Rot2, J2000, R2, R3, M, M_AGC;
 	VECTOR3 UNITW;
@@ -2354,17 +2435,59 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 	DoubleToBuffer(UNITW.y, 0, iTemp, iTemp2);
 	SaveEMEM(mem, iTemp); mem++;
 	SaveEMEM(mem, iTemp2); mem++;
-	if (IsCMC)
+	if (IsCMC || IsSundance)
 	{
 		DoubleToBuffer(UNITW.z, 0, iTemp, iTemp2);
 		SaveEMEM(mem, iTemp); mem++;
 		SaveEMEM(mem, iTemp2); mem++;
 	}
 
+	//UNITW deviation analysis
+
+	debugfile.open("DebugData.txt");
+	debugfile << "CORRECTION VECTORS\n\n";
+	debugfile << "Earth correction vector deviation analysis\n\n";
+
+	MATRIX3 RM, MM;
+	VECTOR3 RLS_Earth,  RLS_ecl, RLS_BRCS, RLS_BRCS2, l, l_P;
+	double MJD, err, t_M;
+
+	MJD = mjd_UNITW;
+	l = _V(-UNITW.y, UNITW.x, 0.0);
+	RLS_Earth = r_from_latlong(28.5*RAD, -80.5*RAD, 0.0, 0, 0);
+
+	while (MJD < mjd_UNITW + 14.5)
+	{
+		t_M = (MJD - t0) * 24.0 * 3600.0;
+		RM = GetRotationMatrix(BODY_EARTH, MJD);
+
+		//Orbiter
+		RLS_ecl = rhmul(RM, RLS_Earth);
+		RLS_BRCS = mul(J2000, RLS_ecl);
+
+		//AGC
+		MM = CalculateEarthTransformationMatrix(t_M, A_Z0, w_E);
+		l_P = mul(MM, l);
+		RLS_BRCS2 = tmul(MM, RLS_Earth + crossp(l_P, RLS_Earth));
+
+		err = acos(dotp(unit(RLS_BRCS), unit(RLS_BRCS2)))*R_Earth;
+
+		sprintf_s(Buffer, 256, "%.3f = %g (meters)\n", MJD, err);
+		debugfile << Buffer;
+
+		MJD += 0.5;
+	}
+
+	if (IsSundance)
+	{
+		debugfile << std::endl;
+		debugfile.close();
+		return;
+	}
+
 	//MOON ROTATIONS
-	MATRIX3 MM, M_AGC_M, RM, R2M, R3M;
+	MATRIX3 M_AGC_M, R2M, R3M;
 	VECTOR3 lm;
-	double t_M;
 
 	t_M = (mjd_504LM - t0) * 24.0 * 3600.0;
 	RM = GetRotationMatrix(BODY_MOON, mjd_504LM);
@@ -2396,40 +2519,6 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 	DoubleToBuffer(lm.z, 0, iTemp, iTemp2);
 	SaveEMEM(mem, iTemp); mem++;
 	SaveEMEM(mem, iTemp2); mem++;
-
-	//UNITW deviation analysis
-
-	debugfile.open("DebugData.txt");
-	debugfile << "CORRECTION VECTORS\n\n";
-	debugfile << "Earth correction vector deviation analysis\n\n";
-
-	VECTOR3 RLS_ecl, RLS_BRCS, RLS_BRCS2, l, l_P;
-	double MJD, err;
-
-	MJD = mjd_UNITW;
-	l = _V(-UNITW.y, UNITW.x, 0.0);
-
-	while (MJD < mjd_UNITW + 14.5)
-	{
-		t_M = (MJD - t0) * 24.0 * 3600.0;
-		RM = GetRotationMatrix(BODY_EARTH, MJD);
-
-		//Orbiter
-		RLS_ecl = rhmul(RM, RLS);
-		RLS_BRCS = mul(J2000, RLS_ecl);
-
-		//AGC
-		MM = CalculateEarthTransformationMatrix(t_M, A_Z0, w_E);
-		l_P = mul(MM, l);
-		RLS_BRCS2 = tmul(MM, RLS + crossp(l_P, RLS));
-
-		err = acos(dotp(unit(RLS_BRCS), unit(RLS_BRCS2)))*R_Earth;
-
-		sprintf_s(Buffer, 256, "%.3f = %g (meters)\n", MJD, err);
-		debugfile << Buffer;
-
-		MJD += 0.5;
-	}
 
 	debugfile << "\nLunar correction vector deviation analysis\n\n";
 

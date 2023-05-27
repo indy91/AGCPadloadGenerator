@@ -22,11 +22,13 @@ protected:
 
 	virtual BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
+
+	void UpdateTotalMass();
+	void UpdateRopeSpecificEditFields();
 public:
 
 	AGCPadloadGenerator agc;
 
-	CString RopeNameValue;
 	CString MissionNameValue;
 
 	CComboBox RopeNameBox;
@@ -43,4 +45,25 @@ public:
 	CEdit LSLongitudeBox;
 	CEdit LSAltitudeBox;
 	afx_msg void OnBnClickedCancel();
+	CEdit LMMassBox;
+	CEdit CSMMassBox;
+	CEdit TotalMassBox;
+	CButton DockedBox;
+	afx_msg void OnEnChangeEdit6();
+	afx_msg void OnEnChangeEdit7();
+	afx_msg void OnBnClickedCheck1();
+	CEdit WRENDPOSBox;
+	CEdit WRENDVELBox;
+	CEdit WSHAFTBox;
+	CEdit WTRUNBox;
+	CEdit RMAXBox;
+	CEdit VMAXBox;
+	CEdit SHAFTVARBox;
+	CEdit TRUNVARBox;
+	CEdit WSURFPOSBox;
+	CEdit WSURFVELBox;
+	CEdit HIASCENTBox;
+	CEdit AGSKBox;
+	CEdit ROLLTIMEBox;
+	CEdit PITCHTIMEBox;
 };

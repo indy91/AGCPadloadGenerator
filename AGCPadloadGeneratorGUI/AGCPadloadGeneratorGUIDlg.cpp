@@ -184,10 +184,10 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.CDUCHKWD = Utilities::Text2Double(&CDUCHKWDBox) / 100.0;
 	agc.HORIZALT = Utilities::Text2Double(&HORIZALTBox);
 	agc.ALTVAR = Utilities::Text2Double(&ALTVARBox);
-	agc.WRENDPOS = Utilities::Text2Double(&WRENDPOSBox);
-	agc.WRENDVEL = Utilities::Text2Double(&WRENDVELBox);
-	agc.RMAX = Utilities::Text2Double(&RMAXBox)*0.3048;
-	agc.VMAX = Utilities::Text2Double(&VMAXBox)*0.3048;
+	agc.BLOCKII.WRENDPOS = Utilities::Text2Double(&WRENDPOSBox);
+	agc.BLOCKII.WRENDVEL = Utilities::Text2Double(&WRENDVELBox);
+	agc.BLOCKII.RMAX = Utilities::Text2Double(&RMAXBox);
+	agc.BLOCKII.VMAX = Utilities::Text2Double(&VMAXBox);
 
 	Launchpad.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -208,7 +208,6 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo1()
 
 void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo2()
 {
-	RopeNameBox.GetLBText(RopeNameBox.GetCurSel(), RopeNameValue);
 	UpdateData(FALSE);
 }
 
@@ -342,13 +341,6 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	default:
 		break;
 	}
-}
-
-void CAGCPadloadGeneratorGUIDlg::Double2Text(double val, CEdit *ed, int length)
-{
-	CString string;
-	string.Format(_T("%.*lf"), length, val);
-	ed->SetWindowText(string);
 }
 
 void CAGCPadloadGeneratorGUIDlg::String2Text(std::string val, CEdit *ed)

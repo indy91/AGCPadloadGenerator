@@ -33,7 +33,6 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
-	void Double2Text(double val, CEdit *ed, int length = 9);
 	void String2Text(std::string val, CEdit *ed);
 	void String2Text(std::string val, CComboBox *ed);
 public:
@@ -53,7 +52,6 @@ public:
 	CEdit LSAltitudeBox;
 	CEdit RTEDBox;
 	CComboBox RopeNameBox;
-	CString RopeNameValue;
 	CEdit EMSAltBox;
 	CEdit UNITWBox;
 	CEdit EphemerisSpanBox;

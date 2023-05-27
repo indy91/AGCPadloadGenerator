@@ -112,4 +112,11 @@ namespace Utilities
 		ed->GetWindowText(string);
 		return wcstod(string, NULL);
 	}
+
+	void Double2Text(double val, CEdit *ed, int length)
+	{
+		CString string;
+		string.Format(_T("%.*lf"), length, val);
+		ed->SetWindowText(string);
+	}
 }
