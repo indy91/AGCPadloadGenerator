@@ -66,4 +66,5 @@ public:
 	CEdit AGSKBox;
 	CEdit ROLLTIMEBox;
 	CEdit PITCHTIMEBox;
+	CEdit TLANDBox;
 };

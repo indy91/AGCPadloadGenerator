@@ -70,6 +70,39 @@ struct BlockIIData
 	double AGSK;
 	double ROLLTIME;
 	double PITCHTIME;
+	double TLAND;
+
+	//Descent constants
+	VECTOR3 RBRFG;
+	VECTOR3 VBRFG;
+	VECTOR3 ABRFG;
+	double VBRFG_star;
+	double ABRFG_star;
+	double JBRFG_star;
+	double GAINBRAK;
+	double TCGFBRAK;
+	double TCGIBRAK;
+	VECTOR3 RAPFG;
+	VECTOR3 VAPFG;
+	VECTOR3 AAPFG;
+	double VAPFG_star;
+	double AAPFG_star;
+	double JAPFG_star;
+	double GAINAPPR;
+	double TCGFAPPR;
+	double TCGIAPPR;
+	double VIGN;
+	double RIGNX;
+	double RIGNZ;
+	double KIGNXB4;
+	double KIGNYB8;
+	double KIGNVB4;
+	double HIGHCRIT;
+	double LOWCRIT;
+
+	//Expected angular acceleration at lunar liftoff
+	double IGNAOSQ;
+	double IGNAOSR;
 };
 
 class AGCPadloadGenerator
@@ -95,7 +128,7 @@ public:
 	std::string Pad, RopeName;
 	double T_504LM, T_UNITW, EphemerisSpan;
 	double LSLat, LSLng, LSAlt;
-	double TLAND;
+
 	double RTED1, EMSALT;
 	double LaunchAzimuth;
 	//Variance of the primary body radius vector, m^2
@@ -166,8 +199,11 @@ protected:
 
 	//Same addresses for all LGCs
 	void LGCDefaults();
+
 	void Sundance306Defaults();
+	void Luminary116Padload();
 	void Luminary131Defaults();
+	void DescentConstants11_13();
 
 	//Block I
 	void BlockIDefaults();
