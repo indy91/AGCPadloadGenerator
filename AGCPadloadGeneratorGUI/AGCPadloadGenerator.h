@@ -198,12 +198,14 @@ protected:
 	void ArtemisDefaults();
 
 	//Same addresses for all LGCs
-	void LGCDefaults();
+	void LGCDefaults(bool mass = false);
 
 	void Sundance306Defaults();
+	void Luminary099Padload();
 	void Luminary116Padload();
 	void Luminary131Defaults();
 	void DescentConstants11_13();
+	void Luminary099_116_Defaults();
 
 	//Block I
 	void BlockIDefaults();

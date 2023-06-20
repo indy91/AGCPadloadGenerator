@@ -7,8 +7,9 @@
 #include "afxdialogex.h"
 
 #define LGC_SUNDANCE306 0
-#define LGC_LUMINARY116 1
-#define LGC_LUMINARY131R1 2
+#define LGC_LUMINARY099 1
+#define LGC_LUMINARY116 2
+#define LGC_LUMINARY131R1 3
 
 // LGCPadloadGenerator-Dialog
 
@@ -81,6 +82,7 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	MissionBox.SetCurSel(0);
 
 	RopeNameBox.AddString(L"Sundance306");
+	RopeNameBox.AddString(L"Luminary099");
 	RopeNameBox.AddString(L"Luminary116");
 	RopeNameBox.AddString(L"Luminary131R1");
 	RopeNameBox.SetCurSel(LGC_LUMINARY116);
@@ -195,13 +197,31 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 	case 2: //Apollo 10
 		break;
 	case 3: //Apollo 11
+		RopeNameBox.SetCurSel(LGC_LUMINARY099);
 		LaunchMJDInput.SetWindowTextW(L"40418.5638889");
 		LSAltitudeBox.SetWindowTextW(L"-2671.9684");
 		LSLatitudeBox.SetWindowTextW(L"0.691395");
 		LSLongitudeBox.SetWindowTextW(L"23.71689");
+		LMMassBox.SetWindowTextW(L"33663.9535");
+		CSMMassBox.SetWindowTextW(L"36470.4");
+		TotalMassBox.SetWindowTextW(L"33663.9535");
+		DockedBox.SetCheck(BST_UNCHECKED);
+		HIASCENTBox.SetWindowTextW(L"11075.1");
+		WRENDPOSBox.SetWindowTextW(L"10000.0");
+		WRENDVELBox.SetWindowTextW(L"10.0");
+		WSHAFTBox.SetWindowTextW(L"15.0");
+		WTRUNBox.SetWindowTextW(L"15.0");
+		RMAXBox.SetWindowTextW(L"2000.0");
+		VMAXBox.SetWindowTextW(L"2.0");
+		WSURFPOSBox.SetWindowText(L"5000");
+		WSURFVELBox.SetWindowText(L"5");
+		SHAFTVARBox.SetWindowTextW(L"1.0");
+		TRUNVARBox.SetWindowTextW(L"1.0");
+		AGSKBox.SetWindowTextW(L"90.0");
+		TLANDBox.SetWindowText(L"102.786402777777778");
 		break;
 	case 4: //Apollo 12
-		RopeNameBox.SetCurSel(LGC_LUMINARY116); //Luminary 131R1
+		RopeNameBox.SetCurSel(LGC_LUMINARY116);
 		LaunchMJDInput.SetWindowTextW(L"40539.6819444");
 		LSAltitudeBox.SetWindowTextW(L"-2371.27");
 		LSLatitudeBox.SetWindowTextW(L"-2.9822165");
@@ -224,7 +244,7 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TLANDBox.SetWindowText(L"110.57895");
 		break;
 	case 5: //Apollo 13
-		RopeNameBox.SetCurSel(LGC_LUMINARY131R1); //Luminary 131R1
+		RopeNameBox.SetCurSel(LGC_LUMINARY131R1);
 		LaunchMJDInput.SetWindowText(L"40687.8006944444444");
 		LSLatitudeBox.SetWindowText(L"-3.6686");
 		LSLongitudeBox.SetWindowText(L"-17.4842");
@@ -285,12 +305,12 @@ void LGCPadloadGenerator::UpdateTotalMass()
 		TotalMass += Utilities::Text2Double(&CSMMassBox);
 	}
 
-	Utilities::Double2Text(TotalMass, &TotalMassBox, 1);
+	Utilities::Double2Text(TotalMass, &TotalMassBox, 5);
 }
 
 void LGCPadloadGenerator::UpdateRopeSpecificEditFields()
 {
-	if (RopeNameBox.GetCurSel() == 0)
+	if (RopeNameBox.GetCurSel() == LGC_SUNDANCE306)
 	{
 		WSURFPOSBox.SetReadOnly(true);
 		WSURFVELBox.SetReadOnly(true);

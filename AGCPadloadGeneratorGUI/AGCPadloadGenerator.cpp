@@ -387,7 +387,7 @@ void AGCPadloadGenerator::RunLGC()
 
 		if (RopeName == "Luminary099")
 		{
-			//TBD
+			Luminary099Padload();
 		}
 		else if (RopeName == "Luminary116")
 		{
@@ -628,14 +628,9 @@ void AGCPadloadGenerator::SetPadData(Launchpad pad)
 	}
 }
 
-void AGCPadloadGenerator::LGCDefaults()
+void AGCPadloadGenerator::LGCDefaults(bool mass)
 {
 	//Contains padloads that never change their address in all of Sundance and Luminary
-
-	//MASS
-	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
-	SaveEMEM(01243, iTemp);
-	SaveEMEM(01244, 0); //To load or not to load
 
 	//PBIASX
 	SaveEMEM(01452, 0);
@@ -750,6 +745,11 @@ void AGCPadloadGenerator::Sundance306Defaults()
 	//PHSPRDT2 - restart protection during P00
 	SaveEMEM(01057, 013000);
 
+	//MASS
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
+	SaveEMEM(01243, iTemp);
+	SaveEMEM(01244, iTemp2);
+
 	//LEMMASS
 	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
 	SaveEMEM(01335, iTemp);
@@ -807,16 +807,185 @@ void AGCPadloadGenerator::Sundance306Defaults()
 	SaveEMEM(03421, iTemp);
 }
 
+void AGCPadloadGenerator::Luminary099Padload()
+{
+	LGCDefaults(true);
+	Luminary099_116_Defaults();
+
+	//FLAGWRD3
+	SaveEMEM(077, 02000);
+
+	//DUMPCNT
+	SaveEMEM(0333, 010000); //2 dumps
+
+	//MASS
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
+	SaveEMEM(01244, iTemp);
+	SaveEMEM(01245, iTemp2);
+
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(01331, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(01332, iTemp);
+
+	//E3J22R3M
+	SaveEMEM(01352, 0); //TBD: Not support by Orbiter gravity model
+	//E32C3IRM
+	SaveEMEM(01353, 0); //TBD: Not support by Orbiter gravity model
+
+	//RADSKAL
+	SaveEMEM(01354, 0);
+	SaveEMEM(01355, 0);
+	//SKALSKAL
+	SaveEMEM(01356, 0);
+
+	//REFSMMAT
+	SaveEMEM(01733, 012704);
+	SaveEMEM(01734, 06264);
+	SaveEMEM(01735, 012562);
+	SaveEMEM(01736, 010723);
+	SaveEMEM(01737, 01112);
+	SaveEMEM(01740, 025001);
+
+	//For now, hardcoded
+	BLOCKII.RBRFG.x = 171.835;
+	BLOCKII.RBRFG.y = 0.0;
+	BLOCKII.RBRFG.z = -10678.596;
+
+	BLOCKII.VBRFG.x = -105.876;
+	BLOCKII.VBRFG.y = 0.0;
+	BLOCKII.VBRFG.z = -1.04;
+
+	BLOCKII.ABRFG.x = 0.6241;
+	BLOCKII.ABRFG.y = 0.0;
+	BLOCKII.ABRFG.z = -9.1044;
+
+	BLOCKII.VBRFG_star = -18.72;
+	BLOCKII.ABRFG_star = -54.6264;
+	BLOCKII.JBRFG_star = -0.01882677;
+
+	BLOCKII.TCGFBRAK = 30.0;
+	BLOCKII.TCGIBRAK = 900.0;
+
+	BLOCKII.RAPFG.x = 111.085;
+	BLOCKII.RAPFG.y = 0.0;
+	BLOCKII.RAPFG.z = -26.794;
+
+	BLOCKII.VAPFG.x = -4.993;
+	BLOCKII.VAPFG.y = 0.0;
+	BLOCKII.VAPFG.z = 0.248;
+
+	BLOCKII.AAPFG.x = -0.2624;
+	BLOCKII.AAPFG.y = 0.0;
+	BLOCKII.AAPFG.z = -0.512;
+
+	BLOCKII.VAPFG_star = 4.464;
+	BLOCKII.AAPFG_star = -3.072;
+	BLOCKII.JAPFG_star = 0.00180772;
+
+	BLOCKII.TCGFAPPR = 30.0;
+	BLOCKII.TCGIAPPR = 200.0;
+
+	BLOCKII.VIGN = 5545.46;
+	BLOCKII.RIGNX = -130519.86;
+	BLOCKII.RIGNZ = -1432597.3;
+	BLOCKII.KIGNXB4 = -0.617631;
+	BLOCKII.KIGNYB8 = -0.755e-6;
+	BLOCKII.KIGNVB4 = -410.0;
+
+	DescentConstants11_13();
+
+	//TAUVERT
+	DoubleToBuffer(10.0*100.0, 14, iTemp, iTemp2);
+	SaveEMEM(02516, iTemp);
+	SaveEMEM(02517, iTemp2);
+
+	//ABTCOF
+	DoubleToBuffer(0.11088229e-6*FT2M/pow(100, 4), -44, iTemp, iTemp2);
+	SaveEMEM(02550, iTemp);
+	SaveEMEM(02551, iTemp2);
+
+	DoubleToBuffer(-0.58743323e-3*FT2M/pow(100, 3), -27, iTemp, iTemp2);
+	SaveEMEM(02552, iTemp);
+	SaveEMEM(02553, iTemp2);
+
+	DoubleToBuffer(0.45897234e-1*FT2M/pow(100, 2), -10, iTemp, iTemp2);
+	SaveEMEM(02554, iTemp);
+	SaveEMEM(02555, iTemp2);
+
+	DoubleToBuffer(5650.9755*FT2M/100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02556, iTemp);
+	SaveEMEM(02557, iTemp2);
+
+	DoubleToBuffer(0.58577412e-6*FT2M/pow(100, 4), -44, iTemp, iTemp2);
+	SaveEMEM(02560, iTemp);
+	SaveEMEM(02561, iTemp2);
+
+	DoubleToBuffer(-0.90488751e-3*FT2M/pow(100, 3), -27, iTemp, iTemp2);
+	SaveEMEM(02562, iTemp);
+	SaveEMEM(02563, iTemp2);
+
+	DoubleToBuffer(0.93189392e-1*FT2M/pow(100, 2), -10, iTemp, iTemp2);
+	SaveEMEM(02564, iTemp);
+	SaveEMEM(02565, iTemp2);
+
+	DoubleToBuffer(5648.901*FT2M/100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02566, iTemp);
+	SaveEMEM(02567, iTemp2);
+
+	//VMIN
+	DoubleToBuffer(5514.41*FT2M / 100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02570, iTemp);
+	SaveEMEM(02571, iTemp2);
+
+	//YLIM
+	DoubleToBuffer(8.2*1852.0, 24, iTemp, iTemp2);
+	SaveEMEM(02572, iTemp);
+	SaveEMEM(02573, iTemp2);
+
+	//ABTRDOT
+	DoubleToBuffer(19.5*0.3048 / 100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02574, iTemp);
+	SaveEMEM(02575, iTemp2);
+
+	//COSTHET1
+	SaveEMEM(02576, 0);
+	SaveEMEM(02577, 0);
+
+	//COSTHET2
+	SaveEMEM(02600, 06733);
+	SaveEMEM(02601, 07535);
+
+	//IGNAOSQ
+	iTemp = SingleToBuffer(6.25 / 360.0, -2);
+	SaveEMEM(03012, iTemp);
+	//IGNAOSR
+	iTemp = SingleToBuffer(0.63 / 360.0, -2);
+	SaveEMEM(03013, iTemp);
+
+	//DELTTFAP
+	iTemp = SingleToBuffer(-110.0*100.0, 17);
+	SaveEMEM(03425, iTemp);
+
+	//TNEWA
+	SaveEMEM(03431, 0);
+	SaveEMEM(03432, 017500);
+}
+
 void AGCPadloadGenerator::Luminary116Padload()
 {
 	LGCDefaults();
+	Luminary099_116_Defaults();
 
 	//FLAGWRD3
 	SaveEMEM(077, 012000);
-	//FLAGWRD8
-	SaveEMEM(0104, 0);
-	//FLAGWRD10
-	SaveEMEM(0106, 0);
+
+	//MASS
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
+	SaveEMEM(01243, iTemp);
+	SaveEMEM(01244, 0);
 
 	//LEMMASS
 	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
@@ -835,11 +1004,6 @@ void AGCPadloadGenerator::Luminary116Padload()
 	SaveEMEM(01352, 0);
 	//SKALSKAL
 	SaveEMEM(01353, 0);
-
-	//TETCSM
-	SaveEMEM(01570, 037777);
-	//TETLEM
-	SaveEMEM(01642, 037777);
 
 	//REFSMMAT
 	SaveEMEM(01733, 061727);
@@ -860,50 +1024,6 @@ void AGCPadloadGenerator::Luminary116Padload()
 	SaveEMEM(01752, 032774);
 	SaveEMEM(01753, 010733);
 	SaveEMEM(01754, 034410);
-
-	//RANGEVAR
-	DoubleToBuffer(1.111111111e-5, -12, iTemp, iTemp2);
-	SaveEMEM(01770, iTemp);
-	SaveEMEM(01771, iTemp2);
-	//RATEVAR
-	DoubleToBuffer(1.877777000e-5, -12, iTemp, iTemp2);
-	SaveEMEM(01772, iTemp);
-	SaveEMEM(01773, iTemp2);
-	//RVARMIN
-	iTemp = SingleToBuffer(66.0, 12);
-	SaveEMEM(01774, iTemp);
-	//VVARMIN
-	iTemp = SingleToBuffer(1.7445e-6, -12);
-	SaveEMEM(01775, iTemp);
-
-	//WSURFPOS
-	SaveEMEM(02006, 0);
-	//WSURFVEL
-	SaveEMEM(02007, 0);
-
-	//SHAFTVAR
-	iTemp = SingleToBuffer(BLOCKII.SHAFTVAR*1e-6, -12);
-	SaveEMEM(02010, iTemp);
-	//TRUNVAR
-	iTemp = SingleToBuffer(BLOCKII.TRUNVAR*1e-6, -12);
-	SaveEMEM(02011, iTemp);
-
-	//AGSK
-	DoubleToBuffer(BLOCKII.AGSK*3600.0*100.0, 28, iTemp, iTemp2);
-	SaveEMEM(02020, iTemp);
-	SaveEMEM(02021, iTemp2);
-
-	//RLS
-	RLS = r_from_latlong(LSLat*RAD, LSLng*RAD, LSAlt, BODY_MOON, 1);
-	DoubleToBuffer(RLS.x, 27, iTemp, iTemp2);
-	SaveEMEM(02022, iTemp);
-	SaveEMEM(02023, iTemp2);
-	DoubleToBuffer(RLS.y, 27, iTemp, iTemp2);
-	SaveEMEM(02024, iTemp);
-	SaveEMEM(02025, iTemp2);
-	DoubleToBuffer(RLS.z, 27, iTemp, iTemp2);
-	SaveEMEM(02026, iTemp);
-	SaveEMEM(02027, iTemp2);
 
 	//For now, hardcoded
 	BLOCKII.RBRFG.x = -3562.05;
@@ -952,17 +1072,6 @@ void AGCPadloadGenerator::Luminary116Padload()
 	BLOCKII.KIGNVB4 = -438.0;
 
 	DescentConstants11_13();
-
-	//V2FG
-	DoubleToBuffer(-3.0*FT2M / 100.0, 10, iTemp, iTemp2);
-	SaveEMEM(02510, iTemp);
-	SaveEMEM(02511, iTemp2);
-	DoubleToBuffer(0.0*FT2M / 100.0, 10, iTemp, iTemp2);
-	SaveEMEM(02512, iTemp);
-	SaveEMEM(02513, iTemp2);
-	DoubleToBuffer(0.0*FT2M / 100.0, 10, iTemp, iTemp2);
-	SaveEMEM(02514, iTemp);
-	SaveEMEM(02515, iTemp2);
 
 	//TAUVERT
 	DoubleToBuffer(8.0*100.0, 14, iTemp, iTemp2);
@@ -1023,68 +1132,10 @@ void AGCPadloadGenerator::Luminary116Padload()
 	iTemp = SingleToBuffer(0.56 / 360.0, -2);
 	SaveEMEM(03013, iTemp);
 
-	//DOWNTORK
-	SaveEMEM(03113, 0);
-	SaveEMEM(03114, 0);
-	SaveEMEM(03115, 0);
-	SaveEMEM(03116, 0);
-	SaveEMEM(03117, 0);
-	SaveEMEM(03120, 0);
-
-	//AOTAZ
-	iTemp = SingleToBuffer(-60.0 / 360.0, -1, true);
-	SaveEMEM(03404, iTemp);
-	iTemp = SingleToBuffer(0.0 / 360.0, -1, true);
-	SaveEMEM(03405, iTemp);
-	iTemp = SingleToBuffer(60.0 / 360.0, -1, true);
-	SaveEMEM(03406, iTemp);
-	iTemp = SingleToBuffer(120.0 / 360.0, -1, true);
-	SaveEMEM(03407, iTemp);
-	iTemp = SingleToBuffer(-180.0 / 360.0, -1, true);
-	SaveEMEM(03410, iTemp);
-	iTemp = SingleToBuffer(-120.0 / 360.0, -1, true);
-	SaveEMEM(03411, iTemp);
-	//AOTEL
-	iTemp = SingleToBuffer(45.0 / 360.0, -1);
-	SaveEMEM(03412, iTemp);
-	iTemp = SingleToBuffer(45.0 / 360.0, -1);
-	SaveEMEM(03413, iTemp);
-	iTemp = SingleToBuffer(45.0 / 360.0, -1);
-	SaveEMEM(03414, iTemp);
-	iTemp = SingleToBuffer(45.0 / 360.0, -1);
-	SaveEMEM(03415, iTemp);
-	iTemp = SingleToBuffer(45.0 / 360.0, -1);
-	SaveEMEM(03416, iTemp);
-	iTemp = SingleToBuffer(45.0 / 360.0, -1);
-	SaveEMEM(03417, iTemp);
-
-	//LRHMAX
-	iTemp = SingleToBuffer(50000.0*0.3048, 14);
-	SaveEMEM(03420, iTemp);
-	//LRWH
-	iTemp = SingleToBuffer(0.35, 0);
-	SaveEMEM(03421, iTemp);
-	//ZOOMTIME
-	iTemp = SingleToBuffer(26.0*100.0, 14);
-	SaveEMEM(03422, iTemp);
-	//TENDBRAK
-	iTemp = SingleToBuffer(62.0*100.0, 17);
-	SaveEMEM(03423, iTemp);
-	//TENDAPPR
-	iTemp = SingleToBuffer(12.0*100.0, 17);
-	SaveEMEM(03424, iTemp);
 	//DELTTFAP
 	iTemp = SingleToBuffer(-90.0*100.0, 17);
 	SaveEMEM(03425, iTemp);
-	//LEADTIME
-	iTemp = SingleToBuffer(-2.2*100.0, 17);
-	SaveEMEM(03426, iTemp);
-	//LEADTIME
-	iTemp = SingleToBuffer(62.0*100.0, 17);
-	SaveEMEM(03427, iTemp);
-	//RPCRTQSW
-	iTemp = SingleToBuffer(-1.0, 1);
-	SaveEMEM(03430, iTemp);
+
 	//TNEWA
 	SaveEMEM(03431, 020000);
 	SaveEMEM(03432, 0);
@@ -1100,6 +1151,11 @@ void AGCPadloadGenerator::Luminary131Defaults()
 	SaveEMEM(0104, 06000);
 	//FLAGWRD10
 	SaveEMEM(0106, 0);
+
+	//MASS
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
+	SaveEMEM(01243, iTemp);
+	SaveEMEM(01244, 0);
 
 	//LEMMASS
 	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
@@ -1389,6 +1445,139 @@ void AGCPadloadGenerator::Luminary131Defaults()
 	//TNEWA
 	SaveEMEM(03431, 020000);
 	SaveEMEM(03432, 0);
+}
+
+void AGCPadloadGenerator::Luminary099_116_Defaults()
+{
+	//Same addresses and values for Luminary 99 and 116
+
+	//FLAGWRD8
+	SaveEMEM(0104, 0);
+	//FLAGWRD10
+	SaveEMEM(0106, 0);
+
+	//TETCSM
+	SaveEMEM(01570, 037777);
+	//TETLEM
+	SaveEMEM(01642, 037777);
+
+	//RANGEVAR
+	DoubleToBuffer(1.111111111e-5, -12, iTemp, iTemp2);
+	SaveEMEM(01770, iTemp);
+	SaveEMEM(01771, iTemp2);
+	//RATEVAR
+	DoubleToBuffer(1.877777000e-5, -12, iTemp, iTemp2);
+	SaveEMEM(01772, iTemp);
+	SaveEMEM(01773, iTemp2);
+	//RVARMIN
+	iTemp = SingleToBuffer(66.0, 12);
+	SaveEMEM(01774, iTemp);
+	//VVARMIN
+	iTemp = SingleToBuffer(1.7445e-6, -12);
+	SaveEMEM(01775, iTemp);
+
+	//WSURFPOS
+	iTemp = SingleToBuffer(BLOCKII.WSURFPOS*FT2M, 14);
+	SaveEMEM(02006, iTemp);
+	//WSURFVEL
+	iTemp = SingleToBuffer(BLOCKII.WSURFVEL*FT2M / 100.0, 0);
+	SaveEMEM(02007, iTemp);
+
+	//SHAFTVAR
+	iTemp = SingleToBuffer(BLOCKII.SHAFTVAR*1e-6, -12);
+	SaveEMEM(02010, iTemp);
+	//TRUNVAR
+	iTemp = SingleToBuffer(BLOCKII.TRUNVAR*1e-6, -12);
+	SaveEMEM(02011, iTemp);
+
+	//AGSK
+	DoubleToBuffer(BLOCKII.AGSK*3600.0*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(02020, iTemp);
+	SaveEMEM(02021, iTemp2);
+
+	//RLS
+	RLS = r_from_latlong(LSLat*RAD, LSLng*RAD, LSAlt, BODY_MOON, 1);
+	DoubleToBuffer(RLS.x, 27, iTemp, iTemp2);
+	SaveEMEM(02022, iTemp);
+	SaveEMEM(02023, iTemp2);
+	DoubleToBuffer(RLS.y, 27, iTemp, iTemp2);
+	SaveEMEM(02024, iTemp);
+	SaveEMEM(02025, iTemp2);
+	DoubleToBuffer(RLS.z, 27, iTemp, iTemp2);
+	SaveEMEM(02026, iTemp);
+	SaveEMEM(02027, iTemp2);
+
+	//V2FG
+	DoubleToBuffer(-3.0*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02510, iTemp);
+	SaveEMEM(02511, iTemp2);
+	DoubleToBuffer(0.0*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02512, iTemp);
+	SaveEMEM(02513, iTemp2);
+	DoubleToBuffer(0.0*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02514, iTemp);
+	SaveEMEM(02515, iTemp2);
+
+	//DOWNTORK
+	SaveEMEM(03113, 0);
+	SaveEMEM(03114, 0);
+	SaveEMEM(03115, 0);
+	SaveEMEM(03116, 0);
+	SaveEMEM(03117, 0);
+	SaveEMEM(03120, 0);
+
+	//AOTAZ
+	iTemp = SingleToBuffer(-60.0 / 360.0, -1, true);
+	SaveEMEM(03404, iTemp);
+	iTemp = SingleToBuffer(0.0 / 360.0, -1, true);
+	SaveEMEM(03405, iTemp);
+	iTemp = SingleToBuffer(60.0 / 360.0, -1, true);
+	SaveEMEM(03406, iTemp);
+	iTemp = SingleToBuffer(120.0 / 360.0, -1, true);
+	SaveEMEM(03407, iTemp);
+	iTemp = SingleToBuffer(-180.0 / 360.0, -1, true);
+	SaveEMEM(03410, iTemp);
+	iTemp = SingleToBuffer(-120.0 / 360.0, -1, true);
+	SaveEMEM(03411, iTemp);
+	//AOTEL
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03412, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03413, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03414, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03415, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03416, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03417, iTemp);
+
+	//LRHMAX
+	iTemp = SingleToBuffer(50000.0*0.3048, 14);
+	SaveEMEM(03420, iTemp);
+	//LRWH
+	iTemp = SingleToBuffer(0.35, 0);
+	SaveEMEM(03421, iTemp);
+	//ZOOMTIME
+	iTemp = SingleToBuffer(26.0*100.0, 14);
+	SaveEMEM(03422, iTemp);
+	//TENDBRAK
+	iTemp = SingleToBuffer(62.0*100.0, 17);
+	SaveEMEM(03423, iTemp);
+	//TENDAPPR
+	iTemp = SingleToBuffer(12.0*100.0, 17);
+	SaveEMEM(03424, iTemp);
+
+	//LEADTIME
+	iTemp = SingleToBuffer(-2.2*100.0, 17);
+	SaveEMEM(03426, iTemp);
+	//LEADTIME
+	iTemp = SingleToBuffer(62.0*100.0, 17);
+	SaveEMEM(03427, iTemp);
+	//RPCRTQSW
+	iTemp = SingleToBuffer(-1.0, 1);
+	SaveEMEM(03430, iTemp);
 }
 
 void AGCPadloadGenerator::DescentConstants11_13()
