@@ -321,6 +321,8 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKII.ROLLTIME = 6.0; //deg
 	BLOCKII.PITCHTIME = 6.0; //deg
 	BLOCKII.TLAND = 0.0;
+	BLOCKII.LAT_SPL = 26.48; //Target for 72° azimuth
+	BLOCKII.LNG_SPL = -17.05;
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -364,7 +366,7 @@ void AGCPadloadGenerator::RunLGC()
 	double AGCEphemTEphemZero;
 	int Epoch;
 
-	if (RopeName == "Sundance306" || RopeName == "Luminary069")
+	if (RopeName == "Sundance306" || RopeName == "Luminary069" || RopeName == "Luminary069R2")
 	{
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 40038.0;
@@ -374,9 +376,13 @@ void AGCPadloadGenerator::RunLGC()
 		{
 			Sundance306Defaults();
 		}
+		else if (RopeName == "Luminary069")
+		{
+			Luminary069Padload(false);
+		}
 		else
 		{
-			//TBD
+			Luminary069Padload(true);
 		}
 	}
 	else if (RopeName == "Luminary099" || RopeName == "Luminary116" || RopeName == "Luminary131" || RopeName == "Luminary131R1")
@@ -560,6 +566,14 @@ void AGCPadloadGenerator::RunCMC()
 		{
 			Comanche67Defaults();
 		}
+	}
+	else if (RopeName == "Artemis072NBY71")
+	{
+		ArtemisDefaults();
+
+		//MJD of preceding July 1st, midnight
+		AGCEphemTEphemZero = 40768.0;
+		Epoch = 1971;
 	}
 	else
 	{
@@ -807,6 +821,338 @@ void AGCPadloadGenerator::Sundance306Defaults()
 	SaveEMEM(03421, iTemp);
 }
 
+void AGCPadloadGenerator::Luminary069Padload(bool IsR2)
+{
+	LGCDefaults(true);
+
+	//FLAGWRD3
+	SaveEMEM(077, 02000);
+	//FLAGWRD8
+	SaveEMEM(0104, 0);
+	//FLAGWRD10
+	SaveEMEM(0106, 0);
+
+	//DUMPCNT
+	SaveEMEM(0333, 010000); //2 dumps
+
+	//MASS
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
+	SaveEMEM(01244, iTemp);
+	SaveEMEM(01245, iTemp2);
+
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(01331, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(01332, iTemp);
+
+	//TETCSM
+	SaveEMEM(01570, 037777);
+	//TETLEM
+	SaveEMEM(01642, 037777);
+
+	//RANGEVAR
+	DoubleToBuffer(1.111111111e-5, -12, iTemp, iTemp2);
+	SaveEMEM(01770, iTemp);
+	SaveEMEM(01771, iTemp2);
+	//RATEVAR
+	DoubleToBuffer(1.877777000e-5, -12, iTemp, iTemp2);
+	SaveEMEM(01772, iTemp);
+	SaveEMEM(01773, iTemp2);
+	//RVARMIN
+	iTemp = SingleToBuffer(66.0, 12);
+	SaveEMEM(01774, iTemp);
+	//VVARMIN
+	iTemp = SingleToBuffer(1.7445e-6, -12);
+	SaveEMEM(01775, iTemp);
+
+	//WSURFPOS
+	iTemp = SingleToBuffer(BLOCKII.WSURFPOS*FT2M, 14);
+	SaveEMEM(02006, iTemp);
+	//WSURFVEL
+	iTemp = SingleToBuffer(BLOCKII.WSURFVEL*FT2M / 100.0, 0);
+	SaveEMEM(02007, iTemp);
+
+	//SHAFTVAR
+	iTemp = SingleToBuffer(BLOCKII.SHAFTVAR*1e-6, -12);
+	SaveEMEM(02010, iTemp);
+	//TRUNVAR
+	iTemp = SingleToBuffer(BLOCKII.TRUNVAR*1e-6, -12);
+	SaveEMEM(02011, iTemp);
+
+	//AGSK
+	DoubleToBuffer(BLOCKII.AGSK*3600.0*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(02020, iTemp);
+	SaveEMEM(02021, iTemp2);
+
+	//RLS
+	RLS = r_from_latlong(LSLat*RAD, LSLng*RAD, LSAlt, BODY_MOON, 1);
+	DoubleToBuffer(RLS.x, 27, iTemp, iTemp2);
+	SaveEMEM(02022, iTemp);
+	SaveEMEM(02023, iTemp2);
+	DoubleToBuffer(RLS.y, 27, iTemp, iTemp2);
+	SaveEMEM(02024, iTemp);
+	SaveEMEM(02025, iTemp2);
+	DoubleToBuffer(RLS.z, 27, iTemp, iTemp2);
+	SaveEMEM(02026, iTemp);
+	SaveEMEM(02027, iTemp2);
+
+	//For now hardcoded
+	BLOCKII.RBRFG.x = 171.835;
+	BLOCKII.RBRFG.y = 0.0;
+	BLOCKII.RBRFG.z = -10678.596;
+
+	BLOCKII.VBRFG.x = -105.876;
+	BLOCKII.VBRFG.y = 0.0;
+	BLOCKII.VBRFG.z = -1.04;
+
+	BLOCKII.ABRFG.x = 0.6241;
+	BLOCKII.ABRFG.y = 0.0;
+	BLOCKII.ABRFG.z = -9.1044;
+
+	BLOCKII.VBRFG_star = -2.34;
+	BLOCKII.ABRFG_star = -54.6264;
+	BLOCKII.JBRFG_star = -0.15061416;
+
+	BLOCKII.RAPFG.x = 111.085;
+	BLOCKII.RAPFG.y = 0.0;
+	BLOCKII.RAPFG.z = -26.794;
+
+	BLOCKII.VAPFG.x = -4.993;
+	BLOCKII.VAPFG.y = 0.0;
+	BLOCKII.VAPFG.z = 0.248;
+
+	BLOCKII.AAPFG.x = -0.2624;
+	BLOCKII.AAPFG.y = 0.0;
+	BLOCKII.AAPFG.z = -0.512;
+
+	BLOCKII.VAPFG_star = 0.558;
+	BLOCKII.AAPFG_star = -3.072;
+	BLOCKII.JAPFG_star = 0.01446176;
+
+	BLOCKII.VIGN = 5545.46;
+	BLOCKII.RIGNX = -130519.86;
+	BLOCKII.RIGNZ = -1430097.4;
+	BLOCKII.KIGNXB4 = -0.617631;
+	BLOCKII.KIGNYB8 = -0.755e-6;
+	BLOCKII.KIGNVB4 = -410.0;
+
+	//TLAND
+	DoubleToBuffer(BLOCKII.TLAND*3600.0*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(02400, iTemp);
+	SaveEMEM(02401, iTemp2);
+
+	//TARGRDG
+	DoubleToBuffer(BLOCKII.RBRFG.x*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02402, iTemp);
+	SaveEMEM(02403, iTemp2);
+	DoubleToBuffer(BLOCKII.RBRFG.y*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02404, iTemp);
+	SaveEMEM(02405, iTemp2);
+	DoubleToBuffer(BLOCKII.RBRFG.z*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02406, iTemp);
+	SaveEMEM(02407, iTemp2);
+
+	//TARGVDG
+	DoubleToBuffer(BLOCKII.VBRFG.x*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02410, iTemp);
+	SaveEMEM(02411, iTemp2);
+	DoubleToBuffer(BLOCKII.VBRFG.y*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02412, iTemp);
+	SaveEMEM(02413, iTemp2);
+	DoubleToBuffer(BLOCKII.VBRFG.z*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02414, iTemp);
+	SaveEMEM(02415, iTemp2);
+
+	//TARGADG
+	DoubleToBuffer(BLOCKII.ABRFG.x*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02416, iTemp);
+	SaveEMEM(02417, iTemp2);
+	DoubleToBuffer(BLOCKII.ABRFG.y*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02420, iTemp);
+	SaveEMEM(02421, iTemp2);
+	DoubleToBuffer(BLOCKII.ABRFG.z*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02422, iTemp);
+	SaveEMEM(02423, iTemp2);
+
+	//TTFVDGV
+	DoubleToBuffer(BLOCKII.VBRFG_star*FT2M / 100.0, 13, iTemp, iTemp2);
+	SaveEMEM(02424, iTemp);
+	SaveEMEM(02425, iTemp2);
+	//TTFADGZ
+	DoubleToBuffer(BLOCKII.ABRFG_star*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02426, iTemp);
+	SaveEMEM(02427, iTemp2);
+	//TTFJDGZ
+	DoubleToBuffer(BLOCKII.JBRFG_star*FT2M / 1000000.0, -21, iTemp, iTemp2);
+	SaveEMEM(02430, iTemp);
+	SaveEMEM(02431, iTemp2);
+
+	//TARGRDG24
+	DoubleToBuffer(BLOCKII.RAPFG.x*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02432, iTemp);
+	SaveEMEM(02433, iTemp2);
+	DoubleToBuffer(BLOCKII.RAPFG.y*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02434, iTemp);
+	SaveEMEM(02435, iTemp2);
+	DoubleToBuffer(BLOCKII.RAPFG.z*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02436, iTemp);
+	SaveEMEM(02437, iTemp2);
+
+	//TARGVDG24
+	DoubleToBuffer(BLOCKII.VAPFG.x*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02440, iTemp);
+	SaveEMEM(02441, iTemp2);
+	DoubleToBuffer(BLOCKII.VAPFG.y*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02442, iTemp);
+	SaveEMEM(02443, iTemp2);
+	DoubleToBuffer(BLOCKII.VAPFG.z*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02444, iTemp);
+	SaveEMEM(02445, iTemp2);
+
+	//TARGADG24
+	DoubleToBuffer(BLOCKII.AAPFG.x*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02446, iTemp);
+	SaveEMEM(02447, iTemp2);
+	DoubleToBuffer(BLOCKII.AAPFG.y*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02450, iTemp);
+	SaveEMEM(02451, iTemp2);
+	DoubleToBuffer(BLOCKII.AAPFG.z*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02452, iTemp);
+	SaveEMEM(02453, iTemp2);
+
+	//TTFVDGZ24
+	DoubleToBuffer(BLOCKII.VAPFG_star*FT2M / 100.0, 13, iTemp, iTemp2);
+	SaveEMEM(02454, iTemp);
+	SaveEMEM(02455, iTemp2);
+	//TTFADGZ24
+	DoubleToBuffer(BLOCKII.AAPFG_star*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02456, iTemp);
+	SaveEMEM(02457, iTemp2);
+	//TTFJDGZ24
+	DoubleToBuffer(BLOCKII.JAPFG_star*FT2M / 1000000.0, -21, iTemp, iTemp2);
+	SaveEMEM(02460, iTemp);
+	SaveEMEM(02461, iTemp2);
+
+	//DESIGNV
+	DoubleToBuffer(BLOCKII.VIGN*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02462, iTemp);
+	SaveEMEM(02463, iTemp2);
+	//DESIGNRX
+	DoubleToBuffer(BLOCKII.RIGNX*0.3048, 24, iTemp, iTemp2);
+	SaveEMEM(02464, iTemp);
+	SaveEMEM(02465, iTemp2);
+	//DESIGNRZ
+	DoubleToBuffer(BLOCKII.RIGNZ*0.3048, 24, iTemp, iTemp2);
+	SaveEMEM(02466, iTemp);
+	SaveEMEM(02467, iTemp2);
+	//DESKIGNX
+	DoubleToBuffer(BLOCKII.KIGNXB4, 4, iTemp, iTemp2);
+	SaveEMEM(02470, iTemp);
+	SaveEMEM(02471, iTemp2);
+	//DESKIGNY
+	DoubleToBuffer(BLOCKII.KIGNYB8 / 0.3048, -16, iTemp, iTemp2);
+	SaveEMEM(02472, iTemp);
+	SaveEMEM(02473, iTemp2);
+	//DESKIGNV
+	DoubleToBuffer(BLOCKII.KIGNVB4*100.0, 18, iTemp, iTemp2);
+	SaveEMEM(02474, iTemp);
+	SaveEMEM(02475, iTemp2);
+	//LOWCRIT
+	SaveEMEM(02476, 04245);
+	//HIGHCRIT
+	SaveEMEM(02477, 04616);
+
+	//DELQFIX
+	DoubleToBuffer(200.0*0.3048, 24, iTemp, iTemp2);
+	SaveEMEM(02500, iTemp);
+	SaveEMEM(02501, iTemp2);
+
+	//TBRKPNT
+	iTemp = SingleToBuffer(600.0 *100.0, 17);
+	SaveEMEM(02502, iTemp);
+
+	//ABTVINJ1
+	DoubleToBuffer(5605.0*FT2M / 100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02503, iTemp);
+	SaveEMEM(02504, iTemp2);
+
+	//ABTVINJ2
+	DoubleToBuffer(5510.0*FT2M / 100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02505, iTemp);
+	SaveEMEM(02506, iTemp2);
+
+	//DOWNTORK
+	SaveEMEM(03113, 0);
+	SaveEMEM(03114, 0);
+	SaveEMEM(03115, 0);
+	SaveEMEM(03116, 0);
+	SaveEMEM(03117, 0);
+	SaveEMEM(03120, 0);
+
+	//AOTAZ
+	iTemp = SingleToBuffer(-60.0 / 360.0, -1, true);
+	SaveEMEM(03404, iTemp);
+	iTemp = SingleToBuffer(0.0 / 360.0, -1, true);
+	SaveEMEM(03405, iTemp);
+	iTemp = SingleToBuffer(60.0 / 360.0, -1, true);
+	SaveEMEM(03406, iTemp);
+	//AOTEL
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03407, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03410, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03411, iTemp);
+
+	//LRALPHA
+	iTemp = SingleToBuffer(6.0 / 360.0, -1);
+	SaveEMEM(03412, iTemp);
+	//LRBETA1
+	iTemp = SingleToBuffer(24.0 / 360.0, -1);
+	SaveEMEM(03413, iTemp);
+	//LRALPHA2
+	iTemp = SingleToBuffer(6.0 / 360.0, -1);
+	SaveEMEM(03414, iTemp);
+	//LRBETA2
+	iTemp = SingleToBuffer(0.0 / 360.0, -1);
+	SaveEMEM(03415, iTemp);
+	//LRHMAX
+	iTemp = SingleToBuffer(50000.0*0.3048, 14);
+	SaveEMEM(03416, iTemp);
+	//LRVMAX
+	iTemp = SingleToBuffer(2000.0*0.3048 / 100.0, 7);
+	SaveEMEM(03417, iTemp);
+	//LRWH
+	iTemp = SingleToBuffer(0.35, -1);
+	SaveEMEM(03420, iTemp);
+	//LRWVZ
+	iTemp = SingleToBuffer(0.3, 0);
+	SaveEMEM(03421, iTemp);
+	//LRWVY
+	iTemp = SingleToBuffer(0.3, 0);
+	SaveEMEM(03422, iTemp);
+	//LRWVX
+	iTemp = SingleToBuffer(0.3, 0);
+	SaveEMEM(03423, iTemp);
+	//ZOOMTIME
+	iTemp = SingleToBuffer(26.0*100.0, 14);
+	SaveEMEM(03424, iTemp);
+	//TENDBRAK
+	iTemp = SingleToBuffer(62.0*100.0, 17);
+	SaveEMEM(03425, iTemp);
+	//TENDAPPR
+	iTemp = SingleToBuffer(12.0*100.0, 17);
+	SaveEMEM(03426, iTemp);
+	//RPCRTIME
+	iTemp = SingleToBuffer(62.0*100.0, 17);
+	SaveEMEM(03427, iTemp);
+	//RPCRTQSW
+	iTemp = SingleToBuffer(-0.5, 1);
+	SaveEMEM(03430, iTemp);
+}
+
 void AGCPadloadGenerator::Luminary099Padload()
 {
 	LGCDefaults(true);
@@ -831,9 +1177,9 @@ void AGCPadloadGenerator::Luminary099Padload()
 	SaveEMEM(01332, iTemp);
 
 	//E3J22R3M
-	SaveEMEM(01352, 0); //TBD: Not support by Orbiter gravity model
+	SaveEMEM(01352, 0); //TBD: Not supported by Orbiter gravity model
 	//E32C3IRM
-	SaveEMEM(01353, 0); //TBD: Not support by Orbiter gravity model
+	SaveEMEM(01353, 0); //TBD: Not supported by Orbiter gravity model
 
 	//RADSKAL
 	SaveEMEM(01354, 0);
@@ -1924,6 +2270,17 @@ void AGCPadloadGenerator::CMCDefaults()
 	SaveEMEM(03004, 077777);
 	SaveEMEM(03005, 077777);
 	SaveEMEM(03006, 042757);
+
+	//LAT(SPL)
+	dTemp = BLOCKII.LAT_SPL / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(03400, iTemp);
+	SaveEMEM(03401, iTemp2);
+	//LNG(SPL)
+	dTemp = BLOCKII.LNG_SPL / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(03402, iTemp);
+	SaveEMEM(03403, iTemp2);
 }
 
 void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
@@ -2063,17 +2420,6 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 	dTemp = -147.25*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
-
-	//LAT(SPL)
-	dTemp = 26.48 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03400, iTemp);
-	SaveEMEM(03401, iTemp2);
-	//LNG(SPL)
-	dTemp = -17.05 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03402, iTemp);
-	SaveEMEM(03403, iTemp2);
 
 	//ECSTEER
 	SaveEMEM(03424, 010000);
@@ -2262,16 +2608,7 @@ void AGCPadloadGenerator::Comanche55Defaults()
 	SaveEMEM(03331, 010000); //0.3 V/DEG
 	//P37RANGE
 	SaveEMEM(03376, 01637);
-	//LAT(SPL)
-	dTemp = 26.48 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03400, iTemp);
-	SaveEMEM(03401, iTemp2);
-	//LNG(SPL)
-	dTemp = -17.05 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03402, iTemp);
-	SaveEMEM(03403, iTemp2);
+
 	//ECSTEER
 	SaveEMEM(03424, 010000);
 }
@@ -2458,16 +2795,7 @@ void AGCPadloadGenerator::Comanche67Defaults()
 	SaveEMEM(03331, 010000); //0.3 V/DEG
 	//P37RANGE
 	SaveEMEM(03376, 01623);
-	//LAT(SPL)
-	dTemp = 26.48 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03400, iTemp);
-	SaveEMEM(03401, iTemp2);
-	//LNG(SPL)
-	dTemp = -17.05 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03402, iTemp);
-	SaveEMEM(03403, iTemp2);
+
 	//ECSTEER
 	SaveEMEM(03424, 010000);
 
@@ -2749,16 +3077,6 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	//HORISLP
 	SaveEMEM(03375, 0);
 	SaveEMEM(03376, 0);
-	//LAT(SPL)
-	dTemp = 26.5 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03400, iTemp);
-	SaveEMEM(03401, iTemp2);
-	//LNG(SPL)
-	dTemp = -17.0 / 360.0;
-	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
-	SaveEMEM(03402, iTemp);
-	SaveEMEM(03403, iTemp2);
 }
 
 MATRIX3 AGCPadloadGenerator::SolariumEarthFixedToSM(double lat, double lng, double azi)
@@ -2850,7 +3168,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 	Rot2 = _M(1., 0., 0., 0., 0., 1., 0., 1., 0.);
 	R = GetRotationMatrix(BODY_EARTH, mjd_UNITW);
 
-	if (rope == "Colossus237" || rope == "Colossus249" || rope == "Comanche045" || rope == "Sundance306" || rope == "Luminary069")
+	if (rope == "Colossus237" || rope == "Colossus249" || rope == "Comanche045" || rope == "Sundance306" || rope == "Luminary069" || rope == "Luminary069R2")
 	{
 		epoch = 1969;    //Nearest Besselian Year 1969
 		w_E = 7.29211515e-5;
@@ -2892,7 +3210,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		sinI = 0.02676579050;
 		t0 = 40403;
 	}
-	else if (rope == "Comanche108" || rope == "Luminary178")
+	else if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71")
 	{
 		epoch = 1971;			//Nearest Besselian Year 1971
 		w_E = 7.292115147e-5;	//Comanche 108 (Apollo 14 CM AGC)
@@ -2934,7 +3252,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 	bool AZ0Hardcoded = false;
 
 	//Hardcoded in Comanche 108 and Luminary 178
-	if (rope == "Comanche108" || rope == "Luminary178")
+	if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71")
 	{
 		A_Z0 = 4.8631512705;
 		AZ0Hardcoded = true;

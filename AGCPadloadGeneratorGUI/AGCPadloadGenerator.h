@@ -59,6 +59,13 @@ struct BlockIIData
 	//P20 W-Matrix maximum velocity deviation that gets processed automatically, ft/s
 	double VMAX;
 
+	//CMC Only
+
+	//Entry target data for boost aborts, latitude, degrees
+	double LAT_SPL;
+	//Entry target data for boost aborts, longitude, degrees
+	double LNG_SPL;
+
 	//LGC Only
 	double WSHAFT;
 	double WTRUN;
@@ -201,11 +208,13 @@ protected:
 	void LGCDefaults(bool mass = false);
 
 	void Sundance306Defaults();
+	void Luminary069Padload(bool IsR2);
 	void Luminary099Padload();
 	void Luminary116Padload();
 	void Luminary131Defaults();
-	void DescentConstants11_13();
+
 	void Luminary099_116_Defaults();
+	void DescentConstants11_13();
 
 	//Block I
 	void BlockIDefaults();

@@ -65,4 +65,6 @@ public:
 	CEdit WRENDVELBox;
 	CEdit RMAXBox;
 	CEdit VMAXBox;
+	CEdit LATSPLBox;
+	CEdit LNGSPLBox;
 };

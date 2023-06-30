@@ -7,9 +7,11 @@
 #include "afxdialogex.h"
 
 #define LGC_SUNDANCE306 0
-#define LGC_LUMINARY099 1
-#define LGC_LUMINARY116 2
-#define LGC_LUMINARY131R1 3
+#define LGC_LUMINARY069 1
+#define LGC_LUMINARY069R2 2
+#define LGC_LUMINARY099 3
+#define LGC_LUMINARY116 4
+#define LGC_LUMINARY131R1 5
 
 // LGCPadloadGenerator-Dialog
 
@@ -82,6 +84,8 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	MissionBox.SetCurSel(0);
 
 	RopeNameBox.AddString(L"Sundance306");
+	RopeNameBox.AddString(L"Luminary069");
+	RopeNameBox.AddString(L"Luminary069R2");
 	RopeNameBox.AddString(L"Luminary099");
 	RopeNameBox.AddString(L"Luminary116");
 	RopeNameBox.AddString(L"Luminary131R1");
@@ -176,8 +180,8 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Apollo 9
-		RopeNameBox.SetCurSel(LGC_SUNDANCE306); //Sundance 306
-		LaunchMJDInput.SetWindowTextW(L"40283.666667");
+		RopeNameBox.SetCurSel(LGC_SUNDANCE306);
+		LaunchMJDInput.SetWindowTextW(L"40283.6666667");
 		LMMassBox.SetWindowTextW(L"32401.2");
 		CSMMassBox.SetWindowTextW(L"30052.6");
 		HIASCENTBox.SetWindowTextW(L"10145.4");
@@ -195,6 +199,28 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		PITCHTIMEBox.SetWindowTextW(L"6.43");
 		break;
 	case 2: //Apollo 10
+		RopeNameBox.SetCurSel(LGC_LUMINARY069R2);
+		LaunchMJDInput.SetWindowTextW(L"40359.7006944");
+		LSAltitudeBox.SetWindowTextW(L"-3073.26");
+		LSLatitudeBox.SetWindowTextW(L"0.71388");
+		LSLongitudeBox.SetWindowTextW(L"23.707773");
+		LMMassBox.SetWindowTextW(L"31132.3");
+		CSMMassBox.SetWindowTextW(L"37605.0");
+		TotalMassBox.SetWindowTextW(L"31132.3");
+		DockedBox.SetCheck(BST_UNCHECKED);
+		HIASCENTBox.SetWindowTextW(L"8422.9");
+		WRENDPOSBox.SetWindowTextW(L"10000.0");
+		WRENDVELBox.SetWindowTextW(L"10.0");
+		WSHAFTBox.SetWindowTextW(L"15.0");
+		WTRUNBox.SetWindowTextW(L"15.0");
+		RMAXBox.SetWindowTextW(L"2000.0");
+		VMAXBox.SetWindowTextW(L"2.0");
+		WSURFPOSBox.SetWindowText(L"52493.4383202");
+		WSURFVELBox.SetWindowText(L"9.842519685");
+		SHAFTVARBox.SetWindowTextW(L"1.0");
+		TRUNVARBox.SetWindowTextW(L"1.0");
+		AGSKBox.SetWindowTextW(L"90.0");
+		TLANDBox.SetWindowText(L"100.847");
 		break;
 	case 3: //Apollo 11
 		RopeNameBox.SetCurSel(LGC_LUMINARY099);
@@ -249,8 +275,8 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		LSLatitudeBox.SetWindowText(L"-3.6686");
 		LSLongitudeBox.SetWindowText(L"-17.4842");
 		LSAltitudeBox.SetWindowText(L"-1405.0");
-		LMMassBox.SetWindowTextW(L"32401.2");
-		CSMMassBox.SetWindowTextW(L"30052.6");
+		LMMassBox.SetWindowTextW(L"33872.3");
+		CSMMassBox.SetWindowTextW(L"37580.3");
 		DockedBox.SetCheck(BST_UNCHECKED);
 		HIASCENTBox.SetWindowText(L"10900.0");
 		WRENDPOSBox.SetWindowTextW(L"10000.0");

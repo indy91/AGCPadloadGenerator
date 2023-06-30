@@ -8,6 +8,14 @@
 #include "afxdialogex.h"
 #include <sstream>
 
+#define CMC_COLOSSUS237 0
+#define CMC_COLOSSUS249 1
+#define CMC_COMANCE045 2
+#define CMC_COMANCE055 3
+#define CMC_COMANCE067 4
+#define CMC_ARTEMIS072NBY71 5
+#define CMC_ARTEMIS072 6
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -46,6 +54,8 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT15, WRENDVELBox);
 	DDX_Control(pDX, IDC_EDIT16, RMAXBox);
 	DDX_Control(pDX, IDC_EDIT17, VMAXBox);
+	DDX_Control(pDX, IDC_EDIT18, LATSPLBox);
+	DDX_Control(pDX, IDC_EDIT19, LNGSPLBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -92,8 +102,9 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	RopeNameBox.AddString(L"Comanche045");
 	RopeNameBox.AddString(L"Comanche055");
 	RopeNameBox.AddString(L"Comanche067");
+	RopeNameBox.AddString(L"Artemis072NBY71");
 	RopeNameBox.AddString(L"Artemis072");
-	RopeNameBox.SetCurSel(3);
+	RopeNameBox.SetCurSel(CMC_COMANCE055);
 
 	MissionBox.AddString(L"Manual");
 	MissionBox.AddString(L"Apollo 7");
@@ -124,6 +135,8 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	WRENDVELBox.SetWindowText(L"3.048");
 	RMAXBox.SetWindowText(L"2000");
 	VMAXBox.SetWindowText(L"2");
+	LATSPLBox.SetWindowText(L"26.48");
+	LNGSPLBox.SetWindowText(L"-17.05");
 
 	return TRUE;
 }
@@ -188,6 +201,8 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.BLOCKII.WRENDVEL = Utilities::Text2Double(&WRENDVELBox);
 	agc.BLOCKII.RMAX = Utilities::Text2Double(&RMAXBox);
 	agc.BLOCKII.VMAX = Utilities::Text2Double(&VMAXBox);
+	agc.BLOCKII.LAT_SPL = Utilities::Text2Double(&LATSPLBox);
+	agc.BLOCKII.LNG_SPL = Utilities::Text2Double(&LNGSPLBox);
 
 	Launchpad.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -225,11 +240,13 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	WRENDVELBox.SetWindowText(L"3.048");
 	RMAXBox.SetWindowText(L"2000");
 	VMAXBox.SetWindowText(L"2");
+	LATSPLBox.SetWindowText(L"26.48");
+	LNGSPLBox.SetWindowText(L"-17.05");
 
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Apollo 7
-		RopeNameBox.SetCurSel(0); //Colossus 237
+		RopeNameBox.SetCurSel(CMC_COLOSSUS237);
 		EphemerisSpanBox.SetWindowTextW(L"14.5");
 		LaunchMJDInput.SetWindowTextW(L"40140.62690972");
 		Launchpad.SetCurSel(0); //LC-34
@@ -250,7 +267,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		VMAXBox.SetWindowText(L"-1");
 		break;
 	case 2: //Apollo 8
-		RopeNameBox.SetCurSel(0); //Colossus 237
+		RopeNameBox.SetCurSel(CMC_COLOSSUS237);
 		EphemerisSpanBox.SetWindowTextW(L"10.5");
 		LaunchMJDInput.SetWindowTextW(L"40211.53541666666");
 		Launchpad.SetCurSel(1); //LC-39A
@@ -266,7 +283,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		WRENDVELBox.SetWindowText(L"1");
 		break;
 	case 3: //Apollo 9
-		RopeNameBox.SetCurSel(1); //Colossus 249
+		RopeNameBox.SetCurSel(CMC_COLOSSUS249);
 		LaunchMJDInput.SetWindowTextW(L"40283.666667");
 		Launchpad.SetCurSel(1); //LC-39A
 		RTEDBox.SetWindowTextW(L"1.69107");
@@ -283,7 +300,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALTVARBox.SetWindowText(L"1.5258e-05");
 		break;
 	case 5: //Apollo 11
-		RopeNameBox.SetCurSel(3); //Comanche 55
+		RopeNameBox.SetCurSel(CMC_COMANCE055);
 		EphemerisSpanBox.SetWindowTextW(L"10.5");
 		LaunchMJDInput.SetWindowTextW(L"40418.5638889");
 		Launchpad.SetCurSel(1); //LC-39A
@@ -297,7 +314,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALTVARBox.SetWindowText(L"1.5258e-05");
 		break;
 	case 6: //Apollo 12
-		RopeNameBox.SetCurSel(4); //Comanche 67
+		RopeNameBox.SetCurSel(CMC_COMANCE067);
 		EphemerisSpanBox.SetWindowTextW(L"14.5");
 		LaunchMJDInput.SetWindowTextW(L"40539.6819444");
 		Launchpad.SetCurSel(1); //LC-39A
@@ -315,12 +332,20 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		HORIZALTBox.SetWindowTextW(L"24000");
 		break;
 	case 8: //Apollo 14
+		RopeNameBox.SetCurSel(CMC_ARTEMIS072NBY71);
+		EphemerisSpanBox.SetWindowTextW(L"14.5");
+		LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
 		Launchpad.SetCurSel(1); //LC-39A
 		RTEDBox.SetWindowTextW(L"1.6602637");
+		LSAltitudeBox.SetWindowTextW(L"-1405.2");
+		LSLatitudeBox.SetWindowTextW(L"-3.67329493");
+		LSLongitudeBox.SetWindowTextW(L"-17.46428902");
+		EMSAltBox.SetWindowTextW(L"293597.2");
+		LaunchAzimuthBox.SetWindowTextW(L"72.066946");
 		HORIZALTBox.SetWindowTextW(L"28000");
 		break;
 	case 9: //Apollo 15
-		RopeNameBox.SetCurSel(5); //Artemis 72
+		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 		EphemerisSpanBox.SetWindowTextW(L"14.5");
 		LaunchMJDInput.SetWindowTextW(L"41158.565277778");
 		Launchpad.SetCurSel(1); //LC-39A
@@ -330,12 +355,16 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		LSLongitudeBox.SetWindowTextW(L"3.654");
 		EMSAltBox.SetWindowTextW(L"297431.0");
 		LaunchAzimuthBox.SetWindowTextW(L"80.08868");
+		LATSPLBox.SetWindowText(L"20.3");
+		LNGSPLBox.SetWindowText(L"-19.5");
 		HORIZALTBox.SetWindowTextW(L"28000");
 		break;
 	case 10: //Apollo 16
+		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 		HORIZALTBox.SetWindowTextW(L"28000");
 		break;
 	case 11: //Apollo 17
+		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 		HORIZALTBox.SetWindowTextW(L"28000");
 		break;
 	default:
