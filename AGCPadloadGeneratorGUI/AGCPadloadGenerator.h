@@ -113,6 +113,7 @@ struct BlockIIData
 	double ABSC[5], SLOPE[5];
 	//Descent abort
 	double J1PARM, K1PARM, J2PARM, K2PARM, THETCRIT, RAMIN;
+	double DELQFIX;
 };
 
 class AGCPadloadGenerator
