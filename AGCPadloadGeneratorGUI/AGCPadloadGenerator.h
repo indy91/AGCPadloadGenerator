@@ -106,10 +106,13 @@ struct BlockIIData
 	double KIGNVB4;
 	double HIGHCRIT;
 	double LOWCRIT;
-
 	//Expected angular acceleration at lunar liftoff
 	double IGNAOSQ;
 	double IGNAOSR;
+	//Terrain model
+	double ABSC[5], SLOPE[5];
+	//Descent abort
+	double J1PARM, K1PARM, J2PARM, K2PARM, THETCRIT, RAMIN;
 };
 
 class AGCPadloadGenerator
@@ -211,10 +214,13 @@ protected:
 	void Luminary069Padload(bool IsR2);
 	void Luminary099Padload();
 	void Luminary116Padload();
-	void Luminary131Defaults();
+	void Luminary131Padload();
+	void Luminary178Padload();
+	void Luminary210Padload();
 
 	void Luminary099_116_Defaults();
 	void DescentConstants11_13();
+	void DescentConstants14_17();
 
 	//Block I
 	void BlockIDefaults();
