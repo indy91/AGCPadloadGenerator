@@ -42,6 +42,31 @@
 #define IDC_EDIT24                      1027
 #define IDC_EDIT25                      1028
 #define IDC_EDIT26                      1029
+#define IDC_EDIT27                      1030
+#define IDC_EDIT28                      1031
+#define IDC_EDIT29                      1032
+#define IDC_EDIT30                      1033
+#define IDC_EDIT31                      1034
+#define IDC_EDIT32                      1035
+#define IDC_EDIT33                      1036
+#define IDC_EDIT34                      1037
+#define IDC_EDIT35                      1038
+#define IDC_EDIT36                      1039
+#define IDC_EDIT37                      1040
+#define IDC_EDIT38                      1041
+#define IDC_EDIT39                      1042
+#define IDC_EDIT40                      1043
+#define IDC_EDIT41                      1044
+#define IDC_EDIT42                      1045
+#define IDC_EDIT43                      1046
+#define IDC_EDIT44                      1047
+#define IDC_EDIT45                      1048
+#define IDC_EDIT46                      1049
+#define IDC_EDIT47                      1050
+#define IDC_EDIT48                      1051
+#define IDC_EDIT49                      1052
+#define IDC_EDIT50                      1053
+#define IDC_EDIT51                      1054
 
 // Next default values for new objects
 // 
@@ -49,7 +74,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1030
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

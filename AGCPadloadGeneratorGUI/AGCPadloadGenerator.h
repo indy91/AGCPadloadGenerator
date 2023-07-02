@@ -44,6 +44,16 @@ struct BlockIData
 	double POLYCOFF[7];
 };
 
+struct BlockCMCIIData
+{
+
+};
+
+struct BlockLGCIIData
+{
+
+};
+
 struct BlockIIData
 {
 	double CSMMass; //lbs
@@ -113,7 +123,10 @@ struct BlockIIData
 	double ABSC[5], SLOPE[5];
 	//Descent abort
 	double J1PARM, K1PARM, J2PARM, K2PARM, THETCRIT, RAMIN;
+	//LR data reasonability test parameter, feet
 	double DELQFIX;
+	//An augment added to TTT during initialization for the first guidance cycle of the approach phase, seconds
+	double DELTTFAP;
 };
 
 class AGCPadloadGenerator

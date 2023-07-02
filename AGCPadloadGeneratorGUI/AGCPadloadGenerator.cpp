@@ -332,6 +332,7 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKII.DELQFIX = 100.0;
 	BLOCKII.IGNAOSQ = 0.0;
 	BLOCKII.IGNAOSR = 0.0;
+	BLOCKII.DELTTFAP = -90.0;
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -944,13 +945,6 @@ void AGCPadloadGenerator::Luminary069Padload(bool IsR2)
 	BLOCKII.AAPFG_star = -3.072;
 	BLOCKII.JAPFG_star = 0.01446176;
 
-	BLOCKII.VIGN = 5545.46;
-	BLOCKII.RIGNX = -130519.86;
-	BLOCKII.RIGNZ = -1430097.4;
-	BLOCKII.KIGNXB4 = -0.617631;
-	BLOCKII.KIGNYB8 = -0.755e-6;
-	BLOCKII.KIGNVB4 = -410.0;
-
 	//TLAND
 	DoubleToBuffer(BLOCKII.TLAND*3600.0*100.0, 28, iTemp, iTemp2);
 	SaveEMEM(02400, iTemp);
@@ -1247,13 +1241,6 @@ void AGCPadloadGenerator::Luminary099Padload()
 	BLOCKII.TCGFAPPR = 30.0;
 	BLOCKII.TCGIAPPR = 200.0;
 
-	BLOCKII.VIGN = 5545.46;
-	BLOCKII.RIGNX = -130519.86;
-	BLOCKII.RIGNZ = -1432597.3;
-	BLOCKII.KIGNXB4 = -0.617631;
-	BLOCKII.KIGNYB8 = -0.755e-6;
-	BLOCKII.KIGNVB4 = -410.0;
-
 	DescentConstants11_13();
 
 	//TAUVERT
@@ -1316,17 +1303,6 @@ void AGCPadloadGenerator::Luminary099Padload()
 	//COSTHET2
 	SaveEMEM(02600, 06733);
 	SaveEMEM(02601, 07535);
-
-	//IGNAOSQ
-	iTemp = SingleToBuffer(6.25 / 360.0, -2);
-	SaveEMEM(03012, iTemp);
-	//IGNAOSR
-	iTemp = SingleToBuffer(0.63 / 360.0, -2);
-	SaveEMEM(03013, iTemp);
-
-	//DELTTFAP
-	iTemp = SingleToBuffer(-110.0*100.0, 17);
-	SaveEMEM(03425, iTemp);
 
 	//TNEWA
 	SaveEMEM(03431, 0);
@@ -1423,13 +1399,6 @@ void AGCPadloadGenerator::Luminary116Padload()
 	BLOCKII.TCGFAPPR = 6.0;
 	BLOCKII.TCGIAPPR = 200.0;
 
-	BLOCKII.VIGN = 5551.1299;
-	BLOCKII.RIGNX = -133067.52;
-	BLOCKII.RIGNZ = -1437887.4;
-	BLOCKII.KIGNXB4 = -0.331;
-	BLOCKII.KIGNYB8 = -5.8694e-7;
-	BLOCKII.KIGNVB4 = -438.0;
-
 	DescentConstants11_13();
 
 	//TAUVERT
@@ -1438,27 +1407,27 @@ void AGCPadloadGenerator::Luminary116Padload()
 	SaveEMEM(02517, iTemp2);
 
 	//J1PARM
-	DoubleToBuffer(6032567.5*0.3048, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.J1PARM*FT2M, 23, iTemp, iTemp2);
 	SaveEMEM(02550, iTemp);
 	SaveEMEM(02551, iTemp2);
 	//K1PARM
-	DoubleToBuffer(-6.2726125e5*0.3048*PI2, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.K1PARM*FT2M*PI2, 23, iTemp, iTemp2);
 	SaveEMEM(02552, iTemp);
 	SaveEMEM(02553, iTemp2);
 	//J2PARM
-	DoubleToBuffer(6030470.0*0.3048, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.J2PARM*FT2M, 23, iTemp, iTemp2);
 	SaveEMEM(02554, iTemp);
 	SaveEMEM(02555, iTemp2);
 	//K2PARM
-	DoubleToBuffer(-3.1835146e5*0.3048*PI2, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.K2PARM*FT2M*PI2, 23, iTemp, iTemp2);
 	SaveEMEM(02556, iTemp);
 	SaveEMEM(02557, iTemp2);
 	//THETCRIT
-	DoubleToBuffer(8.384852304 / 360.0, 0, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.THETCRIT / 360.0, 0, iTemp, iTemp2);
 	SaveEMEM(02560, iTemp);
 	SaveEMEM(02561, iTemp2);
 	//RAMIN
-	DoubleToBuffer(5.8768997e6*0.3048, 24, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.RAMIN*0.3048, 24, iTemp, iTemp2);
 	SaveEMEM(02562, iTemp);
 	SaveEMEM(02563, iTemp2);
 	//YLIM
@@ -1483,17 +1452,6 @@ void AGCPadloadGenerator::Luminary116Padload()
 	SaveEMEM(02637, 0);
 	SaveEMEM(02640, 0);
 	SaveEMEM(02641, 0);
-
-	//IGNAOSQ
-	iTemp = SingleToBuffer(7.97 / 360.0, -2);
-	SaveEMEM(03012, iTemp);
-	//IGNAOSR
-	iTemp = SingleToBuffer(0.56 / 360.0, -2);
-	SaveEMEM(03013, iTemp);
-
-	//DELTTFAP
-	iTemp = SingleToBuffer(-90.0*100.0, 17);
-	SaveEMEM(03425, iTemp);
 
 	//TNEWA
 	SaveEMEM(03431, 020000);
@@ -1649,13 +1607,6 @@ void AGCPadloadGenerator::Luminary131Padload()
 	BLOCKII.TCGFAPPR = 6.0;
 	BLOCKII.TCGIAPPR = 200.0;
 
-	BLOCKII.VIGN = 5545.3644;
-	BLOCKII.RIGNX = -133371.54;
-	BLOCKII.RIGNZ = -1445069.5;
-	BLOCKII.KIGNXB4 = -0.331;
-	BLOCKII.KIGNYB8 = -5.8694e-7;
-	BLOCKII.KIGNVB4 = -438.0;
-
 	DescentConstants11_13();
 
 	//TAUHZ
@@ -1677,27 +1628,27 @@ void AGCPadloadGenerator::Luminary131Padload()
 	SaveEMEM(02517, iTemp2);
 
 	//J1PARM
-	DoubleToBuffer(6042735.9*0.3048, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.J1PARM*FT2M, 23, iTemp, iTemp2);
 	SaveEMEM(02550, iTemp);
 	SaveEMEM(02551, iTemp2);
 	//K1PARM
-	DoubleToBuffer(-3.1743891e5*0.3048*PI2, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.K1PARM *FT2M*PI2, 23, iTemp, iTemp2);
 	SaveEMEM(02552, iTemp);
 	SaveEMEM(02553, iTemp2);
 	//J2PARM
-	DoubleToBuffer(6046910.4*0.3048, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.J2PARM*FT2M, 23, iTemp, iTemp2);
 	SaveEMEM(02554, iTemp);
 	SaveEMEM(02555, iTemp2);
 	//K2PARM
-	DoubleToBuffer(-6.2459985e5*0.3048*PI2, 23, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.K2PARM *FT2M*PI2, 23, iTemp, iTemp2);
 	SaveEMEM(02556, iTemp);
 	SaveEMEM(02557, iTemp2);
 	//THETCRIT
-	DoubleToBuffer(-17.183277 / 360.0, 0, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.THETCRIT / 360.0, 0, iTemp, iTemp2);
 	SaveEMEM(02560, iTemp);
 	SaveEMEM(02561, iTemp2);
 	//RAMIN
-	DoubleToBuffer(5.88048494e6*0.3048, 24, iTemp, iTemp2);
+	DoubleToBuffer(BLOCKII.RAMIN*0.3048, 24, iTemp, iTemp2);
 	SaveEMEM(02562, iTemp);
 	SaveEMEM(02563, iTemp2);
 	//YLIM
@@ -1722,13 +1673,6 @@ void AGCPadloadGenerator::Luminary131Padload()
 	SaveEMEM(02637, 0);
 	SaveEMEM(02640, 0);
 	SaveEMEM(02641, 0);
-
-	//IGNAOSQ
-	iTemp = SingleToBuffer(7.63 / 360.0, -2);
-	SaveEMEM(03012, iTemp);
-	//IGNAOSR
-	iTemp = SingleToBuffer(0.57 / 360.0, -2);
-	SaveEMEM(03013, iTemp);
 
 	//DOWNTORK
 	SaveEMEM(03113, 0);
@@ -1789,9 +1733,7 @@ void AGCPadloadGenerator::Luminary131Padload()
 	//TENDAPPR
 	iTemp = SingleToBuffer(12.0*100.0, 17);
 	SaveEMEM(03424, iTemp);
-	//DELTTFAP
-	iTemp = SingleToBuffer(-90.0*100.0, 17);
-	SaveEMEM(03425, iTemp);
+
 	//LEADTIME
 	iTemp = SingleToBuffer(-2.2*100.0, 17);
 	SaveEMEM(03426, iTemp);
@@ -2149,6 +2091,17 @@ void AGCPadloadGenerator::DescentConstants11_13()
 	//MAXFORCE
 	SaveEMEM(02546, 013);
 	SaveEMEM(02547, 06551);
+
+	//IGNAOSQ
+	iTemp = SingleToBuffer(BLOCKII.IGNAOSQ / 360.0, -2);
+	SaveEMEM(03012, iTemp);
+	//IGNAOSR
+	iTemp = SingleToBuffer(BLOCKII.IGNAOSR / 360.0, -2);
+	SaveEMEM(03013, iTemp);
+
+	//DELTTFAP
+	iTemp = SingleToBuffer(BLOCKII.DELTTFAP*100.0, 17);
+	SaveEMEM(03425, iTemp);
 }
 
 void AGCPadloadGenerator::Luminary178Padload()
@@ -2199,34 +2152,7 @@ void AGCPadloadGenerator::Luminary178Padload()
 	BLOCKII.TCGFAPPR = 6.0;
 	BLOCKII.TCGIAPPR = 200.0;
 
-	BLOCKII.VIGN = 5546.447179;
-	BLOCKII.RIGNX = -140345.7283;
-	BLOCKII.RIGNZ = -1464979.987;
-	BLOCKII.KIGNXB4 = -0.419;
-	BLOCKII.KIGNYB8 = -9.05e-7;
-	BLOCKII.KIGNVB4 = -470.0;
-
-	BLOCKII.ABSC[0] = -238000.0;
-	BLOCKII.ABSC[1] = -57000.0;
-	BLOCKII.ABSC[2] = -49000.0;
-	BLOCKII.ABSC[3] = -11200.0;
-	BLOCKII.ABSC[4] = -5000.0;
-	BLOCKII.SLOPE[0] = -1.105e-2;
-	BLOCKII.SLOPE[1] = -1.088e-1;
-	BLOCKII.SLOPE[2] = 3.704e-2;
-	BLOCKII.SLOPE[3] = -7.903e-2;
-	BLOCKII.SLOPE[4] = -1.2e-2;
-
-	BLOCKII.J1PARM = 6.0469527e6;
-	BLOCKII.K1PARM = -3.1502779e5;
-	BLOCKII.J2PARM = 6.0486099e6;
-	BLOCKII.K2PARM = -6.2763026e5;
-	BLOCKII.THETCRIT = -17.41421853;
-	BLOCKII.RAMIN = 5.88006825e6;
-
 	BLOCKII.DELQFIX = 500.0;
-	BLOCKII.IGNAOSQ = 6.027;
-	BLOCKII.IGNAOSR = -0.016;
 
 	DescentConstants14_17();
 
@@ -2290,34 +2216,7 @@ void AGCPadloadGenerator::Luminary210Padload()
 	BLOCKII.TCGFAPPR = 6.0;
 	BLOCKII.TCGIAPPR = 200.0;
 
-	BLOCKII.VIGN = 5548.14101;
-	BLOCKII.RIGNX = -162539.6686;
-	BLOCKII.RIGNZ = -1547120.997;
-	BLOCKII.KIGNXB4 = -0.334;
-	BLOCKII.KIGNYB8 = -2.207e-7;
-	BLOCKII.KIGNVB4 = -498.0;
-
-	BLOCKII.ABSC[0] = -593000.0;
-	BLOCKII.ABSC[1] = -196000.0;
-	BLOCKII.ABSC[2] = -106000.0;
-	BLOCKII.ABSC[3] = -89400.0;
-	BLOCKII.ABSC[4] = -29200.0;
-	BLOCKII.SLOPE[0] = 2.0968e-2;
-	BLOCKII.SLOPE[1] = 0.0;
-	BLOCKII.SLOPE[2] = 1.86747e-1;
-	BLOCKII.SLOPE[3] = -2.14784e-1;
-	BLOCKII.SLOPE[4] = 1.13014e-2;
-
-	BLOCKII.J1PARM = 6.0410278e6;
-	BLOCKII.K1PARM = -3.1137525e5;
-	BLOCKII.J2PARM = 6.0422821e6;
-	BLOCKII.K2PARM = -6.2221362e5;
-	BLOCKII.THETCRIT = -17.510696;
-	BLOCKII.RAMIN = 5.87303149e6;
-
 	BLOCKII.DELQFIX = 100.0;
-	BLOCKII.IGNAOSQ = 5.961;
-	BLOCKII.IGNAOSR = 0.163;
 
 	DescentConstants14_17();
 
@@ -2744,7 +2643,7 @@ void AGCPadloadGenerator::DescentConstants14_17()
 	iTemp = SingleToBuffer(12.0*100.0, 17);
 	SaveEMEM(03424, iTemp);
 	//DELTTFAP
-	iTemp = SingleToBuffer(-90.0*100.0, 17);
+	iTemp = SingleToBuffer(BLOCKII.DELTTFAP*100.0, 17);
 	SaveEMEM(03425, iTemp);
 	//LEADTIME
 	iTemp = SingleToBuffer(-2.2*100.0, 17);

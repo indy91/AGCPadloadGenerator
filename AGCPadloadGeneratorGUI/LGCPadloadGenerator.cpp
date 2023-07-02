@@ -60,6 +60,31 @@ void LGCPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT24, ROLLTIMEBox);
 	DDX_Control(pDX, IDC_EDIT25, PITCHTIMEBox);
 	DDX_Control(pDX, IDC_EDIT26, TLANDBox);
+	DDX_Control(pDX, IDC_EDIT27, ABSC0Box);
+	DDX_Control(pDX, IDC_EDIT28, ABSC1Box);
+	DDX_Control(pDX, IDC_EDIT29, ABSC2Box);
+	DDX_Control(pDX, IDC_EDIT30, ABSC3Box);
+	DDX_Control(pDX, IDC_EDIT31, ABSC4Box);
+	DDX_Control(pDX, IDC_EDIT32, SLOPE0Box);
+	DDX_Control(pDX, IDC_EDIT33, SLOPE1Box);
+	DDX_Control(pDX, IDC_EDIT34, SLOPE2Box);
+	DDX_Control(pDX, IDC_EDIT35, SLOPE3Box);
+	DDX_Control(pDX, IDC_EDIT36, SLOPE4Box);
+	DDX_Control(pDX, IDC_EDIT37, IGNAOSQBox);
+	DDX_Control(pDX, IDC_EDIT38, IGNAOSRBox);
+	DDX_Control(pDX, IDC_EDIT39, VIGNBox);
+	DDX_Control(pDX, IDC_EDIT40, RIGNXBox);
+	DDX_Control(pDX, IDC_EDIT41, RIGNZBox);
+	DDX_Control(pDX, IDC_EDIT42, KIGNXBox);
+	DDX_Control(pDX, IDC_EDIT43, KIGNYBox);
+	DDX_Control(pDX, IDC_EDIT44, KIGNVBox);
+	DDX_Control(pDX, IDC_EDIT45, J1PARMBox);
+	DDX_Control(pDX, IDC_EDIT46, K1PARMBox);
+	DDX_Control(pDX, IDC_EDIT47, J2PARMBox);
+	DDX_Control(pDX, IDC_EDIT48, K2PARMBox);
+	DDX_Control(pDX, IDC_EDIT49, THETCRITBox);
+	DDX_Control(pDX, IDC_EDIT50, RAMINBox);
+	DDX_Control(pDX, IDC_EDIT51, DELTTFAPBox);
 }
 
 
@@ -85,6 +110,7 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	MissionBox.AddString(L"Apollo 13");
 	MissionBox.AddString(L"Apollo 14");
 	MissionBox.AddString(L"Apollo 15");
+	MissionBox.AddString(L"Apollo 16");
 	MissionBox.SetCurSel(0);
 
 	RopeNameBox.AddString(L"Sundance306");
@@ -96,6 +122,8 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	RopeNameBox.AddString(L"Luminary178");
 	RopeNameBox.AddString(L"Luminary210");
 	RopeNameBox.SetCurSel(LGC_LUMINARY116);
+
+	UpdateRopeSpecificEditFields();
 
 	T504LMBox.SetWindowText(L"4.5");
 	UNITWBox.SetWindowText(L"-0.5");
@@ -126,6 +154,36 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	PITCHTIMEBox.SetWindowText(L"6.0");
 
 	TLANDBox.SetWindowText(L"0.0");
+
+	ABSC0Box.SetWindowText(L"0.0");
+	ABSC1Box.SetWindowText(L"0.0");
+	ABSC2Box.SetWindowText(L"0.0");
+	ABSC3Box.SetWindowText(L"0.0");
+	ABSC4Box.SetWindowText(L"0.0");
+	SLOPE0Box.SetWindowText(L"0.0");
+	SLOPE1Box.SetWindowText(L"0.0");
+	SLOPE2Box.SetWindowText(L"0.0");
+	SLOPE3Box.SetWindowText(L"0.0");
+	SLOPE4Box.SetWindowText(L"0.0");
+
+	IGNAOSQBox.SetWindowText(L"0.0");
+	IGNAOSRBox.SetWindowText(L"0.0");
+
+	VIGNBox.SetWindowText(L"5546.447179");
+	RIGNXBox.SetWindowText(L"-140345.7283");
+	RIGNZBox.SetWindowText(L"-1464979.987");
+	KIGNXBox.SetWindowText(L"-0.419");
+	KIGNYBox.SetWindowText(L"-9.05e-7");
+	KIGNVBox.SetWindowText(L"-470.0");
+
+	J1PARMBox.SetWindowText(L"6032567.5");
+	K1PARMBox.SetWindowText(L"-6.2726125e5");
+	J2PARMBox.SetWindowText(L"6030470.0");
+	K2PARMBox.SetWindowText(L"-3.1835146e5");
+	THETCRITBox.SetWindowText(L"8.384852304");
+	RAMINBox.SetWindowText(L"5.8768997e6");
+
+	DELTTFAPBox.SetWindowText(L"-90.0");
 
 	return TRUE;
 }
@@ -159,6 +217,31 @@ void LGCPadloadGenerator::OnBnClickedOk()
 	agc.BLOCKII.ROLLTIME = Utilities::Text2Double(&ROLLTIMEBox);
 	agc.BLOCKII.PITCHTIME = Utilities::Text2Double(&PITCHTIMEBox);
 	agc.BLOCKII.TLAND = Utilities::Text2Double(&TLANDBox);
+	agc.BLOCKII.ABSC[0] = Utilities::Text2Double(&ABSC0Box);
+	agc.BLOCKII.ABSC[1] = Utilities::Text2Double(&ABSC1Box);
+	agc.BLOCKII.ABSC[2] = Utilities::Text2Double(&ABSC2Box);
+	agc.BLOCKII.ABSC[3] = Utilities::Text2Double(&ABSC3Box);
+	agc.BLOCKII.ABSC[4] = Utilities::Text2Double(&ABSC4Box);
+	agc.BLOCKII.SLOPE[0] = Utilities::Text2Double(&SLOPE0Box);
+	agc.BLOCKII.SLOPE[1] = Utilities::Text2Double(&SLOPE1Box);
+	agc.BLOCKII.SLOPE[2] = Utilities::Text2Double(&SLOPE2Box);
+	agc.BLOCKII.SLOPE[3] = Utilities::Text2Double(&SLOPE3Box);
+	agc.BLOCKII.SLOPE[4] = Utilities::Text2Double(&SLOPE4Box);
+	agc.BLOCKII.IGNAOSQ = Utilities::Text2Double(&IGNAOSQBox);
+	agc.BLOCKII.IGNAOSR = Utilities::Text2Double(&IGNAOSRBox);
+	agc.BLOCKII.VIGN = Utilities::Text2Double(&VIGNBox);
+	agc.BLOCKII.RIGNX = Utilities::Text2Double(&RIGNXBox);
+	agc.BLOCKII.RIGNZ = Utilities::Text2Double(&RIGNZBox);
+	agc.BLOCKII.KIGNXB4 = Utilities::Text2Double(&KIGNXBox);
+	agc.BLOCKII.KIGNYB8 = Utilities::Text2Double(&KIGNYBox);
+	agc.BLOCKII.KIGNVB4 = Utilities::Text2Double(&KIGNVBox);
+	agc.BLOCKII.J1PARM = Utilities::Text2Double(&J1PARMBox);
+	agc.BLOCKII.K1PARM = Utilities::Text2Double(&K1PARMBox);
+	agc.BLOCKII.J2PARM = Utilities::Text2Double(&J2PARMBox);
+	agc.BLOCKII.K2PARM = Utilities::Text2Double(&K2PARMBox);
+	agc.BLOCKII.THETCRIT = Utilities::Text2Double(&THETCRITBox);
+	agc.BLOCKII.RAMIN = Utilities::Text2Double(&RAMINBox);
+	agc.BLOCKII.DELTTFAP = Utilities::Text2Double(&DELTTFAPBox);
 
 	RopeNameBox.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -227,6 +310,12 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TRUNVARBox.SetWindowTextW(L"1.0");
 		AGSKBox.SetWindowTextW(L"90.0");
 		TLANDBox.SetWindowText(L"100.847");
+		VIGNBox.SetWindowText(L"5545.46");
+		RIGNXBox.SetWindowText(L"-130519.86");
+		RIGNZBox.SetWindowText(L"-1430097.4");
+		KIGNXBox.SetWindowText(L"-0.617631");
+		KIGNYBox.SetWindowText(L"-0.755e-6");
+		KIGNVBox.SetWindowText(L"-410.0");
 		break;
 	case 3: //Apollo 11
 		RopeNameBox.SetCurSel(LGC_LUMINARY099);
@@ -251,6 +340,15 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TRUNVARBox.SetWindowTextW(L"1.0");
 		AGSKBox.SetWindowTextW(L"90.0");
 		TLANDBox.SetWindowText(L"102.786402777777778");
+		IGNAOSQBox.SetWindowText(L"6.25");
+		IGNAOSRBox.SetWindowText(L"0.63");
+		VIGNBox.SetWindowText(L"5545.46");
+		RIGNXBox.SetWindowText(L"-130519.86");
+		RIGNZBox.SetWindowText(L"-1432597.3");
+		KIGNXBox.SetWindowText(L"-0.617631");
+		KIGNYBox.SetWindowText(L"-0.755e-6");
+		KIGNVBox.SetWindowText(L"-410.0");
+		DELTTFAPBox.SetWindowText(L"-110.0");
 		break;
 	case 4: //Apollo 12
 		RopeNameBox.SetCurSel(LGC_LUMINARY116);
@@ -274,6 +372,21 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TRUNVARBox.SetWindowTextW(L"1.0");
 		AGSKBox.SetWindowTextW(L"100.0");
 		TLANDBox.SetWindowText(L"110.57895");
+		IGNAOSQBox.SetWindowText(L"7.97");
+		IGNAOSRBox.SetWindowText(L"0.56");
+		VIGNBox.SetWindowText(L"5551.1299");
+		RIGNXBox.SetWindowText(L"-133067.52");
+		RIGNZBox.SetWindowText(L"-1437887.4");
+		KIGNXBox.SetWindowText(L"-0.331");
+		KIGNYBox.SetWindowText(L"-5.8694e-7");
+		KIGNVBox.SetWindowText(L"-438.0");
+		J1PARMBox.SetWindowText(L"6032567.5");
+		K1PARMBox.SetWindowText(L"-6.2726125e5");
+		J2PARMBox.SetWindowText(L"6030470.0");
+		K2PARMBox.SetWindowText(L"-3.1835146e5");
+		THETCRITBox.SetWindowText(L"8.384852304");
+		RAMINBox.SetWindowText(L"5.8768997e6");
+		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 5: //Apollo 13
 		RopeNameBox.SetCurSel(LGC_LUMINARY131R1);
@@ -297,6 +410,21 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TRUNVARBox.SetWindowTextW(L"1.0");
 		AGSKBox.SetWindowText(L"100.0");
 		TLANDBox.SetWindowText(L"103.7433811");
+		IGNAOSQBox.SetWindowText(L"7.63");
+		IGNAOSRBox.SetWindowText(L"0.57");
+		VIGNBox.SetWindowText(L"5545.3644");
+		RIGNXBox.SetWindowText(L"-133371.54");
+		RIGNZBox.SetWindowText(L"-1445069.5");
+		KIGNXBox.SetWindowText(L"-0.331");
+		KIGNYBox.SetWindowText(L"-5.8694e-7");
+		KIGNVBox.SetWindowText(L"-438.0");
+		J1PARMBox.SetWindowText(L"6042735.9");
+		K1PARMBox.SetWindowText(L"-3.1743891e5");
+		J2PARMBox.SetWindowText(L"6046910.4");
+		K2PARMBox.SetWindowText(L"-6.2459985e5");
+		THETCRITBox.SetWindowText(L"-17.183277");
+		RAMINBox.SetWindowText(L"5.88048494e6");
+		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 6: //Apollo 14
 		RopeNameBox.SetCurSel(LGC_LUMINARY178);
@@ -320,6 +448,31 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TRUNVARBox.SetWindowTextW(L"1.0");
 		AGSKBox.SetWindowText(L"100.0");
 		TLANDBox.SetWindowText(L"108.9202417");
+		ABSC0Box.SetWindowText(L"-238000.0");
+		ABSC1Box.SetWindowText(L"-57000.0");
+		ABSC2Box.SetWindowText(L"-49000.0");
+		ABSC3Box.SetWindowText(L"-11200.0");
+		ABSC4Box.SetWindowText(L"-5000.0");
+		SLOPE0Box.SetWindowText(L"-1.105e-2");
+		SLOPE1Box.SetWindowText(L"-1.088e-1");
+		SLOPE2Box.SetWindowText(L"3.704e-2");
+		SLOPE3Box.SetWindowText(L"-7.903e-2");
+		SLOPE4Box.SetWindowText(L"-1.2e-2");
+		IGNAOSQBox.SetWindowText(L"6.027");
+		IGNAOSRBox.SetWindowText(L"-0.016");
+		VIGNBox.SetWindowText(L"5546.447179");
+		RIGNXBox.SetWindowText(L"-140345.7283");
+		RIGNZBox.SetWindowText(L"-1464979.987");
+		KIGNXBox.SetWindowText(L"-0.419");
+		KIGNYBox.SetWindowText(L"-9.05e-7");
+		KIGNVBox.SetWindowText(L"-470.0");
+		J1PARMBox.SetWindowText(L"6.0469527e6");
+		K1PARMBox.SetWindowText(L"-3.1502779e5");
+		J2PARMBox.SetWindowText(L"6.0486099e6");
+		K2PARMBox.SetWindowText(L"-6.2763026e5");
+		THETCRITBox.SetWindowText(L"-17.41421853");
+		RAMINBox.SetWindowText(L"5.88006825e6");
+		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 7: //Apollo 15
 		RopeNameBox.SetCurSel(LGC_LUMINARY210);
@@ -343,6 +496,84 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		TRUNVARBox.SetWindowTextW(L"1.0");
 		AGSKBox.SetWindowText(L"100.0");
 		TLANDBox.SetWindowText(L"104.6824861");
+		ABSC0Box.SetWindowText(L"-593000.0");
+		ABSC1Box.SetWindowText(L"-196000.0");
+		ABSC2Box.SetWindowText(L"-106000.0");
+		ABSC3Box.SetWindowText(L"-89400.0");
+		ABSC4Box.SetWindowText(L"-29200.0");
+		SLOPE0Box.SetWindowText(L"2.0968e-2");
+		SLOPE1Box.SetWindowText(L"0.0");
+		SLOPE2Box.SetWindowText(L"1.86747e-1");
+		SLOPE3Box.SetWindowText(L"-2.14784e-1");
+		SLOPE4Box.SetWindowText(L"1.13014e-2");
+		IGNAOSQBox.SetWindowText(L"5.961");
+		IGNAOSRBox.SetWindowText(L"0.163");
+		VIGNBox.SetWindowText(L"5548.14101");
+		RIGNXBox.SetWindowText(L"-162539.6686");
+		RIGNZBox.SetWindowText(L"-1547120.997");
+		KIGNXBox.SetWindowText(L"-0.334");
+		KIGNYBox.SetWindowText(L"-2.207e-7");
+		KIGNVBox.SetWindowText(L"-498.0");
+		J1PARMBox.SetWindowText(L"6.0410278e6");
+		K1PARMBox.SetWindowText(L"-3.1137525e5");
+		J2PARMBox.SetWindowText(L"6.0422821e6");
+		K2PARMBox.SetWindowText(L"-6.2221362e5");
+		THETCRITBox.SetWindowText(L"-17.510696");
+		RAMINBox.SetWindowText(L"5.87303149e6");
+		DELTTFAPBox.SetWindowText(L"-90.0");
+		break;
+	case 8: //Apollo 16
+		RopeNameBox.SetCurSel(LGC_LUMINARY210);
+		LaunchMJDInput.SetWindowTextW(L"41423.7458333333");
+		LSAltitudeBox.SetWindowTextW(L"-260.0");
+		LSLatitudeBox.SetWindowTextW(L"-9.00028");
+		LSLongitudeBox.SetWindowTextW(L"15.516389");
+		LMMassBox.SetWindowTextW(L"36685.2");
+		CSMMassBox.SetWindowTextW(L"39354.1");
+		DockedBox.SetCheck(BST_UNCHECKED);
+		HIASCENTBox.SetWindowText(L"10900.0");
+		WRENDPOSBox.SetWindowTextW(L"10000.0");
+		WRENDVELBox.SetWindowTextW(L"10.0");
+		WSHAFTBox.SetWindowTextW(L"15.0");
+		WTRUNBox.SetWindowTextW(L"15.0");
+		RMAXBox.SetWindowTextW(L"2000.0");
+		VMAXBox.SetWindowTextW(L"2.0");
+		WSURFPOSBox.SetWindowText(L"0");
+		WSURFVELBox.SetWindowText(L"0");
+		SHAFTVARBox.SetWindowTextW(L"1.0");
+		TRUNVARBox.SetWindowTextW(L"1.0");
+		AGSKBox.SetWindowText(L"90.0");
+		TLANDBox.SetWindowText(L"98.7784");
+		ABSC0Box.SetWindowText(L"-692000.0");
+		ABSC1Box.SetWindowText(L"-524000.0");
+		ABSC2Box.SetWindowText(L"-234000.0");
+		ABSC3Box.SetWindowText(L"-164000.0");
+		ABSC4Box.SetWindowText(L"-100000.0");
+		SLOPE0Box.SetWindowText(L"9.821428e-2");
+		SLOPE1Box.SetWindowText(L"-5.17241e-3");
+		SLOPE2Box.SetWindowText(L"-6.428571e-2");
+		SLOPE3Box.SetWindowText(L"1.5625e-2");
+		SLOPE4Box.SetWindowText(L"0.0");
+		IGNAOSQBox.SetWindowText(L"5.442");
+		IGNAOSRBox.SetWindowText(L"0.094");
+		VIGNBox.SetWindowText(L"5543.4605");
+		RIGNXBox.SetWindowText(L"-159548.72");
+		RIGNZBox.SetWindowText(L"-1547623.3");
+		KIGNXBox.SetWindowText(L"-0.334");
+		KIGNYBox.SetWindowText(L"-2.207e-7");
+		KIGNVBox.SetWindowText(L"-498.0");
+		J1PARMBox.SetWindowText(L"6.051373e6");
+		K1PARMBox.SetWindowText(L"-6.055552e5");
+		J2PARMBox.SetWindowText(L"6.0383801e6");
+		K2PARMBox.SetWindowText(L"-3.1696236e5");
+		THETCRITBox.SetWindowText(L"5.63040073");
+		RAMINBox.SetWindowText(L"5.883824672e6");
+		DELTTFAPBox.SetWindowText(L"-70.0");
+		break;
+	case 9: //Apollo 17
+		RopeNameBox.SetCurSel(LGC_LUMINARY210);
+
+		DELTTFAPBox.SetWindowText(L"-70.0");
 		break;
 	}
 
@@ -392,10 +623,52 @@ void LGCPadloadGenerator::UpdateRopeSpecificEditFields()
 	{
 		WSURFPOSBox.SetReadOnly(true);
 		WSURFVELBox.SetReadOnly(true);
+		VIGNBox.SetReadOnly(true);
+		RIGNXBox.SetReadOnly(true);
+		RIGNZBox.SetReadOnly(true);
+		KIGNXBox.SetReadOnly(true);
+		KIGNYBox.SetReadOnly(true);
+		KIGNVBox.SetReadOnly(true);
 	}
 	else
 	{
 		WSURFPOSBox.SetReadOnly(false);
 		WSURFVELBox.SetReadOnly(false);
+		VIGNBox.SetReadOnly(false);
+		RIGNXBox.SetReadOnly(false);
+		RIGNZBox.SetReadOnly(false);
+		KIGNXBox.SetReadOnly(false);
+		KIGNYBox.SetReadOnly(false);
+		KIGNVBox.SetReadOnly(false);
+	}
+
+	if (RopeNameBox.GetCurSel() == LGC_LUMINARY178 || RopeNameBox.GetCurSel() == LGC_LUMINARY210)
+	{
+		ABSC0Box.SetReadOnly(false); ABSC1Box.SetReadOnly(false); ABSC2Box.SetReadOnly(false); ABSC3Box.SetReadOnly(false); ABSC4Box.SetReadOnly(false);
+		SLOPE0Box.SetReadOnly(false); SLOPE1Box.SetReadOnly(false); SLOPE2Box.SetReadOnly(false); SLOPE3Box.SetReadOnly(false); SLOPE4Box.SetReadOnly(false);
+	}
+	else
+	{
+		ABSC0Box.SetReadOnly(true); ABSC1Box.SetReadOnly(true); ABSC2Box.SetReadOnly(true); ABSC3Box.SetReadOnly(true); ABSC4Box.SetReadOnly(true);
+		SLOPE0Box.SetReadOnly(true); SLOPE1Box.SetReadOnly(true); SLOPE2Box.SetReadOnly(true); SLOPE3Box.SetReadOnly(true); SLOPE4Box.SetReadOnly(true);
+	}
+
+	if (RopeNameBox.GetCurSel() <= LGC_LUMINARY099)
+	{
+		J1PARMBox.SetReadOnly(true);
+		K1PARMBox.SetReadOnly(true);
+		J2PARMBox.SetReadOnly(true);
+		K2PARMBox.SetReadOnly(true);
+		THETCRITBox.SetReadOnly(true);
+		RAMINBox.SetReadOnly(true);
+	}
+	else
+	{
+		J1PARMBox.SetReadOnly(false);
+		K1PARMBox.SetReadOnly(false);
+		J2PARMBox.SetReadOnly(false);
+		K2PARMBox.SetReadOnly(false);
+		THETCRITBox.SetReadOnly(false);
+		RAMINBox.SetReadOnly(false);
 	}
 }
