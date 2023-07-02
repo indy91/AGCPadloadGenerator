@@ -111,6 +111,7 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	MissionBox.AddString(L"Apollo 14");
 	MissionBox.AddString(L"Apollo 15");
 	MissionBox.AddString(L"Apollo 16");
+	MissionBox.AddString(L"Apollo 17");
 	MissionBox.SetCurSel(0);
 
 	RopeNameBox.AddString(L"Sundance306");
@@ -572,7 +573,50 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		break;
 	case 9: //Apollo 17
 		RopeNameBox.SetCurSel(LGC_LUMINARY210);
-
+		LaunchMJDInput.SetWindowTextW(L"41658.120138888");
+		LSAltitudeBox.SetWindowTextW(L"-3606.0");
+		LSLatitudeBox.SetWindowTextW(L"20.164029");
+		LSLongitudeBox.SetWindowTextW(L"30.749532");
+		LMMassBox.SetWindowTextW(L"36759.3");
+		CSMMassBox.SetWindowTextW(L"38115.5");
+		DockedBox.SetCheck(BST_UNCHECKED);
+		HIASCENTBox.SetWindowText(L"10900.0");
+		WRENDPOSBox.SetWindowTextW(L"10000.0");
+		WRENDVELBox.SetWindowTextW(L"10.0");
+		WSHAFTBox.SetWindowTextW(L"15.0");
+		WTRUNBox.SetWindowTextW(L"15.0");
+		RMAXBox.SetWindowTextW(L"2000.0");
+		VMAXBox.SetWindowTextW(L"2.0");
+		WSURFPOSBox.SetWindowText(L"0");
+		WSURFVELBox.SetWindowText(L"0");
+		SHAFTVARBox.SetWindowTextW(L"1.0");
+		TRUNVARBox.SetWindowTextW(L"1.0");
+		AGSKBox.SetWindowText(L"110.0");
+		TLANDBox.SetWindowText(L"113.0272472");
+		ABSC0Box.SetWindowText(L"-205500.0");
+		ABSC1Box.SetWindowText(L"-57500.0");
+		ABSC2Box.SetWindowText(L"-44000.0");
+		ABSC3Box.SetWindowText(L"-29000.0");
+		ABSC4Box.SetWindowText(L"-16300.0");
+		SLOPE0Box.SetWindowText(L"3.37837e-3");
+		SLOPE1Box.SetWindowText(L"-3.40741e-1");
+		SLOPE2Box.SetWindowText(L"1.333333e-1");
+		SLOPE3Box.SetWindowText(L"-2.07086e-1");
+		SLOPE4Box.SetWindowText(L"1.411e-2");
+		IGNAOSQBox.SetWindowText(L"5.335");
+		IGNAOSRBox.SetWindowText(L"0.003");
+		VIGNBox.SetWindowText(L"5542.8976");
+		RIGNXBox.SetWindowText(L"-156145.03");
+		RIGNZBox.SetWindowText(L"-1541941.8");
+		KIGNXBox.SetWindowText(L"-0.334");
+		KIGNYBox.SetWindowText(L"-2.207e-7");
+		KIGNVBox.SetWindowText(L"-498.0");
+		J1PARMBox.SetWindowText(L"6.0457376e6");
+		K1PARMBox.SetWindowText(L"-6.0598187e5");
+		J2PARMBox.SetWindowText(L"6.036605e6");
+		K2PARMBox.SetWindowText(L"-3.180295e5");
+		THETCRITBox.SetWindowText(L"6.432346783");
+		RAMINBox.SetWindowText(L"5.872844816e6");
 		DELTTFAPBox.SetWindowText(L"-70.0");
 		break;
 	}
