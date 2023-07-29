@@ -223,6 +223,7 @@ protected:
 	void SetPadData(Launchpad pad);
 
 	//Same addresses for all CMCs
+	void IMUCompensation();
 	void CMCDefaults(bool IsC108 = false);
 
 	//Colossus
@@ -252,6 +253,10 @@ protected:
 	void Luminary099_116_Defaults();
 	void DescentConstants11_13();
 	void DescentConstants14_17();
+
+	void Skylark048Padload();
+	void SkylarkSolarEphemeris(double TC, double T0);
+	void SkylarkCorrectionMatrix(double TC, double T0);
 
 	//Block I
 	void BlockIDefaults();

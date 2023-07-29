@@ -178,3 +178,8 @@ inline MATRIX3 _MRz(double a)
 	double ca = cos(a), sa = sin(a);
 	return _M(ca, sa, 0, -sa, ca, 0, 0, 0, 1.0);
 }
+
+inline MATRIX3 MatrixRH_LH(MATRIX3 A)
+{
+	return _M(A.m11, A.m13, A.m12, A.m31, A.m33, A.m32, A.m21, A.m23, A.m22);
+}
