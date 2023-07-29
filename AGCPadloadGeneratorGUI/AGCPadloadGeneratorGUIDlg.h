@@ -35,6 +35,14 @@ protected:
 
 	void String2Text(std::string val, CEdit *ed);
 	void String2Text(std::string val, CComboBox *ed);
+
+	void UpdateRopeSpecificEditFields();
+
+	void Apollo13Padload();
+	void Apollo14Padload();
+	void Apollo15Padload();
+	void Apollo16Padload();
+	void Apollo17Padload();
 public:
 	CEdit LaunchMJDInput;
 	afx_msg void OnBnClickedOk();
@@ -67,4 +75,12 @@ public:
 	CEdit VMAXBox;
 	CEdit LATSPLBox;
 	CEdit LNGSPLBox;
+	CEdit CSMMASSBox;
+	CEdit LEMMASSBox;
+	CEdit PACTOFFBox;
+	CEdit YACTOFFBox;
+	CEdit LADPADBox;
+	CEdit LODPADBox;
+	CEdit ALFAPADBox;
+	CEdit P37RANGEBox;
 };

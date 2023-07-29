@@ -323,6 +323,18 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKII.TLAND = 0.0;
 	BLOCKII.LAT_SPL = 26.48; //Target for 72° azimuth
 	BLOCKII.LNG_SPL = -17.05;
+	BLOCKII.PACTOFF = 0.0;
+	BLOCKII.YACTOFF = 0.0;
+	BLOCKII.LADPAD = 0.3;
+	BLOCKII.LODPAD = 0.18;
+	BLOCKII.ALFAPAD = -20.0;
+	BLOCKII.P37RANGE = 0.0;
+	for (int i = 0; i < 7; i++)
+	{
+		BLOCKII.POLYNUM[i] = 0.0;
+	}
+	BLOCKII.RPSTART = 0.0;
+	BLOCKII.POLYSTOP = 0.0;
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -414,9 +426,16 @@ void AGCPadloadGenerator::RunLGC()
 			Luminary131Padload();
 		}
 	}
-	else if (RopeName == "Luminary178")
+	else if (RopeName == "Luminary178" || RopeName == "Zerlina56")
 	{
-		Luminary178Padload();
+		if (RopeName == "Luminary178")
+		{
+			Luminary178Padload();
+		}
+		else
+		{
+			Zerlina56Padload();
+		}
 
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 40768.0;
@@ -551,7 +570,7 @@ void AGCPadloadGenerator::RunCMC()
 	double AGCEphemTEphemZero;
 	int Epoch;
 
-	if (RopeName == "Colossus237" || RopeName == "Colossus249")
+	if (RopeName == "Colossus237" || RopeName == "Colossus249" || RopeName == "Comanche045")
 	{
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 40038.0;
@@ -561,12 +580,16 @@ void AGCPadloadGenerator::RunCMC()
 		{
 			Colossus237_249_Defaults(false);
 		}
-		else
+		else if (RopeName == "Colossus249")
 		{
 			Colossus237_249_Defaults(true);
 		}
+		else
+		{
+			Comanche45Padload(true);
+		}
 	}
-	else if (RopeName == "Comanche055" || RopeName == "Comanche067")
+	else if (RopeName == "Comanche055" || RopeName == "Comanche067" || RopeName == "Comanche072")
 	{
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 40403.0;
@@ -574,24 +597,35 @@ void AGCPadloadGenerator::RunCMC()
 
 		if (RopeName == "Comanche055")
 		{
-			Comanche55Defaults();
+			Comanche55Padload();
+		}
+		else if (RopeName == "Comanche067")
+		{
+			Comanche67Padload();
 		}
 		else
 		{
-			Comanche67Defaults();
+			Comanche72Padload();
 		}
 	}
-	else if (RopeName == "Artemis072NBY71")
+	else if (RopeName == "Artemis072NBY71" || RopeName == "Comanche108")
 	{
-		ArtemisDefaults();
-
+		if (RopeName == "Comanche108")
+		{
+			Comanche108Padload();
+		}
+		else
+		{
+			Artemis72Padload(); //Artemis072NBY71, but it's the same
+		}
+		
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 40768.0;
 		Epoch = 1971;
 	}
 	else
 	{
-		ArtemisDefaults();
+		Artemis72Padload();
 
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 41133.0;
@@ -2161,6 +2195,11 @@ void AGCPadloadGenerator::Luminary178Padload()
 	SaveEMEM(03756, iTemp);
 }
 
+void AGCPadloadGenerator::Zerlina56Padload()
+{
+
+}
+
 void AGCPadloadGenerator::Luminary210Padload()
 {
 	LGCDefaults();
@@ -2659,7 +2698,7 @@ void AGCPadloadGenerator::DescentConstants14_17()
 	SaveEMEM(03432, 0);
 }
 
-void AGCPadloadGenerator::CMCDefaults()
+void AGCPadloadGenerator::CMCDefaults(bool IsC108)
 {
 	//Contains padloads that never change their address in all of Colossus
 
@@ -2670,7 +2709,45 @@ void AGCPadloadGenerator::CMCDefaults()
 	//after receiving an optics mark button input. If the cell is zero
 	//or negative, the delay is 0.01 second.
 	iTemp = SingleToBuffer(CDUCHKWD * 100.0, 14);
-	SaveEMEM(01341, iTemp);
+	if (IsC108)
+	{
+		SaveEMEM(01346, iTemp);
+	}
+	else
+	{
+		SaveEMEM(01341, iTemp);
+	}
+
+	//PBIASX
+	SaveEMEM(01452, 0);
+	//PIPASCFX
+	SaveEMEM(01453, 0);
+	//PBIASY
+	SaveEMEM(01454, 0);
+	//PIPASCFY
+	SaveEMEM(01455, 0);
+	//PBIASZ
+	SaveEMEM(01456, 0);
+	//PIPASCFZ
+	SaveEMEM(01457, 0);
+	//NBDX
+	SaveEMEM(01460, 0);
+	//NBDY
+	SaveEMEM(01461, 0);
+	//NBDZ
+	SaveEMEM(01462, 0);
+	//ADIAX
+	SaveEMEM(01463, 0);
+	//ADIAY
+	SaveEMEM(01464, 0);
+	//ADIAZ
+	SaveEMEM(01465, 0);
+	//ADSRAX
+	SaveEMEM(01466, 0);
+	//ADSRAY
+	SaveEMEM(01467, 0);
+	//ADSRAZ
+	SaveEMEM(01470, 0);
 
 	//WRENDPOS
 	iTemp = SingleToBuffer(BLOCKII.WRENDPOS, 19);
@@ -2909,9 +2986,11 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 	SaveEMEM(03067, 01111);
 
 	//LEMMASS
-	SaveEMEM(03073, 0);
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
 	//CSMMASS
-	SaveEMEM(03074, 016024);
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03074, iTemp);
 
 	//POLYNUM
 	SaveEMEM(03261, 05);
@@ -2946,7 +3025,199 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 	SaveEMEM(03424, 010000);
 }
 
-void AGCPadloadGenerator::Comanche55Defaults()
+void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
+{
+	CMCDefaults();
+
+	//FLAGWRD1
+	SaveEMEM(075, 0);
+	//FLAGWRD3
+	SaveEMEM(077, 0);
+	//FLAGWRD8
+	SaveEMEM(0104, 0);
+	//EMDOT
+	dTemp = SPS_THRUST / SPS_ISP;
+	iTemp = SingleToBuffer(dTemp / 100.0, 3);
+	SaveEMEM(0110, iTemp);
+	//DUMPCNT
+	SaveEMEM(0333, 010000);
+	//PIPTIME
+	double PIPTIME = (LaunchMJD - PrelaunchMJD)*8.64e6;
+	DoubleToBuffer(PIPTIME, 28, iTemp, iTemp2);
+	SaveEMEM(01204, iTemp);
+	SaveEMEM(01205, iTemp2);
+	//PADLONG
+	dTemp = PadLong / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01263, iTemp);
+	SaveEMEM(01264, iTemp2);
+	//PGNCSALT
+	dTemp = PadAlt;
+	DoubleToBuffer(dTemp, 29, iTemp, iTemp2);
+	SaveEMEM(01272, iTemp);
+	SaveEMEM(01273, iTemp2);
+
+	//RTED1
+	DoubleToBuffer(RTED1, 3, iTemp, iTemp2);
+	SaveEMEM(01351, iTemp);
+	SaveEMEM(01352, iTemp2);
+
+	//DVTHRESH
+	iTemp = SingleToBuffer(DVTHRESH / 100.0, -2);
+	SaveEMEM(01353, iTemp);
+
+	//HORIZALT
+	DoubleToBuffer(HORIZALT, 29, iTemp, iTemp2);
+	SaveEMEM(01354, iTemp);
+	SaveEMEM(01355, iTemp2);
+	//ALTVAR
+	iTemp = SingleToBuffer(ALTVAR, -16);
+	SaveEMEM(01356, iTemp);
+
+	//GCOMPSW
+	SaveEMEM(01477, 0);
+
+	//EK1VAL
+	SaveEMEM(01767, 01);
+	SaveEMEM(01770, 030000);
+	//FANG
+	SaveEMEM(01771, 02200);
+	SaveEMEM(01772, 015070);
+
+	if (IsR2)
+	{
+		//E3J22R3M
+		SaveEMEM(01773, 0);
+		//E32C3IRM
+		SaveEMEM(01774, 0);
+	}
+
+	//LAUNCHAZ
+	dTemp = LaunchAzimuth / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(02633, iTemp);
+	SaveEMEM(02634, iTemp2);
+
+	//LADPAD
+	dTemp = 0.27;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03007, iTemp);
+	//LODPAD
+	dTemp = 0.207;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03010, iTemp);
+	//ALFAPAD
+	dTemp = -19.55 / 360.0;
+	iTemp = SingleToBuffer(dTemp, -1);
+	SaveEMEM(03011, iTemp);
+
+	//ETDECAY
+	dTemp = 0.6*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03012, iTemp);
+	//ESTROKER
+	SaveEMEM(03013, 05);
+	//EKPRIME
+	SaveEMEM(03014, 0123);
+	SaveEMEM(03015, 0175);
+
+	//EKTLX
+	SaveEMEM(03016, 037065);
+	SaveEMEM(03017, 02245);
+	SaveEMEM(03020, 0156);
+	//EREPFRAC
+	SaveEMEM(03021, 01000);
+	SaveEMEM(03022, 0232);
+	//PACTOFF
+	iTemp = SingleToBuffer(BLOCKII.PACTOFF / 0.023725, 14);
+	SaveEMEM(03023, iTemp);
+	//YACTOFF
+	iTemp = SingleToBuffer(BLOCKII.YACTOFF / 0.023725, 14);
+	SaveEMEM(03024, iTemp);
+	//HBN10
+	SaveEMEM(03025, 037777);
+	//HBN11/2
+	SaveEMEM(03026, 0);
+	//HBN12
+	SaveEMEM(03027, 0);
+	//HBD11/2
+	SaveEMEM(03030, 054360);
+	//HBD12
+	SaveEMEM(03031, 021075);
+	//HBN20
+	SaveEMEM(03032, 037777);
+	//HBN21/2
+	SaveEMEM(03033, 060465);
+	//HBN22
+	SaveEMEM(03034, 0);
+	//HBD21/2
+	SaveEMEM(03035, 054360);
+	//HBD22
+	SaveEMEM(03036, 021075);
+	//HBN30
+	SaveEMEM(03037, 037777);
+	//HBN31/2
+	SaveEMEM(03040, 057142);
+	//HBN32
+	SaveEMEM(03041, 033106);
+	//HBD31/2
+	SaveEMEM(03042, 050741);
+	//HBD32
+	SaveEMEM(03043, 031162);
+	//DAPDATR1
+	SaveEMEM(03066, 031102);
+	//DAPDATR2
+	SaveEMEM(03067, 01111);
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03074, iTemp);
+	//POLYNUM
+	SaveEMEM(03261, 05);
+	SaveEMEM(03262, 0);
+	SaveEMEM(03263, 014107);
+	SaveEMEM(03264, 010);
+	SaveEMEM(03265, 024775);
+	SaveEMEM(03266, 0536);
+	SaveEMEM(03267, 010550);
+	SaveEMEM(03270, 0746);
+	SaveEMEM(03271, 027545);
+	SaveEMEM(03272, 072636);
+	SaveEMEM(03273, 060425);
+	SaveEMEM(03274, 05754);
+	SaveEMEM(03275, 036030);
+	SaveEMEM(03276, 075607);
+	SaveEMEM(03277, 053465);
+	//SATRLRT
+	SaveEMEM(03300, 0);
+	SaveEMEM(03301, 016441);
+	//RPSTART
+	dTemp = 11.85*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03302, iTemp);
+	//RPSTOP
+	dTemp = -147.25*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03303, iTemp);
+	//SATRATE
+	SaveEMEM(03321, 0);
+	SaveEMEM(03322, 0344);
+	SaveEMEM(03323, 077433);
+	SaveEMEM(03324, 0);
+	//SATSCALE
+	SaveEMEM(03331, 010000); //0.3 V/DEG
+	//P37RANGE
+	dTemp = BLOCKII.P37RANGE / 21600.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03376, iTemp);
+
+	//ECSTEER
+	SaveEMEM(03424, 010000);
+}
+
+void AGCPadloadGenerator::Comanche55Padload()
 {
 	CMCDefaults();
 
@@ -3051,9 +3322,11 @@ void AGCPadloadGenerator::Comanche55Defaults()
 	SaveEMEM(03021, 01000);
 	SaveEMEM(03022, 0232);
 	//PACTOFF
-	SaveEMEM(03023, 077676);
+	iTemp = SingleToBuffer(BLOCKII.PACTOFF / 0.023725, 14);
+	SaveEMEM(03023, iTemp);
 	//YACTOFF
-	SaveEMEM(03024, 070);
+	iTemp = SingleToBuffer(BLOCKII.YACTOFF / 0.023725, 14);
+	SaveEMEM(03024, iTemp);
 	//HBN10
 	SaveEMEM(03025, 037777);
 	//HBN11/2
@@ -3088,11 +3361,12 @@ void AGCPadloadGenerator::Comanche55Defaults()
 	SaveEMEM(03066, 031102);
 	//DAPDATR2
 	SaveEMEM(03067, 01111);
-
 	//LEMMASS
-	SaveEMEM(03073, 07275);
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
 	//CSMMASS
-	SaveEMEM(03074, 016024);
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03074, iTemp);
 	//POLYNUM
 	SaveEMEM(03261, 05);
 	SaveEMEM(03262, 0);
@@ -3128,13 +3402,15 @@ void AGCPadloadGenerator::Comanche55Defaults()
 	//SATSCALE
 	SaveEMEM(03331, 010000); //0.3 V/DEG
 	//P37RANGE
-	SaveEMEM(03376, 01637);
+	dTemp = BLOCKII.P37RANGE / 21600.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03376, iTemp);
 
 	//ECSTEER
 	SaveEMEM(03424, 010000);
 }
 
-void AGCPadloadGenerator::Comanche67Defaults()
+void AGCPadloadGenerator::Comanche67Padload()
 {
 	CMCDefaults();
 
@@ -3238,9 +3514,11 @@ void AGCPadloadGenerator::Comanche67Defaults()
 	SaveEMEM(03021, 01000);
 	SaveEMEM(03022, 0232);
 	//PACTOFF
-	SaveEMEM(03023, 077676);
+	iTemp = SingleToBuffer(BLOCKII.PACTOFF / 0.023725, 14);
+	SaveEMEM(03023, iTemp);
 	//YACTOFF
-	SaveEMEM(03024, 070);
+	iTemp = SingleToBuffer(BLOCKII.YACTOFF / 0.023725, 14);
+	SaveEMEM(03024, iTemp);
 	//HBN10
 	SaveEMEM(03025, 037777);
 	//HBN11/2
@@ -3275,11 +3553,12 @@ void AGCPadloadGenerator::Comanche67Defaults()
 	SaveEMEM(03066, 031102);
 	//DAPDATR2
 	SaveEMEM(03067, 01111);
-
 	//LEMMASS
-	SaveEMEM(03073, 07336);
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
 	//CSMMASS
-	SaveEMEM(03074, 016036);
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03074, iTemp);
 	//POLYNUM
 	SaveEMEM(03261, 05);
 	SaveEMEM(03262, 0);
@@ -3315,7 +3594,9 @@ void AGCPadloadGenerator::Comanche67Defaults()
 	//SATSCALE
 	SaveEMEM(03331, 010000); //0.3 V/DEG
 	//P37RANGE
-	SaveEMEM(03376, 01623);
+	dTemp = BLOCKII.P37RANGE / 21600.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03376, iTemp);
 
 	//ECSTEER
 	SaveEMEM(03424, 010000);
@@ -3377,7 +3658,435 @@ void AGCPadloadGenerator::Comanche67Defaults()
 	SaveEMEM(03576, 01537);
 }
 
-void AGCPadloadGenerator::ArtemisDefaults()
+void AGCPadloadGenerator::Comanche72Padload()
+{
+	CMCDefaults();
+
+	//FLAGWRD1
+	SaveEMEM(075, 0);
+	//FLAGWRD3
+	SaveEMEM(077, 0);
+	//FLAGWRD8
+	//Bit 8 set: SURFFLAG. LM on lunar surface
+	SaveEMEM(0104, 0200);
+	//EMDOT
+	dTemp = SPS_THRUST / SPS_ISP;
+	iTemp = SingleToBuffer(dTemp / 100.0, 3);
+	SaveEMEM(0110, iTemp);
+	//PIPTIME
+	double PIPTIME = (LaunchMJD - PrelaunchMJD)*8.64e6;
+	DoubleToBuffer(PIPTIME, 28, iTemp, iTemp2);
+	SaveEMEM(01204, iTemp);
+	SaveEMEM(01205, iTemp2);
+	//PADLONG
+	dTemp = PadLong / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01263, iTemp);
+	SaveEMEM(01264, iTemp2);
+	//PGNCSALT
+	dTemp = PadAlt;
+	DoubleToBuffer(dTemp, 29, iTemp, iTemp2);
+	SaveEMEM(01272, iTemp);
+	SaveEMEM(01273, iTemp2);
+	//RTED1. First coefficient defining high speed V-gamma target line polynomial
+	DoubleToBuffer(RTED1, 3, iTemp, iTemp2);
+	SaveEMEM(01345, iTemp);
+	SaveEMEM(01346, iTemp2);
+	//DVTHRESH
+	iTemp = SingleToBuffer(DVTHRESH / 100.0, -2);
+	SaveEMEM(01347, iTemp);
+	//HORIZALT
+	DoubleToBuffer(HORIZALT, 29, iTemp, iTemp2);
+	SaveEMEM(01350, iTemp);
+	SaveEMEM(01351, iTemp2);
+	//ALTVAR
+	iTemp = SingleToBuffer(ALTVAR, -16);
+	SaveEMEM(01352, iTemp);
+	//EK1VAL
+	SaveEMEM(01767, 01);
+	SaveEMEM(01770, 024315);
+	//EK2VAL
+	SaveEMEM(01771, 0);
+	SaveEMEM(01772, 022274);
+	//EK3VAL
+	SaveEMEM(01773, 0552);
+	//FANG
+	SaveEMEM(01774, 02210);
+	SaveEMEM(01775, 025231);
+	//E3J22R3M
+	SaveEMEM(01776, 0);
+	//E32C3IRM
+	SaveEMEM(01777, 0);
+
+	//LAUNCHAZ
+	dTemp = LaunchAzimuth / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(02633, iTemp);
+	SaveEMEM(02634, iTemp2);
+
+	//LADPAD
+	dTemp = 0.3;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03007, iTemp);
+	//LODPAD
+	dTemp = 0.18;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03010, iTemp);
+	//ALFAPAD
+	dTemp = -21.49 / 360.0;
+	iTemp = SingleToBuffer(dTemp, -1);
+	SaveEMEM(03011, iTemp);
+	//ETDECAY
+	dTemp = 0.6*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03012, iTemp);
+	//ESTROKER
+	SaveEMEM(03013, 05);
+	//EKPRIME
+	SaveEMEM(03014, 0123);
+	SaveEMEM(03015, 0175);
+	//EKTLX
+	SaveEMEM(03016, 017433);
+	SaveEMEM(03017, 04500);
+	SaveEMEM(03020, 0334);
+	//EREPFRAC
+	SaveEMEM(03021, 01000);
+	SaveEMEM(03022, 0232);
+	//PACTOFF
+	iTemp = SingleToBuffer(BLOCKII.PACTOFF / 0.023725, 14);
+	SaveEMEM(03023, iTemp);
+	//YACTOFF
+	iTemp = SingleToBuffer(BLOCKII.YACTOFF / 0.023725, 14);
+	SaveEMEM(03024, iTemp);
+	//HBN10
+	SaveEMEM(03025, 037777);
+	//HBN11/2
+	SaveEMEM(03026, 0);
+	//HBN12
+	SaveEMEM(03027, 0);
+	//HBD11/2
+	SaveEMEM(03030, 054360);
+	//HBD12
+	SaveEMEM(03031, 021075);
+	//HBN20
+	SaveEMEM(03032, 037777);
+	//HBN21/2
+	SaveEMEM(03033, 060465);
+	//HBN22
+	SaveEMEM(03034, 0);
+	//HBD21/2
+	SaveEMEM(03035, 054360);
+	//HBD22
+	SaveEMEM(03036, 021075);
+	//HBN30
+	SaveEMEM(03037, 037777);
+	//HBN31/2
+	SaveEMEM(03040, 057142);
+	//HBN32
+	SaveEMEM(03041, 033106);
+	//HBD31/2
+	SaveEMEM(03042, 050741);
+	//HBD32
+	SaveEMEM(03043, 031162);
+	//DAPDATR1
+	SaveEMEM(03066, 031102);
+	//DAPDATR2
+	SaveEMEM(03067, 01111);
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03074, iTemp);
+	//POLYNUM
+	SaveEMEM(03261, 05);
+	SaveEMEM(03262, 077777);
+	SaveEMEM(03263, 074411);
+	SaveEMEM(03264, 051);
+	SaveEMEM(03265, 036055);
+	SaveEMEM(03266, 0543);
+	SaveEMEM(03267, 0222);
+	SaveEMEM(03270, 076132);
+	SaveEMEM(03271, 057562);
+	SaveEMEM(03272, 04121);
+	SaveEMEM(03273, 033143);
+	SaveEMEM(03274, 072576);
+	SaveEMEM(03275, 053233);
+	SaveEMEM(03276, 02272);
+	SaveEMEM(03277, 037152);
+	//SATRLRT
+	SaveEMEM(03300, 0);
+	SaveEMEM(03301, 016441);
+	//RPSTART
+	dTemp = 11.85*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03302, iTemp);
+	//RPSTOP
+	dTemp = -149.5*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03303, iTemp);
+	//SATRATE
+	SaveEMEM(03321, 0);
+	SaveEMEM(03322, 0344);
+	SaveEMEM(03323, 077433);
+	SaveEMEM(03324, 0);
+	//SATSCALE
+	SaveEMEM(03331, 010000); //0.3 V/DEG
+	//P37RANGE
+	dTemp = BLOCKII.P37RANGE / 21600.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03376, iTemp);
+	//ECSTEER
+	SaveEMEM(03424, 010000);
+
+	//TB6JOB
+	SaveEMEM(03513, 04);
+	SaveEMEM(03514, 06);
+	SaveEMEM(03515, 031413);
+	SaveEMEM(03516, 053140);
+	SaveEMEM(03517, 06);
+	SaveEMEM(03520, 040025);
+	SaveEMEM(03521, 021140);
+	SaveEMEM(03522, 05357);
+	SaveEMEM(03523, 01550);
+	SaveEMEM(03524, 010067);
+	SaveEMEM(03525, 011573);
+	SaveEMEM(03526, 04106);
+
+	SaveEMEM(03527, 035055);
+	SaveEMEM(03530, 05251);
+	SaveEMEM(03531, 01543);
+	SaveEMEM(03532, 06);
+	SaveEMEM(03533, 041413);
+	SaveEMEM(03534, 053046);
+	SaveEMEM(03535, 01574);
+	SaveEMEM(03537, 021046);
+	SaveEMEM(03540, 033300);
+	SaveEMEM(03541, 04676);
+	SaveEMEM(03542, 020707);
+	SaveEMEM(03543, 037663);
+	SaveEMEM(03544, 05150);
+
+	SaveEMEM(03545, 01525);
+	SaveEMEM(03546, 010067);
+	SaveEMEM(03547, 05340);
+	SaveEMEM(03550, 035017);
+	SaveEMEM(03551, 06);
+	SaveEMEM(03552, 05012);
+	SaveEMEM(03553, 035031);
+	SaveEMEM(03554, 06);
+	SaveEMEM(03555, 05011);
+	SaveEMEM(03556, 06);
+	SaveEMEM(03557, 030025);
+	SaveEMEM(03560, 053337);
+	SaveEMEM(03561, 05303);
+
+	SaveEMEM(03562, 01750);
+	SaveEMEM(03563, 045017);
+	SaveEMEM(03564, 06);
+	SaveEMEM(03565, 03012);
+	SaveEMEM(03566, 045031);
+	SaveEMEM(03567, 06);
+	SaveEMEM(03570, 03011);
+	SaveEMEM(03571, 025573);
+	SaveEMEM(03572, 05340);
+	SaveEMEM(03573, 0);
+	SaveEMEM(03574, 06);
+	SaveEMEM(03575, 030025);
+	SaveEMEM(03576, 01537);
+}
+
+void AGCPadloadGenerator::Comanche108Padload()
+{
+	CMCDefaults(true);
+
+	//FLAGWRD1
+	SaveEMEM(075, 0);
+	//FLAGWRD3
+	SaveEMEM(077, 0);
+	//FLAGWRD8
+	//Bit 8 set: SURFFLAG. LM on lunar surface
+	SaveEMEM(0104, 0200);
+	//FLAGWRD9
+	//Bit 3 set: MID1FLAG. Integrate to TDEC
+	SaveEMEM(0105, 04);
+	//NO.PASS. Number of passes of P24 before landmark coordinate update.
+	SaveEMEM(0736, 037777);
+	//PIPTIME
+	double PIPTIME = (LaunchMJD - PrelaunchMJD)*8.64e6;
+	DoubleToBuffer(PIPTIME, 28, iTemp, iTemp2);
+	SaveEMEM(01041, iTemp);
+	SaveEMEM(01042, iTemp2);
+	//PGNCSALT
+	dTemp = PadAlt;
+	DoubleToBuffer(dTemp, 29, iTemp, iTemp2);
+	SaveEMEM(01133, iTemp);
+	SaveEMEM(01134, iTemp2);
+	//PADLONG
+	dTemp = PadLong / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01135, iTemp);
+	SaveEMEM(01136, iTemp2);
+	//RTED1. First coefficient defining high speed V-gamma target line polynomial
+	DoubleToBuffer(RTED1, 3, iTemp, iTemp2);
+	SaveEMEM(01347, iTemp);
+	SaveEMEM(01350, iTemp2);
+	//DVTHRESH
+	iTemp = SingleToBuffer(DVTHRESH / 100.0, -2);
+	SaveEMEM(01351, iTemp);
+	//Horizalt
+	DoubleToBuffer(HORIZALT, 29, iTemp, iTemp2);
+	SaveEMEM(01352, iTemp);
+	SaveEMEM(01353, iTemp2);
+	//ALTVAR
+	iTemp = SingleToBuffer(ALTVAR, -16);
+	SaveEMEM(01354, iTemp);
+	//EMDOT
+	dTemp = SPS_THRUST / SPS_ISP;
+	iTemp = SingleToBuffer(dTemp / 100.0, 3);
+	SaveEMEM(01355, iTemp);
+	//EK1VAL
+	SaveEMEM(01765, 01);
+	SaveEMEM(01766, 027404);
+	//EK2VAL
+	SaveEMEM(01767, 0);
+	SaveEMEM(01770, 015514);
+	//EK3VAL
+	SaveEMEM(01771, 0542);
+	//FANG
+	SaveEMEM(01772, 02210);
+	SaveEMEM(01773, 036321);
+	//E3J22R3M
+	SaveEMEM(01774, 0);
+	//E32C3IRM
+	SaveEMEM(01775, 0);
+	//TRUNSF
+	SaveEMEM(01776, 0233);
+	//SHAFTSF
+	SaveEMEM(01777, 0502);
+
+	//LAUNCHAZ
+	dTemp = LaunchAzimuth / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(02633, iTemp);
+	SaveEMEM(02634, iTemp2);
+
+	//LADPAD
+	dTemp = 0.27;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03007, iTemp);
+	//LODPAD
+	dTemp = 0.207;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03010, iTemp);
+	//ALFAPAD
+	dTemp = -19.06 / 360.0;
+	iTemp = SingleToBuffer(dTemp, -1);
+	SaveEMEM(03011, iTemp);
+	//P37RANGE
+	dTemp = BLOCKII.P37RANGE / 21600.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03012, iTemp);
+	//ETDECAY
+	dTemp = 0.6*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03013, iTemp);
+	//EKPRIME
+	SaveEMEM(03014, 0123);
+	SaveEMEM(03015, 0175);
+	//EKTLX
+	SaveEMEM(03016, 017433);
+	SaveEMEM(03017, 04500);
+	SaveEMEM(03020, 0334);
+	//EREPFRAC
+	SaveEMEM(03021, 01000);
+	SaveEMEM(03022, 0232);
+	//PACTOFF
+	iTemp = SingleToBuffer(BLOCKII.PACTOFF / 0.023725, 14);
+	SaveEMEM(03023, iTemp);
+	//YACTOFF
+	iTemp = SingleToBuffer(BLOCKII.YACTOFF / 0.023725, 14);
+	SaveEMEM(03024, iTemp);
+	//HBN10
+	SaveEMEM(03025, 037777);
+	//HBN11/2
+	SaveEMEM(03026, 0);
+	//HBN12
+	SaveEMEM(03027, 0);
+	//HBD11/2
+	SaveEMEM(03030, 054360);
+	//HBD12
+	SaveEMEM(03031, 021075);
+	//HBN20
+	SaveEMEM(03032, 037777);
+	//HBN21/2
+	SaveEMEM(03033, 060465);
+	//HBN22
+	SaveEMEM(03034, 0);
+	//HBD21/2
+	SaveEMEM(03035, 054360);
+	//HBD22
+	SaveEMEM(03036, 021075);
+	//HBN30
+	SaveEMEM(03037, 037777);
+	//HBN31/2
+	SaveEMEM(03040, 057142);
+	//HBN32
+	SaveEMEM(03041, 033106);
+	//HBD31/2
+	SaveEMEM(03042, 050741);
+	//HBD32
+	SaveEMEM(03043, 031162);
+	//DAPDATR1
+	SaveEMEM(03065, 031102);
+	//DAPDATR2
+	SaveEMEM(03066, 01111);
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03074, iTemp);
+	//POLYNUM
+	SaveEMEM(03261, 05);
+	SaveEMEM(03262, 0);
+	SaveEMEM(03263, 06312);
+	SaveEMEM(03264, 065);
+	SaveEMEM(03265, 012415);
+	SaveEMEM(03266, 0250);
+	SaveEMEM(03267, 027364);
+	SaveEMEM(03270, 0104);
+	SaveEMEM(03271, 031224);
+	SaveEMEM(03272, 077547);
+	SaveEMEM(03273, 050115);
+	SaveEMEM(03274, 077163);
+	SaveEMEM(03275, 074065);
+	SaveEMEM(03276, 0556);
+	SaveEMEM(03277, 032274);
+	//SATRLRT
+	SaveEMEM(03300, 0);
+	SaveEMEM(03301, 016441);
+	//RPSTART
+	dTemp = 12.6*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03302, iTemp);
+	//RPSTOP
+	dTemp = -150.0*100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(03303, iTemp);
+	//SATRATE
+	SaveEMEM(03321, 0);
+	SaveEMEM(03322, 0344);
+	SaveEMEM(03323, 077433);
+	SaveEMEM(03324, 0);
+	//SATSCALE
+	SaveEMEM(03331, 010000); //0.3 V/DEG
+	//HORISLP
+	SaveEMEM(03376, 0);
+	SaveEMEM(03377, 0);
+}
+
+void AGCPadloadGenerator::Artemis72Padload()
 {
 	CMCDefaults();
 
@@ -3492,19 +4201,21 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	SaveEMEM(02634, iTemp2);
 
 	//LADPAD
-	dTemp = 0.27;
+	dTemp = BLOCKII.LADPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
 	SaveEMEM(03007, iTemp);
 	//LODPAD
-	dTemp = 0.207;
+	dTemp = BLOCKII.LODPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
 	SaveEMEM(03010, iTemp);
 	//ALFAPAD
-	dTemp = -18.51 / 360.0;
+	dTemp = BLOCKII.ALFAPAD / 360.0;
 	iTemp = SingleToBuffer(dTemp, -1);
 	SaveEMEM(03011, iTemp);
 	//P37RANGE
-	SaveEMEM(03012, 01470);
+	dTemp = BLOCKII.P37RANGE / 21600.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03012, iTemp);
 	//ETDECAY
 	dTemp = 0.6*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
@@ -3520,9 +4231,11 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	SaveEMEM(03021, 01000);
 	SaveEMEM(03022, 0232);
 	//PACTOFF
-	SaveEMEM(03023, 077751);
+	iTemp = SingleToBuffer(BLOCKII.PACTOFF / 0.023725, 14);
+	SaveEMEM(03023, iTemp);
 	//YACTOFF
-	SaveEMEM(03024, 0120);
+	iTemp = SingleToBuffer(BLOCKII.YACTOFF / 0.023725, 14);
+	SaveEMEM(03024, iTemp);
 	//HBN10
 	SaveEMEM(03025, 037777);
 	//HBN11/2
@@ -3558,34 +4271,22 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	//DAPDATR2
 	SaveEMEM(03066, 01111);
 	//LEMMASS
-	SaveEMEM(03072, 010012);
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(03072, iTemp);
 	//CSMMASS
-	SaveEMEM(03073, 016641);
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(03073, iTemp);
 	//POLYNUM
-	SaveEMEM(03261, 05);
-	SaveEMEM(03262, 077777);
-	SaveEMEM(03263, 073525);
-	SaveEMEM(03264, 055);
-	SaveEMEM(03265, 032332);
-	SaveEMEM(03266, 0553);
-	SaveEMEM(03267, 010223);
-	SaveEMEM(03270, 076165);
-	SaveEMEM(03271, 043602);
-	SaveEMEM(03272, 03651);
-	SaveEMEM(03273, 07111);
-	SaveEMEM(03274, 073025);
-	SaveEMEM(03275, 040413);
-	SaveEMEM(03276, 02253);
-	SaveEMEM(03277, 033035);
+	SavePOLYNUM(03261);
 	//SATRLRT
 	SaveEMEM(03300, 0);
 	SaveEMEM(03301, 016441);
 	//RPSTART
-	dTemp = 11.85*100.0;
+	dTemp = BLOCKII.RPSTART*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
-	dTemp = -147.0*100.0;
+	//POLYSTOP
+	dTemp = -BLOCKII.POLYSTOP*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
 	//SATRATE
@@ -3598,6 +4299,40 @@ void AGCPadloadGenerator::ArtemisDefaults()
 	//HORISLP
 	SaveEMEM(03375, 0);
 	SaveEMEM(03376, 0);
+}
+
+void AGCPadloadGenerator::SavePOLYNUM(int address)
+{
+	//POLYNUM
+	SaveEMEM(address++, 05);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[0] / 360.0 / pow(100.0, 0), 5, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[1] / 360.0 / pow(100.0, 1), -9, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[2] / 360.0 / pow(100.0, 2), -23, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[3] / 360.0 / pow(100.0, 3), -37, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[4] / 360.0 / pow(100.0, 4), -51, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[5] / 360.0 / pow(100.0, 5), -65, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
+
+	DoubleToBuffer(BLOCKII.POLYNUM[6] / 360.0 / pow(100.0, 6), -79, iTemp, iTemp2);
+	SaveEMEM(address++, iTemp);
+	SaveEMEM(address++, iTemp2);
 }
 
 MATRIX3 AGCPadloadGenerator::SolariumEarthFixedToSM(double lat, double lng, double azi)

@@ -75,6 +75,18 @@ struct BlockIIData
 	double LAT_SPL;
 	//Entry target data for boost aborts, longitude, degrees
 	double LNG_SPL;
+	double PACTOFF;
+	double YACTOFF;
+	double LADPAD;
+	double LODPAD;
+	double ALFAPAD;
+	double P37RANGE;
+	//Pitch polynomial
+	double POLYNUM[7];
+	//Start of pitch polynomial in seconds since liftoff
+	double RPSTART;
+	//End of pitch polynomial in seconds since liftoff
+	double POLYSTOP;
 
 	//LGC Only
 	double WSHAFT;
@@ -211,15 +223,19 @@ protected:
 	void SetPadData(Launchpad pad);
 
 	//Same addresses for all CMCs
-	void CMCDefaults();
+	void CMCDefaults(bool IsC108 = false);
 
 	//Colossus
 	void Colossus237_249_Defaults(bool Is249);
 	//Comanche
-	void Comanche55Defaults();
-	void Comanche67Defaults();
+	void Comanche45Padload(bool IsR2);
+	void Comanche55Padload();
+	void Comanche67Padload();
+	void Comanche72Padload();
+	void Comanche108Padload();
 	//Artemis
-	void ArtemisDefaults();
+	void Artemis72Padload();
+	void SavePOLYNUM(int address);
 
 	//Same addresses for all LGCs
 	void LGCDefaults(bool mass = false);
@@ -230,6 +246,7 @@ protected:
 	void Luminary116Padload();
 	void Luminary131Padload();
 	void Luminary178Padload();
+	void Zerlina56Padload();
 	void Luminary210Padload();
 
 	void Luminary099_116_Defaults();

@@ -13,8 +13,10 @@
 #define CMC_COMANCE045 2
 #define CMC_COMANCE055 3
 #define CMC_COMANCE067 4
-#define CMC_ARTEMIS072NBY71 5
-#define CMC_ARTEMIS072 6
+#define CMC_COMANCE072 5
+#define CMC_COMANCE0108 6
+#define CMC_ARTEMIS072 7
+#define CMC_ARTEMIS072NBY71 8
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,6 +58,14 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT17, VMAXBox);
 	DDX_Control(pDX, IDC_EDIT18, LATSPLBox);
 	DDX_Control(pDX, IDC_EDIT19, LNGSPLBox);
+	DDX_Control(pDX, IDC_EDIT20, CSMMASSBox);
+	DDX_Control(pDX, IDC_EDIT21, LEMMASSBox);
+	DDX_Control(pDX, IDC_EDIT22, PACTOFFBox);
+	DDX_Control(pDX, IDC_EDIT52, YACTOFFBox);
+	DDX_Control(pDX, IDC_EDIT23, LADPADBox);
+	DDX_Control(pDX, IDC_EDIT24, LODPADBox);
+	DDX_Control(pDX, IDC_EDIT25, ALFAPADBox);
+	DDX_Control(pDX, IDC_EDIT26, P37RANGEBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -102,9 +112,13 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	RopeNameBox.AddString(L"Comanche045");
 	RopeNameBox.AddString(L"Comanche055");
 	RopeNameBox.AddString(L"Comanche067");
-	RopeNameBox.AddString(L"Artemis072NBY71");
+	RopeNameBox.AddString(L"Comanche072");
+	RopeNameBox.AddString(L"Comanche108");
 	RopeNameBox.AddString(L"Artemis072");
+	RopeNameBox.AddString(L"Artemis072NBY71");
 	RopeNameBox.SetCurSel(CMC_COMANCE055);
+
+	UpdateRopeSpecificEditFields();
 
 	MissionBox.AddString(L"Manual");
 	MissionBox.AddString(L"Apollo 7");
@@ -116,6 +130,8 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	MissionBox.AddString(L"Apollo 13");
 	MissionBox.AddString(L"Apollo 14");
 	MissionBox.AddString(L"Apollo 15");
+	MissionBox.AddString(L"Apollo 16");
+	MissionBox.AddString(L"Apollo 17");
 	MissionBox.SetCurSel(0);
 
 	TLANDBox.SetWindowText(L"4.5");
@@ -137,6 +153,14 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	VMAXBox.SetWindowText(L"2");
 	LATSPLBox.SetWindowText(L"26.48");
 	LNGSPLBox.SetWindowText(L"-17.05");
+	CSMMASSBox.SetWindowText(L"63386.7");
+	LEMMASSBox.SetWindowText(L"33275.6");
+	PACTOFFBox.SetWindowText(L"-1.541");
+	YACTOFFBox.SetWindowText(L"1.321");
+	LADPADBox.SetWindowText(L"0.3");
+	LODPADBox.SetWindowText(L"0.18");
+	ALFAPADBox.SetWindowText(L"-20.0");
+	P37RANGEBox.SetWindowText(L"0.0");
 
 	return TRUE;
 }
@@ -203,6 +227,14 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.BLOCKII.VMAX = Utilities::Text2Double(&VMAXBox);
 	agc.BLOCKII.LAT_SPL = Utilities::Text2Double(&LATSPLBox);
 	agc.BLOCKII.LNG_SPL = Utilities::Text2Double(&LNGSPLBox);
+	agc.BLOCKII.CSMMass = Utilities::Text2Double(&CSMMASSBox);
+	agc.BLOCKII.LMMass = Utilities::Text2Double(&LEMMASSBox);
+	agc.BLOCKII.PACTOFF = Utilities::Text2Double(&PACTOFFBox);
+	agc.BLOCKII.YACTOFF = Utilities::Text2Double(&YACTOFFBox);
+	agc.BLOCKII.LADPAD = Utilities::Text2Double(&LADPADBox);
+	agc.BLOCKII.LODPAD = Utilities::Text2Double(&LODPADBox);
+	agc.BLOCKII.ALFAPAD = Utilities::Text2Double(&ALFAPADBox);
+	agc.BLOCKII.P37RANGE = Utilities::Text2Double(&P37RANGEBox);
 
 	Launchpad.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -218,12 +250,13 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo1()
 {
 	Launchpad.GetLBText(Launchpad.GetCurSel(), LaunchPadValue);
-	UpdateData(FALSE);
+	//UpdateData(FALSE);
 }
 
 void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo2()
 {
-	UpdateData(FALSE);
+	UpdateRopeSpecificEditFields();
+	//UpdateData(FALSE);
 }
 
 void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
@@ -265,6 +298,15 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		WRENDVELBox.SetWindowText(L"1");
 		RMAXBox.SetWindowText(L"-1");
 		VMAXBox.SetWindowText(L"-1");
+		CSMMASSBox.SetWindowTextW(L"32816.3");
+		LEMMASSBox.SetWindowTextW(L"0.0");
+
+		//TBD
+		PACTOFFBox.SetWindowTextW(L"-1.541");
+		YACTOFFBox.SetWindowTextW(L"1.321");
+		LADPADBox.SetWindowTextW(L"0.27");
+		LODPADBox.SetWindowTextW(L"0.207");
+		ALFAPADBox.SetWindowTextW(L"-19.55");
 		break;
 	case 2: //Apollo 8
 		RopeNameBox.SetCurSel(CMC_COLOSSUS237);
@@ -281,6 +323,15 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALTVARBox.SetWindowText(L"1e-6");
 		WRENDPOSBox.SetWindowText(L"1000");
 		WRENDVELBox.SetWindowText(L"1");
+		CSMMASSBox.SetWindowTextW(L"64001.0");
+		LEMMASSBox.SetWindowTextW(L"0.0");
+
+		//TBD
+		PACTOFFBox.SetWindowTextW(L"-1.541");
+		YACTOFFBox.SetWindowTextW(L"1.321");
+		LADPADBox.SetWindowTextW(L"0.27");
+		LODPADBox.SetWindowTextW(L"0.207");
+		ALFAPADBox.SetWindowTextW(L"-19.55");
 		break;
 	case 3: //Apollo 9
 		RopeNameBox.SetCurSel(CMC_COLOSSUS249);
@@ -294,10 +345,38 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALTVARBox.SetWindowText(L"1e-6");
 		WRENDPOSBox.SetWindowText(L"1000");
 		WRENDVELBox.SetWindowText(L"1");
+		CSMMASSBox.SetWindowTextW(L"59183.0");
+		LEMMASSBox.SetWindowTextW(L"32000.0");
+
+		//TBD
+		PACTOFFBox.SetWindowTextW(L"-1.541");
+		YACTOFFBox.SetWindowTextW(L"1.321");
+		LADPADBox.SetWindowTextW(L"0.27");
+		LODPADBox.SetWindowTextW(L"0.207");
+		ALFAPADBox.SetWindowTextW(L"-19.55");
 		break;
 	case 4: //Apollo 10
+		RopeNameBox.SetCurSel(CMC_COMANCE045);
+		LaunchMJDInput.SetWindowTextW(L"40359.7006944");
+		Launchpad.SetCurSel(1); //LC-39A
+		RTEDBox.SetWindowTextW(L"1.6602637");
+		LSAltitudeBox.SetWindowTextW(L"-3073.26");
+		LSLatitudeBox.SetWindowTextW(L"0.71388");
+		LSLongitudeBox.SetWindowTextW(L"23.707773");
+		EMSAltBox.SetWindowTextW(L"294084.3");
+		LaunchAzimuthBox.SetWindowTextW(L"72.028");
 		HORIZALTBox.SetWindowTextW(L"24000");
 		ALTVARBox.SetWindowText(L"1.5258e-05");
+		CSMMASSBox.SetWindowTextW(L"63904.0");
+		LEMMASSBox.SetWindowTextW(L"31579.7");
+		PACTOFFBox.SetWindowTextW(L"-1.48");
+		YACTOFFBox.SetWindowTextW(L"1.35");
+
+		//TBD
+		LADPADBox.SetWindowTextW(L"0.27");
+		LODPADBox.SetWindowTextW(L"0.207");
+		ALFAPADBox.SetWindowTextW(L"-19.55");
+		P37RANGEBox.SetWindowTextW(L"1221.5");
 		break;
 	case 5: //Apollo 11
 		RopeNameBox.SetCurSel(CMC_COMANCE055);
@@ -312,6 +391,14 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		LaunchAzimuthBox.SetWindowTextW(L"72.05897");
 		HORIZALTBox.SetWindowTextW(L"24000");
 		ALTVARBox.SetWindowText(L"1.5258e-05");
+		CSMMASSBox.SetWindowTextW(L"63386.7");
+		LEMMASSBox.SetWindowTextW(L"33275.6");
+		PACTOFFBox.SetWindowTextW(L"-1.541");
+		YACTOFFBox.SetWindowTextW(L"1.321");
+		LADPADBox.SetWindowTextW(L"0.27");
+		LODPADBox.SetWindowTextW(L"0.207");
+		ALFAPADBox.SetWindowTextW(L"-19.55");
+		P37RANGEBox.SetWindowTextW(L"1221.5");
 		break;
 	case 6: //Apollo 12
 		RopeNameBox.SetCurSel(CMC_COMANCE067);
@@ -325,51 +412,35 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		EMSAltBox.SetWindowTextW(L"297431.0");
 		LaunchAzimuthBox.SetWindowTextW(L"72.029345");
 		HORIZALTBox.SetWindowTextW(L"24000");
+		CSMMASSBox.SetWindowTextW(L"63477.0");
+		LEMMASSBox.SetWindowTextW(L"33559.3");
+		PACTOFFBox.SetWindowTextW(L"-1.541");
+		YACTOFFBox.SetWindowTextW(L"1.321");
+		LADPADBox.SetWindowTextW(L"0.27");
+		LODPADBox.SetWindowTextW(L"0.207");
+		ALFAPADBox.SetWindowTextW(L"-20.5");
+		P37RANGEBox.SetWindowTextW(L"1205.8");
 		break;
 	case 7: //Apollo 13
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		HORIZALTBox.SetWindowTextW(L"24000");
+		Apollo13Padload();
 		break;
 	case 8: //Apollo 14
-		RopeNameBox.SetCurSel(CMC_ARTEMIS072NBY71);
-		EphemerisSpanBox.SetWindowTextW(L"14.5");
-		LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		LSAltitudeBox.SetWindowTextW(L"-1405.2");
-		LSLatitudeBox.SetWindowTextW(L"-3.67329493");
-		LSLongitudeBox.SetWindowTextW(L"-17.46428902");
-		EMSAltBox.SetWindowTextW(L"293597.2");
-		LaunchAzimuthBox.SetWindowTextW(L"72.066946");
-		HORIZALTBox.SetWindowTextW(L"28000");
+		Apollo14Padload();
 		break;
 	case 9: //Apollo 15
-		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
-		EphemerisSpanBox.SetWindowTextW(L"14.5");
-		LaunchMJDInput.SetWindowTextW(L"41158.565277778");
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		LSAltitudeBox.SetWindowTextW(L"-3550.284");
-		LSLatitudeBox.SetWindowTextW(L"26.074");
-		LSLongitudeBox.SetWindowTextW(L"3.654");
-		EMSAltBox.SetWindowTextW(L"297431.0");
-		LaunchAzimuthBox.SetWindowTextW(L"80.08868");
-		LATSPLBox.SetWindowText(L"20.3");
-		LNGSPLBox.SetWindowText(L"-19.5");
-		HORIZALTBox.SetWindowTextW(L"28000");
+		Apollo15Padload();
 		break;
 	case 10: //Apollo 16
-		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
-		HORIZALTBox.SetWindowTextW(L"28000");
+		Apollo16Padload();
 		break;
 	case 11: //Apollo 17
-		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
-		HORIZALTBox.SetWindowTextW(L"28000");
+		Apollo17Padload();
 		break;
 	default:
 		break;
 	}
+
+	UpdateRopeSpecificEditFields();
 }
 
 void CAGCPadloadGeneratorGUIDlg::String2Text(std::string val, CEdit *ed)
@@ -382,4 +453,187 @@ void CAGCPadloadGeneratorGUIDlg::String2Text(std::string val, CComboBox *ed)
 {
 	CString string(val.c_str());
 	ed->SetWindowText(string);
+}
+
+void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
+{
+	if (RopeNameBox.GetCurSel() <= CMC_COLOSSUS249)
+	{
+		P37RANGEBox.SetReadOnly(true);
+	}
+	else
+	{
+		P37RANGEBox.SetReadOnly(false);
+	}
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
+{
+	RopeNameBox.SetCurSel(CMC_COMANCE055);
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowText(L"40687.8006944444444");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSLatitudeBox.SetWindowText(L"-3.6686");
+	LSLongitudeBox.SetWindowText(L"-17.4842");
+	LSAltitudeBox.SetWindowText(L"-1405.0");
+	EMSAltBox.SetWindowTextW(L"290001.0");
+	LaunchAzimuthBox.SetWindowTextW(L"72.042916");
+	HORIZALTBox.SetWindowTextW(L"24000");
+	CSMMASSBox.SetWindowTextW(L"63678.1");
+	LEMMASSBox.SetWindowTextW(L"33420.9");
+	PACTOFFBox.SetWindowTextW(L"-1.517");
+	YACTOFFBox.SetWindowTextW(L"1.3158");
+	LADPADBox.SetWindowTextW(L"0.3");
+	LODPADBox.SetWindowTextW(L"0.18");
+	ALFAPADBox.SetWindowTextW(L"-21.49");
+	P37RANGEBox.SetWindowTextW(L"1185.64");
+
+	agc.BLOCKII.POLYNUM[0] = -7.646894e-2;
+	agc.BLOCKII.POLYNUM[1] = 1.79988e-1;
+	agc.BLOCKII.POLYNUM[2] = 9.298907e-4;
+	agc.BLOCKII.POLYNUM[3] = -1.49242e-4;
+	agc.BLOCKII.POLYNUM[4] = 2.078269e-6;
+	agc.BLOCKII.POLYNUM[5] = -1.601873e-8;
+	agc.BLOCKII.POLYNUM[6] = 4.401981e-11;
+	agc.BLOCKII.RPSTART = 11.85;
+	agc.BLOCKII.POLYSTOP = 149.5;
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo14Padload()
+{
+	RopeNameBox.SetCurSel(CMC_ARTEMIS072NBY71);
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-1405.2");
+	LSLatitudeBox.SetWindowTextW(L"-3.67329493");
+	LSLongitudeBox.SetWindowTextW(L"-17.46428902");
+	EMSAltBox.SetWindowTextW(L"293597.2");
+	LaunchAzimuthBox.SetWindowTextW(L"72.066946");
+	HORIZALTBox.SetWindowTextW(L"28000");
+	CSMMASSBox.SetWindowTextW(L"64457.1");
+	LEMMASSBox.SetWindowTextW(L"33678.4");
+	PACTOFFBox.SetWindowTextW(L"-1.416");
+	YACTOFFBox.SetWindowTextW(L"1.314");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-19.06");
+	P37RANGEBox.SetWindowTextW(L"1187.35");
+
+	agc.BLOCKII.POLYNUM[0] = 1.405176e-1;
+	agc.BLOCKII.POLYNUM[1] = 2.2886283e-1;
+	agc.BLOCKII.POLYNUM[2] = 4.4197154e-3;
+	agc.BLOCKII.POLYNUM[3] = 1.099765e-5;
+	agc.BLOCKII.POLYNUM[4] = -1.4904606e-7;
+	agc.BLOCKII.POLYNUM[5] = -2.3591821e-9;
+	agc.BLOCKII.POLYNUM[6] = 1.3334313e-11;
+	agc.BLOCKII.RPSTART = 12.6;
+	agc.BLOCKII.POLYSTOP = 150.0;
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo15Padload()
+{
+	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowTextW(L"41158.565277778");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-3550.0");
+	LSLatitudeBox.SetWindowTextW(L"26.07389");
+	LSLongitudeBox.SetWindowTextW(L"3.65389");
+	EMSAltBox.SetWindowTextW(L"300781.4");
+	LaunchAzimuthBox.SetWindowTextW(L"80.08868");
+	LATSPLBox.SetWindowText(L"20.3");
+	LNGSPLBox.SetWindowText(L"-19.5");
+	HORIZALTBox.SetWindowTextW(L"28000");
+	CSMMASSBox.SetWindowTextW(L"66915.2");
+	LEMMASSBox.SetWindowTextW(L"36206.2");
+	PACTOFFBox.SetWindowTextW(L"-0.524");
+	YACTOFFBox.SetWindowTextW(L"1.895");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-18.64");
+	P37RANGEBox.SetWindowTextW(L"1114.55");
+
+	agc.BLOCKII.POLYNUM[0] = 1.7813387e-1;
+	agc.BLOCKII.POLYNUM[1] = 1.8310605e-2;
+	agc.BLOCKII.POLYNUM[2] = 1.1728888e-2;
+	agc.BLOCKII.POLYNUM[3] = -1.1888579e-7;
+	agc.BLOCKII.POLYNUM[4] = -1.642047e-6;
+	agc.BLOCKII.POLYNUM[5] = 1.270428e-8;
+	agc.BLOCKII.POLYNUM[6] = -2.9239175e-11;
+	agc.BLOCKII.RPSTART = 10.97;
+	agc.BLOCKII.POLYSTOP = 144.25;
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo16Padload()
+{
+	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowTextW(L"41423.7458333333");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-260.0");
+	LSLatitudeBox.SetWindowTextW(L"-9.00028");
+	LSLongitudeBox.SetWindowTextW(L"15.516389");
+	EMSAltBox.SetWindowTextW(L"290000.1");
+	LaunchAzimuthBox.SetWindowTextW(L"72.03443909");
+	HORIZALTBox.SetWindowTextW(L"28000");
+	CSMMASSBox.SetWindowTextW(L"66887.6");
+	LEMMASSBox.SetWindowTextW(L"36208.3");
+	PACTOFFBox.SetWindowTextW(L"-0.527");
+	YACTOFFBox.SetWindowTextW(L"1.898");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-18.51");
+	P37RANGEBox.SetWindowTextW(L"1086.533");
+	LATSPLBox.SetWindowText(L"26.5");
+	LNGSPLBox.SetWindowText(L"-17.0");
+
+	agc.BLOCKII.POLYNUM[0] = -9.5207497e-2;
+	agc.BLOCKII.POLYNUM[1] = 1.9666296e-1;
+	agc.BLOCKII.POLYNUM[2] = 9.5150055e-3;
+	agc.BLOCKII.POLYNUM[3] = -1.4498524e-4;
+	agc.BLOCKII.POLYNUM[4] = 1.9137262e-6;
+	agc.BLOCKII.POLYNUM[5] = -1.5121426e-8;
+	agc.BLOCKII.POLYNUM[6] = 4.3469835e-11;
+	agc.BLOCKII.RPSTART = 11.85;
+	agc.BLOCKII.POLYSTOP = 147.0;
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo17Padload()
+{
+	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowTextW(L"41658.120138888");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-3606.0");
+	LSLatitudeBox.SetWindowTextW(L"20.164029");
+	LSLongitudeBox.SetWindowTextW(L"30.749532");
+	EMSAltBox.SetWindowTextW(L"290000.1");
+	LaunchAzimuthBox.SetWindowTextW(L"72.141393");
+	HORIZALTBox.SetWindowTextW(L"28000");
+	CSMMASSBox.SetWindowTextW(L"66893.4");
+	LEMMASSBox.SetWindowTextW(L"36255.4");
+	PACTOFFBox.SetWindowTextW(L"-0.578");
+	YACTOFFBox.SetWindowTextW(L"1.892");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-18.97");
+	P37RANGEBox.SetWindowTextW(L"1074.63");
+	LATSPLBox.SetWindowText(L"26.35");
+	LNGSPLBox.SetWindowText(L"-17.1");
+
+	agc.BLOCKII.POLYNUM[0] = -3.7352617e-1;
+	agc.BLOCKII.POLYNUM[1] = 2.4436145e-1;
+	agc.BLOCKII.POLYNUM[2] = 6.2373017e-3;
+	agc.BLOCKII.POLYNUM[3] = -9.0587464e-5;
+	agc.BLOCKII.POLYNUM[4] = 1.685017e-6;
+	agc.BLOCKII.POLYNUM[5] = -1.6095034e-8;
+	agc.BLOCKII.POLYNUM[6] = 4.9817897e-11;
+	agc.BLOCKII.RPSTART = 12.25;
+	agc.BLOCKII.POLYSTOP = 147.75;
 }
