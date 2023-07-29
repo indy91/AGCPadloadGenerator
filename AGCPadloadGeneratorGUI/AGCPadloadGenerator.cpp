@@ -2197,7 +2197,487 @@ void AGCPadloadGenerator::Luminary178Padload()
 
 void AGCPadloadGenerator::Zerlina56Padload()
 {
+	LGCDefaults();
 
+	//FLAGWRD3
+	SaveEMEM(077, 012000);
+	//FLAGWRD8
+	SaveEMEM(0104, 06000);
+	//FLAGWRD10
+	SaveEMEM(0106, 0);
+
+	//MASS
+	DoubleToBuffer(BLOCKII.TotalMass*LBS2KG, 16, iTemp, iTemp2);
+	SaveEMEM(01245, iTemp);
+	SaveEMEM(01246, 0);
+
+	//LRWH1
+	iTemp = SingleToBuffer(0.35, 0);
+	SaveEMEM(01315, iTemp);
+
+	//LEMMASS
+	iTemp = SingleToBuffer(BLOCKII.LMMass*LBS2KG, 16);
+	SaveEMEM(01326, iTemp);
+	//CSMMASS
+	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
+	SaveEMEM(01327, iTemp);
+
+	//E3J22R3M
+	SaveEMEM(01347, 0); //TBD: Not support by Orbiter gravity model
+	//E32C3IRM
+	SaveEMEM(01350, 0); //TBD: Not support by Orbiter gravity model
+
+	//ELBIAS
+	SaveEMEM(01353, 0);
+
+	//TOOFEW
+	SaveEMEM(01354, 03);
+
+	//TETCSM
+	SaveEMEM(01570, 037777);
+	SaveEMEM(01571, 037777);
+	//TETLEM
+	SaveEMEM(01642, 037777);
+	SaveEMEM(01643, 037777);
+
+	//REFSMMAT (Just a generic one)
+	SaveEMEM(01731, 067061);
+	SaveEMEM(01732, 060375);
+	SaveEMEM(01733, 064033);
+	SaveEMEM(01734, 051650);
+	SaveEMEM(01735, 072126);
+	SaveEMEM(01736, 045456);
+	SaveEMEM(01737, 02656);
+	SaveEMEM(01740, 014434);
+	SaveEMEM(01741, 067336);
+	SaveEMEM(01742, 043072);
+	SaveEMEM(01743, 015154);
+	SaveEMEM(01744, 015512);
+	SaveEMEM(01745, 063006);
+	SaveEMEM(01746, 064677);
+	SaveEMEM(01747, 06242);
+	SaveEMEM(01750, 0131);
+	SaveEMEM(01751, 06706);
+	SaveEMEM(01752, 020152);
+
+	//RANGEVAR
+	DoubleToBuffer(1.111111111e-5, -12, iTemp, iTemp2);
+	SaveEMEM(01766, iTemp);
+	SaveEMEM(01767, iTemp2);
+	//RATEVAR
+	DoubleToBuffer(1.877777778e-5, -12, iTemp, iTemp2);
+	SaveEMEM(01770, iTemp);
+	SaveEMEM(01771, iTemp2);
+	//RVARMIN
+	iTemp = SingleToBuffer(66.0, 12);
+	SaveEMEM(01772, iTemp);
+	//VVARMIN
+	iTemp = SingleToBuffer(1.7445e-6, -12);
+	SaveEMEM(01773, iTemp);
+
+	//WSURFPOS
+	SaveEMEM(02006, 0);
+	//WSURFVEL
+	SaveEMEM(02007, 0);
+
+	//SHAFTVAR
+	iTemp = SingleToBuffer(BLOCKII.SHAFTVAR*1e-6, -12);
+	SaveEMEM(02010, iTemp);
+	//TRUNVAR
+	iTemp = SingleToBuffer(BLOCKII.TRUNVAR*1e-6, -12);
+	SaveEMEM(02011, iTemp);
+
+	//RLS
+	RLS = r_from_latlong(LSLat*RAD, LSLng*RAD, LSAlt, BODY_MOON, 1);
+	DoubleToBuffer(RLS.x, 27, iTemp, iTemp2);
+	SaveEMEM(02020, iTemp);
+	SaveEMEM(02021, iTemp2);
+	DoubleToBuffer(RLS.y, 27, iTemp, iTemp2);
+	SaveEMEM(02022, iTemp);
+	SaveEMEM(02023, iTemp2);
+	DoubleToBuffer(RLS.z, 27, iTemp, iTemp2);
+	SaveEMEM(02024, iTemp);
+	SaveEMEM(02025, iTemp2);
+
+	//TLAND
+	DoubleToBuffer(BLOCKII.TLAND*3600.0*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(02026, iTemp);
+	SaveEMEM(02027, iTemp2);
+
+	//VELBIAS
+	DoubleToBuffer(2.5*0.3048 / 100.0, 6, iTemp, iTemp2);
+	SaveEMEM(02400, iTemp);
+	SaveEMEM(02401, iTemp2);
+
+	BLOCKII.RBRFG.x = -1773.725;
+	BLOCKII.RAPFG.x = 94.91910105;
+	BLOCKII.RBRFG.z = -14488.0269;
+	BLOCKII.RAPFG.z = -15.72079987;
+	BLOCKII.VBRFG.x = -168.1064567;
+	BLOCKII.VAPFG.x = 2.083579987;
+	BLOCKII.VBRFG.z = -77.6143668;
+	BLOCKII.VAPFG.z = 0.8303187992;
+	BLOCKII.ABRFG.x = -0.6472360236;
+	BLOCKII.AAPFG.x = 0.5402850066;
+	BLOCKII.ABRFG.z = -8.41438189;
+	BLOCKII.AAPFG.z = -0.2354229987;
+	BLOCKII.VBRFG_star = -1397.058596;
+	BLOCKII.VAPFG_star = 14.94573786;
+	BLOCKII.ABRFG_star = -50.48629265;
+	BLOCKII.AAPFG_star = -1.412537992;
+	BLOCKII.JBRFG_star = 0.008257294947;
+	BLOCKII.JAPFG_star = 0.04509242126;
+
+	BLOCKII.TCGFBRAK = 30.0;
+	BLOCKII.TCGIBRAK = 900.0;
+	BLOCKII.TCGFAPPR = 6.0;
+	BLOCKII.TCGIAPPR = 200.0;
+
+	BLOCKII.DELQFIX = 100.0;
+
+	//RBRFGX
+	DoubleToBuffer(BLOCKII.RBRFG.x*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02402, iTemp);
+	SaveEMEM(02403, iTemp2);
+	//RAPFGX
+	DoubleToBuffer(BLOCKII.RAPFG.x*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02404, iTemp);
+	SaveEMEM(02405, iTemp2);
+	//RBRFGZ
+	DoubleToBuffer(BLOCKII.RBRFG.z*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02406, iTemp);
+	SaveEMEM(02407, iTemp2);
+	//RAPFGZ
+	DoubleToBuffer(BLOCKII.RAPFG.z*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02410, iTemp);
+	SaveEMEM(02411, iTemp2);
+	//VBRFGX
+	DoubleToBuffer(BLOCKII.VBRFG.x*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02412, iTemp);
+	SaveEMEM(02413, iTemp2);
+	//VAPFGX
+	DoubleToBuffer(BLOCKII.VAPFG.x*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02414, iTemp);
+	SaveEMEM(02415, iTemp2);
+	//VBRFGZ
+	DoubleToBuffer(BLOCKII.VBRFG.z*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02416, iTemp);
+	SaveEMEM(02417, iTemp2);
+	//VAPFGZ
+	DoubleToBuffer(BLOCKII.VAPFG.z*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02420, iTemp);
+	SaveEMEM(02421, iTemp2);
+	//ABRFGX
+	DoubleToBuffer(BLOCKII.ABRFG.x*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02422, iTemp);
+	SaveEMEM(02423, iTemp2);
+	//AAPFGX
+	DoubleToBuffer(BLOCKII.AAPFG.x*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02424, iTemp);
+	SaveEMEM(02425, iTemp2);
+	//ABRFGZ
+	DoubleToBuffer(BLOCKII.ABRFG.z*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02426, iTemp);
+	SaveEMEM(02427, iTemp2);
+	//AAPFGZ
+	DoubleToBuffer(BLOCKII.AAPFG.z*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02430, iTemp);
+	SaveEMEM(02431, iTemp2);
+	//VBRFG*
+	DoubleToBuffer(BLOCKII.VBRFG_star*FT2M / 100.0, 13, iTemp, iTemp2);
+	SaveEMEM(02432, iTemp);
+	SaveEMEM(02433, iTemp2);
+	//VAPFG*
+	DoubleToBuffer(BLOCKII.VAPFG_star*FT2M / 100.0, 13, iTemp, iTemp2);
+	SaveEMEM(02434, iTemp);
+	SaveEMEM(02435, iTemp2);
+	//ABRFG*
+	DoubleToBuffer(BLOCKII.ABRFG_star*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02436, iTemp);
+	SaveEMEM(02437, iTemp2);
+	//AAPFG*
+	DoubleToBuffer(BLOCKII.AAPFG_star*FT2M / 10000.0, -4, iTemp, iTemp2);
+	SaveEMEM(02440, iTemp);
+	SaveEMEM(02441, iTemp2);
+	//JBRFG*
+	DoubleToBuffer(BLOCKII.JBRFG_star*FT2M / 1000000.0, -21, iTemp, iTemp2);
+	SaveEMEM(02442, iTemp);
+	SaveEMEM(02443, iTemp2);
+	//JAPFG*
+	DoubleToBuffer(BLOCKII.JAPFG_star*FT2M / 1000000.0, -21, iTemp, iTemp2);
+	SaveEMEM(02444, iTemp);
+	SaveEMEM(02445, iTemp2);
+	//GAINBRAK
+	SaveEMEM(02446, 037777);
+	SaveEMEM(02447, 037777);
+	//GAINAPPR
+	SaveEMEM(02450, 0);
+	SaveEMEM(02451, 0);
+	//TCGFBRAK
+	iTemp = SingleToBuffer(BLOCKII.TCGFBRAK*100.0, 17);
+	SaveEMEM(02452, iTemp);
+	//TCGIBRAK
+	iTemp = SingleToBuffer(BLOCKII.TCGIBRAK*100.0, 17);
+	SaveEMEM(02453, iTemp);
+	//TCGFAPPR
+	iTemp = SingleToBuffer(BLOCKII.TCGFAPPR*100.0, 17);
+	SaveEMEM(02454, iTemp);
+	//TCGIAPPR
+	iTemp = SingleToBuffer(BLOCKII.TCGIAPPR*100.0, 17);
+	SaveEMEM(02455, iTemp);
+
+	//VIGN
+	DoubleToBuffer(BLOCKII.VIGN*FT2M / 100.0, 10, iTemp, iTemp2);
+	SaveEMEM(02456, iTemp);
+	SaveEMEM(02457, iTemp2);
+	//RIGNX
+	DoubleToBuffer(BLOCKII.RIGNX*0.3048, 24, iTemp, iTemp2);
+	SaveEMEM(02460, iTemp);
+	SaveEMEM(02461, iTemp2);
+	//RIGNZ
+	DoubleToBuffer(BLOCKII.RIGNZ*0.3048, 24, iTemp, iTemp2);
+	SaveEMEM(02462, iTemp);
+	SaveEMEM(02463, iTemp2);
+	//KIGNX/B4
+	DoubleToBuffer(BLOCKII.KIGNXB4, 4, iTemp, iTemp2);
+	SaveEMEM(02464, iTemp);
+	SaveEMEM(02465, iTemp2);
+	//KIGNY/B8
+	DoubleToBuffer(BLOCKII.KIGNYB8 / 0.3048, -16, iTemp, iTemp2);
+	SaveEMEM(02466, iTemp);
+	SaveEMEM(02467, iTemp2);
+	//KIGNV/B4
+	DoubleToBuffer(BLOCKII.KIGNVB4*100.0, 18, iTemp, iTemp2);
+	SaveEMEM(02470, iTemp);
+	SaveEMEM(02471, iTemp2);
+	//LOWCRIT
+	SaveEMEM(02472, 04114);
+	//HIGHCRIT
+	SaveEMEM(02473, 04454);
+
+	//TAUHZ
+	iTemp = SingleToBuffer(5.0*100.0, 10);
+	SaveEMEM(02474, iTemp);
+	//QHZ
+	SaveEMEM(02475, 031463);
+	//AHZLIM
+	SaveEMEM(02476, 037);
+	//TEXTRA (Time to achieve P66HZ command)
+	iTemp = SingleToBuffer(0.75*100.0, 9);
+	SaveEMEM(02477, iTemp);
+
+	//DELQFIX
+	DoubleToBuffer(BLOCKII.DELQFIX*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02500, iTemp);
+	SaveEMEM(02501, iTemp2);
+	//LRVMAX
+	iTemp = SingleToBuffer(2500.0*0.3048 / 100.0, 7);
+	SaveEMEM(02502, iTemp);
+	//LRVF
+	iTemp = SingleToBuffer(200.0*0.3048 / 100.0, 7);
+	SaveEMEM(02503, iTemp);
+	//LRWVZ
+	iTemp = SingleToBuffer(0.3, 0);
+	SaveEMEM(02504, iTemp);
+	//LRWVY
+	iTemp = SingleToBuffer(0.3, 0);
+	SaveEMEM(02505, iTemp);
+	//LRWVX
+	iTemp = SingleToBuffer(0.3, 0);
+	SaveEMEM(02506, iTemp);
+	//LRWVFZ
+	iTemp = SingleToBuffer(0.2, 0);
+	SaveEMEM(02507, iTemp);
+	//LRWVFY
+	iTemp = SingleToBuffer(0.2, 0);
+	SaveEMEM(02510, iTemp);
+	//LRWVFX
+	iTemp = SingleToBuffer(0.2, 0);
+	SaveEMEM(02511, iTemp);
+	//LRWVFF
+	iTemp = SingleToBuffer(0.1, 0);
+	SaveEMEM(02512, iTemp);
+
+	//ABSC0
+	iTemp = SingleToBuffer(BLOCKII.ABSC[0] * FT2M, 18);
+	SaveEMEM(02513, iTemp);
+	//ABSC1
+	iTemp = SingleToBuffer(BLOCKII.ABSC[1] * FT2M, 18);
+	SaveEMEM(02514, iTemp);
+	//ABSC2
+	iTemp = SingleToBuffer(BLOCKII.ABSC[2] * FT2M, 18);
+	SaveEMEM(02515, iTemp);
+	//ABSC3
+	iTemp = SingleToBuffer(BLOCKII.ABSC[3] * FT2M, 18);
+	SaveEMEM(02516, iTemp);
+	//ABSC4
+	iTemp = SingleToBuffer(BLOCKII.ABSC[4] * FT2M, 18);
+	SaveEMEM(02517, iTemp);
+	//SLOPE0
+	iTemp = SingleToBuffer(BLOCKII.SLOPE[0], 6);
+	SaveEMEM(02520, iTemp);
+	//SLOPE1
+	iTemp = SingleToBuffer(BLOCKII.SLOPE[1], 6);
+	SaveEMEM(02521, iTemp);
+	//SLOPE2
+	iTemp = SingleToBuffer(BLOCKII.SLOPE[2], 6);
+	SaveEMEM(02522, iTemp);
+	//SLOPE3
+	iTemp = SingleToBuffer(BLOCKII.SLOPE[3], 6);
+	SaveEMEM(02523, iTemp);
+	//SLOPE4
+	iTemp = SingleToBuffer(BLOCKII.SLOPE[4], 6);
+	SaveEMEM(02524, iTemp);
+
+	//RODSCALE
+	iTemp = SingleToBuffer(1.0*0.3048 / 100.0, -3);
+	SaveEMEM(02525, iTemp);
+	//ROHZSCAL
+	iTemp = SingleToBuffer(1.0*0.3048 / 100.0, -3);
+	SaveEMEM(02526, iTemp);
+
+	//TAURODL (Little Tau for P66ROD outside DB)
+	iTemp = SingleToBuffer(1.5*100.0, 14);
+	SaveEMEM(02527, iTemp);
+	//TAURODB (Bigger Tau for P66ROD inside DB)
+	iTemp = SingleToBuffer(3.0*100.0, 14);
+	SaveEMEM(02530, iTemp);
+	//VERCRIT (Velocity error criterion for P66ROD)
+	SaveEMEM(02531, 037777);
+
+	//MINFORCE
+	SaveEMEM(02532, 0534);
+	//MAXFORCE
+	SaveEMEM(02533, 04274);
+
+	//J1PARM
+	DoubleToBuffer(BLOCKII.J1PARM*FT2M, 23, iTemp, iTemp2);
+	SaveEMEM(02534, iTemp);
+	SaveEMEM(02535, iTemp2);
+	//K1PARM
+	DoubleToBuffer(BLOCKII.K1PARM*FT2M*PI2, 23, iTemp, iTemp2);
+	SaveEMEM(02536, iTemp);
+	SaveEMEM(02537, iTemp2);
+	//J2PARM
+	DoubleToBuffer(BLOCKII.J2PARM*FT2M, 23, iTemp, iTemp2);
+	SaveEMEM(02540, iTemp);
+	SaveEMEM(02541, iTemp2);
+	//K2PARM
+	DoubleToBuffer(BLOCKII.K2PARM*FT2M*PI2, 23, iTemp, iTemp2);
+	SaveEMEM(02542, iTemp);
+	SaveEMEM(02543, iTemp2);
+	//THETCRIT
+	DoubleToBuffer(BLOCKII.THETCRIT / 360.0, 0, iTemp, iTemp2);
+	SaveEMEM(02544, iTemp);
+	SaveEMEM(02545, iTemp2);
+	//RAMIN
+	DoubleToBuffer(BLOCKII.RAMIN*FT2M, 24, iTemp, iTemp2);
+	SaveEMEM(02546, iTemp);
+	SaveEMEM(02547, iTemp2);
+	//YLIM
+	DoubleToBuffer(8.2*1852.0, 24, iTemp, iTemp2);
+	SaveEMEM(02550, iTemp);
+	SaveEMEM(02551, iTemp2);
+	//ABTRDOT
+	DoubleToBuffer(19.5*0.3048 / 100.0, 7, iTemp, iTemp2);
+	SaveEMEM(02552, iTemp);
+	SaveEMEM(02553, iTemp2);
+	//COSTHET1
+	SaveEMEM(02554, 0);
+	SaveEMEM(02555, 0);
+	//COSTHET2
+	SaveEMEM(02556, 06733);
+	SaveEMEM(02557, 07535);
+
+	//DLAND
+	SaveEMEM(02612, 0);
+	SaveEMEM(02613, 0);
+	SaveEMEM(02614, 0);
+	SaveEMEM(02615, 0);
+	SaveEMEM(02616, 0);
+	SaveEMEM(02617, 0);
+
+	//IGNAOSQ
+	iTemp = SingleToBuffer(BLOCKII.IGNAOSQ / 360.0, -2);
+	SaveEMEM(03012, iTemp);
+	//IGNAOSR
+	iTemp = SingleToBuffer(BLOCKII.IGNAOSR / 360.0, -2);
+	SaveEMEM(03013, iTemp);
+
+	//DOWNTORK
+	SaveEMEM(03113, 0);
+	SaveEMEM(03114, 0);
+	SaveEMEM(03115, 0);
+	SaveEMEM(03116, 0);
+	SaveEMEM(03117, 0);
+	SaveEMEM(03120, 0);
+
+	//AGSK
+	DoubleToBuffer(BLOCKII.AGSK*3600.0*100.0, 28, iTemp, iTemp2);
+	SaveEMEM(03371, iTemp);
+	SaveEMEM(03372, iTemp2);
+
+	//AZBIAS
+	iTemp = SingleToBuffer(0.0 / 360.0, -1);
+	SaveEMEM(03373, iTemp);
+
+	//AOTAZ
+	iTemp = SingleToBuffer(-60.0 / 360.0, -1, true);
+	SaveEMEM(03404, iTemp);
+	iTemp = SingleToBuffer(0.0 / 360.0, -1, true);
+	SaveEMEM(03405, iTemp);
+	iTemp = SingleToBuffer(60.0 / 360.0, -1, true);
+	SaveEMEM(03406, iTemp);
+	iTemp = SingleToBuffer(120.0 / 360.0, -1, true);
+	SaveEMEM(03407, iTemp);
+	iTemp = SingleToBuffer(-180.0 / 360.0, -1, true);
+	SaveEMEM(03410, iTemp);
+	iTemp = SingleToBuffer(-120.0 / 360.0, -1, true);
+	SaveEMEM(03411, iTemp);
+	//AOTEL
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03412, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03413, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03414, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03415, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03416, iTemp);
+	iTemp = SingleToBuffer(45.0 / 360.0, -1);
+	SaveEMEM(03417, iTemp);
+
+	//LRHMAX
+	iTemp = SingleToBuffer(50000.0*0.3048, 14);
+	SaveEMEM(03420, iTemp);
+	//LRWH
+	iTemp = SingleToBuffer(0.35, 0);
+	SaveEMEM(03421, iTemp);
+	//ZOOMTIME
+	iTemp = SingleToBuffer(26.0*100.0, 14);
+	SaveEMEM(03422, iTemp);
+	//TENDBRAK
+	iTemp = SingleToBuffer(62.0*100.0, 17);
+	SaveEMEM(03423, iTemp);
+	//TENDAPPR
+	iTemp = SingleToBuffer(12.0*100.0, 17);
+	SaveEMEM(03424, iTemp);
+	//DELTTFAP
+	iTemp = SingleToBuffer(BLOCKII.DELTTFAP*100.0, 17);
+	SaveEMEM(03425, iTemp);
+	//LEADTIME
+	iTemp = SingleToBuffer(-2.2*100.0, 17);
+	SaveEMEM(03426, iTemp);
+	//RPCRTIME
+	iTemp = SingleToBuffer(62.0*100.0, 17);
+	SaveEMEM(03427, iTemp);
+	//RPCRTQSW
+	iTemp = SingleToBuffer(-1.0, 1);
+	SaveEMEM(03430, iTemp);
+	//TNEWA
+	SaveEMEM(03431, 020000);
+	SaveEMEM(03432, 0);
 }
 
 void AGCPadloadGenerator::Luminary210Padload()
@@ -4466,7 +4946,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		sinI = 0.02676579050;
 		t0 = 40403;
 	}
-	else if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71")
+	else if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71" || rope == "Zerlina56")
 	{
 		epoch = 1971;			//Nearest Besselian Year 1971
 		w_E = 7.292115147e-5;	//Comanche 108 (Apollo 14 CM AGC)
@@ -4507,8 +4987,8 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	bool AZ0Hardcoded = false;
 
-	//Hardcoded in Comanche 108 and Luminary 178
-	if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71")
+	//Hardcoded in Comanche 108, Luminary 178 and Zerlina 56
+	if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71" || rope == "Zerlina56")
 	{
 		A_Z0 = 4.8631512705;
 		AZ0Hardcoded = true;
