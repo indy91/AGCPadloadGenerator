@@ -401,25 +401,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		P37RANGEBox.SetWindowTextW(L"1221.5");
 		break;
 	case 6: //Apollo 12
-		RopeNameBox.SetCurSel(CMC_COMANCE067);
-		EphemerisSpanBox.SetWindowTextW(L"14.5");
-		LaunchMJDInput.SetWindowTextW(L"40539.6819444");
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		LSAltitudeBox.SetWindowTextW(L"-2371.27");
-		LSLatitudeBox.SetWindowTextW(L"-2.9822165");
-		LSLongitudeBox.SetWindowTextW(L"-23.391933");
-		EMSAltBox.SetWindowTextW(L"297431.0");
-		LaunchAzimuthBox.SetWindowTextW(L"72.029345");
-		HORIZALTBox.SetWindowTextW(L"24000");
-		CSMMASSBox.SetWindowTextW(L"63477.0");
-		LEMMASSBox.SetWindowTextW(L"33559.3");
-		PACTOFFBox.SetWindowTextW(L"-1.541");
-		YACTOFFBox.SetWindowTextW(L"1.321");
-		LADPADBox.SetWindowTextW(L"0.27");
-		LODPADBox.SetWindowTextW(L"0.207");
-		ALFAPADBox.SetWindowTextW(L"-20.5");
-		P37RANGEBox.SetWindowTextW(L"1205.8");
+		Apollo12Padload();
 		break;
 	case 7: //Apollo 13
 		Apollo13Padload();
@@ -465,6 +447,29 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 	{
 		P37RANGEBox.SetReadOnly(false);
 	}
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
+{
+	RopeNameBox.SetCurSel(CMC_COMANCE067);
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowTextW(L"40539.6819444");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-2371.27");
+	LSLatitudeBox.SetWindowTextW(L"-2.9822165");
+	LSLongitudeBox.SetWindowTextW(L"-23.391933");
+	EMSAltBox.SetWindowTextW(L"304519.2");
+	LaunchAzimuthBox.SetWindowTextW(L"72.029345");
+	HORIZALTBox.SetWindowTextW(L"24000");
+	CSMMASSBox.SetWindowTextW(L"63477.0");
+	LEMMASSBox.SetWindowTextW(L"33559.3");
+	PACTOFFBox.SetWindowTextW(L"-1.541");
+	YACTOFFBox.SetWindowTextW(L"1.321");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-20.5");
+	P37RANGEBox.SetWindowTextW(L"1205.8");
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()

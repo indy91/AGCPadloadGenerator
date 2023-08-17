@@ -113,6 +113,17 @@ namespace Utilities
 		return wcstod(string, NULL);
 	}
 
+	int Text2Octal(CEdit *ed)
+	{
+		CString string;
+		ed->GetWindowText(string);
+
+		int val;
+		swscanf_s(string, _T("%o"), &val);
+
+		return val;
+	}
+
 	void Double2Text(double val, CEdit *ed, int length)
 	{
 		CString string;

@@ -9,6 +9,7 @@
 #define IDD_DIALOG1                     141
 #define IDD_DIALOG2                     143
 #define IDD_DIALOG3                     145
+#define IDD_DIALOG4                     147
 #define IDC_EDIT1                       1000
 #define IDC_COMBO1                      1001
 #define IDC_EDIT2                       1002
@@ -17,26 +18,38 @@
 #define IDC_EDIT5                       1005
 #define IDC_EDIT6                       1006
 #define IDC_COMBO2                      1007
+#define IDC_EDIT53                      1007
 #define IDC_EDIT7                       1008
 #define IDC_EDIT8                       1009
+#define IDC_EDIT54                      1009
 #define IDC_EDIT9                       1010
+#define IDC_EDIT55                      1010
 #define IDC_COMBO3                      1011
+#define IDC_EDIT56                      1011
 #define IDC_EDIT10                      1012
+#define IDC_EDIT57                      1012
 #define IDC_EDIT11                      1013
 #define IDC_EDIT12                      1014
+#define IDC_EDIT58                      1014
 #define IDC_EDIT13                      1015
+#define IDC_EDIT59                      1015
 #define IDC_EDIT14                      1016
+#define IDC_EDIT60                      1016
 #define IDC_EDIT15                      1017
+#define IDC_EDIT61                      1017
 #define IDC_EDIT18                      1018
 #define IDC_EDIT19                      1019
 #define IDC_EDIT20                      1020
+#define IDC_EDIT62                      1020
 #define IDC_BUTTON1                     1021
 #define IDC_EDIT21                      1021
+#define IDC_EDIT63                      1021
 #define IDC_BUTTON2                     1022
 #define IDC_EDIT22                      1022
 #define IDC_BUTTON3                     1023
 #define IDC_EDIT52                      1023
 #define IDC_EDIT16                      1024
+#define IDC_EDIT64                      1024
 #define IDC_EDIT17                      1025
 #define IDC_CHECK1                      1025
 #define IDC_EDIT23                      1026
@@ -68,14 +81,15 @@
 #define IDC_EDIT49                      1052
 #define IDC_EDIT50                      1053
 #define IDC_EDIT51                      1054
+#define IDC_BUTTON4                     1055
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        147
+#define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1055
+#define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

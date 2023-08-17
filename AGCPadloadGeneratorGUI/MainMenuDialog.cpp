@@ -8,6 +8,7 @@
 #include "AGCPadloadGeneratorGUIDlg.h"
 #include "LGCPadloadGenerator.h"
 #include "BlockIPadloadGenerator.h"
+#include "SkylarkPadloadGenerator.h"
 
 // MainMenuDialog-Dialog
 
@@ -19,6 +20,7 @@ MainMenuDialog::MainMenuDialog(CWnd* pParent /*=nullptr*/)
 	cmc_form = NULL;
 	lgc_form = NULL;
 	blockI_form = NULL;
+	skylark_form = NULL;
 }
 
 MainMenuDialog::~MainMenuDialog()
@@ -38,6 +40,11 @@ MainMenuDialog::~MainMenuDialog()
 		delete blockI_form;
 		blockI_form = NULL;
 	}
+	if (skylark_form)
+	{
+		delete skylark_form;
+		skylark_form = NULL;
+	}
 }
 
 void MainMenuDialog::DoDataExchange(CDataExchange* pDX)
@@ -50,6 +57,7 @@ BEGIN_MESSAGE_MAP(MainMenuDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &MainMenuDialog::OnBnClickedCMC)
 	ON_BN_CLICKED(IDC_BUTTON2, &MainMenuDialog::OnBnClickedLGC)
 	ON_BN_CLICKED(IDC_BUTTON3, &MainMenuDialog::OnBnClickedBlockI)
+	ON_BN_CLICKED(IDC_BUTTON4, &MainMenuDialog::OnBnClickedSkylark)
 END_MESSAGE_MAP()
 
 
@@ -83,4 +91,14 @@ void MainMenuDialog::OnBnClickedBlockI()
 		blockI_form->DoModal();
 	}
 	//lgc_form->ShowWindow(SW_SHOW);
+}
+
+
+void MainMenuDialog::OnBnClickedSkylark()
+{
+	if (skylark_form == NULL)
+	{
+		skylark_form = new SkylarkPadloadGenerator(this);
+		skylark_form->DoModal();
+	}
 }

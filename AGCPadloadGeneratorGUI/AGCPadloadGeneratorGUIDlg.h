@@ -38,6 +38,7 @@ protected:
 
 	void UpdateRopeSpecificEditFields();
 
+	void Apollo12Padload();
 	void Apollo13Padload();
 	void Apollo14Padload();
 	void Apollo15Padload();

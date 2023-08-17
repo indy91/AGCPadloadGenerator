@@ -54,6 +54,9 @@
     <ClInclude Include="BlockIPadloadGenerator.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="SkylarkPadloadGenerator.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AGCPadloadGeneratorGUI.cpp">
@@ -81,6 +84,9 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="BlockIPadloadGenerator.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="SkylarkPadloadGenerator.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>

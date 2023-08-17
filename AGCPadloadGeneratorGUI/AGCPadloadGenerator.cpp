@@ -388,6 +388,7 @@ void AGCPadloadGenerator::WriteEMEM(int address, int value, bool cmc)
 
 void AGCPadloadGenerator::RunLGC()
 {
+	arr.clear();
 	myfile.open("Padload.txt");
 
 	//Launch MJD rounded down to the next 12 hours
@@ -488,6 +489,8 @@ void AGCPadloadGenerator::RunLGC()
 
 void AGCPadloadGenerator::RunBlockI()
 {
+	arr.clear();
+
 	if (Pad == "LC-39A")
 	{
 		SetPadData(Launchpad::LC39A);
@@ -551,6 +554,8 @@ void AGCPadloadGenerator::RunBlockI()
 
 void AGCPadloadGenerator::RunCMC()
 {
+	arr.clear();
+
 	if (Pad == "LC-39A")
 	{
 		SetPadData(Launchpad::LC39A);
@@ -561,13 +566,7 @@ void AGCPadloadGenerator::RunCMC()
 	}
 	else
 	{
-		//LC-39B
-		TAZEL[0] = -106.7757496;
-		TAZEL[1] = -1.757722222;
-		TAZEL[2] = -63.7823055;
-		TAZEL[3] = -1.678888922;
-
-		return;
+		SetPadData(Launchpad::LC39B);
 	}
 
 	myfile.open("Padload.txt");
@@ -649,11 +648,11 @@ void AGCPadloadGenerator::RunCMC()
 		do
 		{
 			Year++;
-			AGCEphemTEphemZero = TJUDAT(Year - 1, 7, 1);
+			AGCEphemTEphemZero = JD2MJD(TJUDAT(Year - 1, 7, 1));
 		} while (AGCEphemTEphemZero < PrelaunchMJD);
 
-		AGCEphemTEphemZero = TJUDAT(Year, 7, 1);
-		Epoch = 1972;
+		AGCEphemTEphemZero = JD2MJD(TJUDAT(Year - 2, 7, 1));
+		Epoch = 1950;
 
 		Skylark048Padload();
 		SkylarkSolarEphemeris(MJD2JD(LaunchMJD), MJD2JD(AGCEphemTEphemZero));
@@ -708,7 +707,15 @@ void AGCPadloadGenerator::SetPadData(Launchpad pad)
 	}
 	else if (pad == Launchpad::LC39B)
 	{
+		PadLat = 28.62687861;
+		PadLong = 279.3789091;
+		PadAlt = 89.4;
+		PadAzimuth = -90.0;
 
+		TAZEL[0] = -106.7757496;
+		TAZEL[1] = -1.757722222;
+		TAZEL[2] = -63.7823055;
+		TAZEL[3] = -1.678888922;
 	}
 	else if (pad == Launchpad::LC34)
 	{
@@ -5943,7 +5950,7 @@ void AGCPadloadGenerator::Skylark048Padload()
 
 	//RVARMIN
 	dTemp = 40000.0; //ft^2
-	TripleToBuffer(-dTemp * pow(FT2M, 3), 40, iTemp, iTemp2, iTemp3);
+	TripleToBuffer(-dTemp * pow(FT2M, 2), 40, iTemp, iTemp2, iTemp3);
 	SaveEMEM(01744, iTemp);
 	SaveEMEM(01745, iTemp2);
 	SaveEMEM(01746, iTemp3);
@@ -6068,38 +6075,52 @@ void AGCPadloadGenerator::Skylark048Padload()
 	SaveEMEM(02246, iTemp);
 
 	//NBOA(YZ)
-	SaveEMEM(02255, 0);
-	SaveEMEM(02256, 0);
+	dTemp = 0.0;
+	DoubleToBuffer(dTemp, 1, iTemp, iTemp2);
+	SaveEMEM(02255, iTemp);
+	SaveEMEM(02256, iTemp2);
 
 	//NBOA(YZ)+2
-	SaveEMEM(02257, 0);
-	SaveEMEM(02260, 0);
+	dTemp = cos(35.0*RAD);
+	DoubleToBuffer(dTemp, 1, iTemp, iTemp2);
+	SaveEMEM(02257, iTemp);
+	SaveEMEM(02260, iTemp2);
 
 	//NBOA(YZ)+4
-	SaveEMEM(02261, 0);
-	SaveEMEM(02262, 0);
+	dTemp = -sin(35.0*RAD);
+	DoubleToBuffer(dTemp, 1, iTemp, iTemp2);
+	SaveEMEM(02261, iTemp);
+	SaveEMEM(02262, iTemp2);
 
 	//NBOA(YZ)+6
-	SaveEMEM(02263, 0);
-	SaveEMEM(02264, 0);
+	dTemp = 0.0;
+	DoubleToBuffer(dTemp, 1, iTemp, iTemp2);
+	SaveEMEM(02263, iTemp);
+	SaveEMEM(02264, iTemp2);
 
 	//NBOA(YZ)+8
-	SaveEMEM(02265, 0);
-	SaveEMEM(02266, 0);
+	dTemp = -sin(35.0*RAD);
+	DoubleToBuffer(dTemp, 1, iTemp, iTemp2);
+	SaveEMEM(02265, iTemp);
+	SaveEMEM(02266, iTemp2);
 
 	//NBOA(YZ)+10
-	SaveEMEM(02267, 0);
-	SaveEMEM(02270, 0);
+	dTemp = -cos(35.0*RAD);
+	DoubleToBuffer(dTemp, 1, iTemp, iTemp2);
+	SaveEMEM(02267, iTemp);
+	SaveEMEM(02270, iTemp2);
 
 	//RTRIDOT
 	dTemp = 7.32e-5; //meters/sec^3
-	DoubleToBuffer(dTemp*pow(100.0, 3), -31, iTemp, iTemp2);
+	DoubleToBuffer(dTemp/pow(100.0, 3), -31, iTemp, iTemp2);
 	SaveEMEM(02334, iTemp);
 	SaveEMEM(02335, iTemp2);
 
 	//1/2ALPHA
-	SaveEMEM(02373, 0741);
-	SaveEMEM(02374, 012000);
+	dTemp = CMCDATA.C12ALPHA*100.0*360.0;
+	DoubleToBuffer(dTemp, 19, iTemp, iTemp2);
+	SaveEMEM(02373, iTemp);
+	SaveEMEM(02374, iTemp2);
 
 	//AZIMUTH
 	dTemp = -90.0 / 360.0; //-90°
@@ -6198,26 +6219,47 @@ void AGCPadloadGenerator::Skylark048Padload()
 	SaveEMEM(03035, 056);
 	//WL-H/SLP+1
 	SaveEMEM(03036, 017);
+
 	//ECP
-	SaveEMEM(03037, 017403);
+	iTemp = SingleToBuffer(CMCDATA.ECP, 0);
+	SaveEMEM(03037, iTemp);
+
 	//ECYW
-	SaveEMEM(03040, 060424);
+	iTemp = SingleToBuffer(CMCDATA.ECYW, 0);
+	SaveEMEM(03040, iTemp);
+
 	//ALPHAP
-	SaveEMEM(03041, 0);
+	iTemp = SingleToBuffer(CMCDATA.ALPHAP, 0);
+	SaveEMEM(03041, iTemp);
+
 	//ALPHAYW
-	SaveEMEM(03042, 0);
+	iTemp = SingleToBuffer(CMCDATA.ALPHAYW, 0);
+	SaveEMEM(03042, iTemp);
+
 	//KMJDCKD
-	SaveEMEM(03043, 01352);
+	iTemp = SingleToBuffer(CMCDATA.KMJDCKD / 1000.0 / 360.0, -13);
+	SaveEMEM(03043, iTemp);
+
 	//KMJ1DCKD
-	SaveEMEM(03044, 0107);
+	iTemp = SingleToBuffer(CMCDATA.KMJ1DCKD / 1000.0 / 360.0, -13);
+	SaveEMEM(03044, iTemp);
+	
 	//KMJ2DCKD
-	SaveEMEM(03045, 0107);
+	iTemp = SingleToBuffer(CMCDATA.KMJ2DCKD / 1000.0 / 360.0, -13);
+	SaveEMEM(03045, iTemp);
+
 	//J/MDCKD
-	SaveEMEM(03046, 026);
+	iTemp = SingleToBuffer(CMCDATA.JMDCKD*1000.0*360.0, 27);
+	SaveEMEM(03046, iTemp);
+
 	//J/M1DCKD
-	SaveEMEM(03047, 0746);
+	iTemp = SingleToBuffer(CMCDATA.JM1DCKD*1000.0*360.0, 27);
+	SaveEMEM(03047, iTemp);
+
 	//J/M2DCKD
-	SaveEMEM(03050, 0746);
+	iTemp = SingleToBuffer(CMCDATA.JM2DCKD*1000.0*360.0, 27);
+	SaveEMEM(03050, iTemp);
+
 	//CLDKDELT
 	SaveEMEM(03055, 0247);
 	//DAPDATR3
@@ -6225,9 +6267,10 @@ void AGCPadloadGenerator::Skylark048Padload()
 	//CH5FAIL
 	SaveEMEM(03071, 0146);
 	//CH6FAIL
-	SaveEMEM(03072, 0);
+	SaveEMEM(03072, CMCDATA.CH6FAIL);
 	//DKRATE
-	SaveEMEM(03073, 02215);
+	iTemp = SingleToBuffer(CMCDATA.DKRATE / 10.0 / 360.0, -9);
+	SaveEMEM(03073, iTemp);
 	//DKDB
 	SaveEMEM(03074, 056);
 	//WHICHDAP
@@ -6285,7 +6328,7 @@ void AGCPadloadGenerator::Skylark048Padload()
 	SaveEMEM(03403, iTemp2);
 
 	//SBDELT
-	dTemp = 0.81;
+	dTemp = 0.81*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03424, iTemp);
 
@@ -6296,7 +6339,7 @@ void AGCPadloadGenerator::Skylark048Padload()
 	SaveEMEM(03641, iTemp2);
 
 	//TTPI
-	dTemp = 1.56265e5; //sec. TBD: Has to be made variable
+	dTemp = CMCDATA.TTPI*100.0;
 	DoubleToBuffer(dTemp, 28, iTemp, iTemp2);
 	SaveEMEM(03642, iTemp);
 	SaveEMEM(03643, iTemp2);
@@ -6317,17 +6360,11 @@ void AGCPadloadGenerator::SkylarkSolarEphemeris(double TC, double T0)
 	e_EM = 0.0167301085 - 4.1926e-5*T - 1.26e-7*T*T;
 	//Calculate longitude of perihelion
 	W_0EM = 102.08053 + (0.32328 / 36525.0)*(T0 - 2433282.5) + 1.5e-4*T*T;
-	while (W_0EM >= 360.0)
-	{
-		W_0EM = W_0EM - 360.0;
-	}
+	W_0EM = fmod(W_0EM, 360.0);
 	W_0EM *= RAD;
 	//Calculate mean anomaly
 	M_0EM = 358.000682 + NEM * (T0 - 2433282.5) - 1.55e-4*pow(T, 2) - 3.3333e-6*pow(T, 3);
-	while (M_0EM >= 360.0)
-	{
-		M_0EM = M_0EM - 360.0;
-	}
+	M_0EM = fmod(M_0EM, 360.0);
 	M_0EM *= RAD;
 
 	LOSO = W_0EM + M_0EM - PI;
@@ -6336,19 +6373,19 @@ void AGCPadloadGenerator::SkylarkSolarEphemeris(double TC, double T0)
 
 	//LOSO
 	dTemp = LOSO;
-	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
+	DoubleToBuffer(dTemp / PI2, 0, iTemp, iTemp2);
 	SaveEMEM(02006, iTemp);
 	SaveEMEM(02007, iTemp2);
 
 	//CMOD
 	dTemp = CMOD;
-	DoubleToBuffer(dTemp / 360.0, -1, iTemp, iTemp2);
+	DoubleToBuffer(dTemp / PI2, -1, iTemp, iTemp2);
 	SaveEMEM(02010, iTemp);
 	SaveEMEM(02011, iTemp2);
 
 	//CARG
 	dTemp = CARG;
-	DoubleToBuffer(dTemp / 360.0, 0, iTemp, iTemp2);
+	DoubleToBuffer(dTemp / PI2, 0, iTemp, iTemp2);
 	SaveEMEM(02012, iTemp);
 	SaveEMEM(02013, iTemp2);
 }

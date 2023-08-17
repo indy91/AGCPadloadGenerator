@@ -3,6 +3,7 @@
 class CAGCPadloadGeneratorGUIDlg;
 class LGCPadloadGenerator;
 class BlockIPadloadGenerator;
+class SkylarkPadloadGenerator;
 
 class MainMenuDialog : public CDialogEx
 {
@@ -23,10 +24,12 @@ protected:
 	CAGCPadloadGeneratorGUIDlg *cmc_form;
 	LGCPadloadGenerator *lgc_form;
 	BlockIPadloadGenerator *blockI_form;
+	SkylarkPadloadGenerator *skylark_form;
 
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedCMC();
 	afx_msg void OnBnClickedLGC();
 	afx_msg void OnBnClickedBlockI();
+	afx_msg void OnBnClickedSkylark();
 };

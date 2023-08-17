@@ -46,7 +46,21 @@ struct BlockIData
 
 struct BlockCMCIIData
 {
-
+	//Skylark only
+	double C12ALPHA = 0.0; //Used in Docked DAP, SEC2/DEG
+	double ECP = 0.0; //Used in docked DAP, unitless
+	double ECYW = 0.0; //Used in docked DAP, unitless
+	double ALPHAP = 0.0; //Used in docked DAP, unitless
+	double ALPHAYW = 0.0; //Used in docked DAP, unitless
+	double KMJDCKD = 0.0; //Used in docked DAP, DEG/SEC2
+	double KMJ1DCKD = 0.0; //Used in docked DAP, DEG/SEC2
+	double KMJ2DCKD = 0.0; //Used in docked DAP, DEG/SEC2
+	double JMDCKD = 0.0; //Used in docked DAP, SEC2/DEG
+	double JM1DCKD = 0.0; //Used in docked DAP, SEC2/DEG
+	double JM2DCKD = 0.0; //Used in docked DAP, SEC2/DEG
+	int CH6FAIL = 0; //R3 of N87. Docked DAP channel 6 jet inhibit mask
+	double DKRATE = 0.0; //R1 of N89, Docked DAP maneuver rate, DEG/SEC
+	double TTPI = 0.0; //Time of TPI, seconds
 };
 
 struct BlockLGCIIData
@@ -191,6 +205,7 @@ public:
 
 	BlockIData BLOCKI;
 	BlockIIData BLOCKII;
+	BlockCMCIIData CMCDATA;
 
 protected:
 	void SaveEMEM(int address, int value);
