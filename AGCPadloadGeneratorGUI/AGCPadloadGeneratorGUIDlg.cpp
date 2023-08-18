@@ -16,7 +16,8 @@
 #define CMC_COMANCE072 5
 #define CMC_COMANCE0108 6
 #define CMC_ARTEMIS072 7
-#define CMC_ARTEMIS072NBY71 8
+#define CMC_ARTEMIS072NBY70 8
+#define CMC_ARTEMIS072NBY71 9
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -115,6 +116,7 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	RopeNameBox.AddString(L"Comanche072");
 	RopeNameBox.AddString(L"Comanche108");
 	RopeNameBox.AddString(L"Artemis072");
+	RopeNameBox.AddString(L"Artemis072NBY70");
 	RopeNameBox.AddString(L"Artemis072NBY71");
 	RopeNameBox.SetCurSel(CMC_COMANCE055);
 

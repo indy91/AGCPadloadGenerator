@@ -599,7 +599,7 @@ void AGCPadloadGenerator::RunCMC()
 			Comanche45Padload(true);
 		}
 	}
-	else if (RopeName == "Comanche055" || RopeName == "Comanche067" || RopeName == "Comanche072")
+	else if (RopeName == "Comanche055" || RopeName == "Comanche067" || RopeName == "Comanche072" || RopeName == "Artemis072NBY70")
 	{
 		//MJD of preceding July 1st, midnight
 		AGCEphemTEphemZero = 40403.0;
@@ -613,9 +613,13 @@ void AGCPadloadGenerator::RunCMC()
 		{
 			Comanche67Padload();
 		}
-		else
+		else if (RopeName == "Comanche072")
 		{
 			Comanche72Padload();
+		}
+		else
+		{
+			Artemis72Padload(); //Artemis072NBY70, but it's the same
 		}
 	}
 	else if (RopeName == "Artemis072NBY71" || RopeName == "Comanche108")
@@ -4953,7 +4957,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		sinI = 0.02676579;
 		t0 = 40403;
 	}
-	else if (rope == "Comanche067" || rope == "Luminary116" || rope == "Comanche072" || rope == "Luminary131" || rope == "Luminary131R1")
+	else if (rope == "Comanche067" || rope == "Luminary116" || rope == "Comanche072" || rope == "Luminary131" || rope == "Luminary131R1" || rope == "Artemis072NBY70")
 	{
 		epoch = 1970;				//Nearest Besselian Year 1970
 		w_E = 7.292115145489943e-05;
@@ -5008,8 +5012,14 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	bool AZ0Hardcoded = false;
 
-	//Hardcoded in Comanche 108, Luminary 178 and Zerlina 56
-	if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71" || rope == "Zerlina56")
+	//Hardcoded in Artemis 072 (modified for NBY 1970)
+	if (rope == "Artemis072NBY70")
+	{
+		A_Z0 = 4.867316151485891;
+		AZ0Hardcoded = true;
+	}
+	//Hardcoded in Comanche 108, Luminary 178, Zerlina 56 and Artemis 072 (modified for NBY 1971)
+	else if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71" || rope == "Zerlina56")
 	{
 		A_Z0 = 4.8631512705;
 		AZ0Hardcoded = true;
