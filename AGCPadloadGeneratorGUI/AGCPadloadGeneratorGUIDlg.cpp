@@ -455,7 +455,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	case 4: //Apollo 10
 		RopeNameBox.SetCurSel(CMC_COMANCE045);
 		LaunchMJDInput.SetWindowTextW(L"40359.7006944");
-		Launchpad.SetCurSel(1); //LC-39A
+		Launchpad.SetCurSel(2); //LC-39B
 		RTEDBox.SetWindowTextW(L"1.6602637");
 		LSAltitudeBox.SetWindowTextW(L"-3073.26");
 		LSLatitudeBox.SetWindowTextW(L"0.71388");

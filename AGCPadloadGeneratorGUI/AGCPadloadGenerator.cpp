@@ -3407,6 +3407,19 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 	DoubleToBuffer(PIPTIME, 28, iTemp, iTemp2);
 	SaveEMEM(01204, iTemp);
 	SaveEMEM(01205, iTemp2);
+
+	//PADLONG
+	dTemp = PadLong / 360.0;
+	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
+	SaveEMEM(01263, iTemp);
+	SaveEMEM(01264, iTemp2);
+
+	//PGNCSALT
+	dTemp = PadAlt;
+	DoubleToBuffer(dTemp, 29, iTemp, iTemp2);
+	SaveEMEM(01272, iTemp);
+	SaveEMEM(01273, iTemp2);
+
 	//RTED1
 	DoubleToBuffer(RTED1, 3, iTemp, iTemp2);
 	SaveEMEM(01351, iTemp);
