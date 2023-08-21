@@ -12,6 +12,8 @@ public:
 	LGCPadloadGenerator(CWnd* pParent = nullptr);   // Standardkonstruktor
 	virtual ~LGCPadloadGenerator();
 
+	BOOL PreTranslateMessage(MSG* pMsg);
+
 // Dialogfelddaten
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DIALOG2 };
@@ -25,6 +27,8 @@ protected:
 
 	void UpdateTotalMass();
 	void UpdateRopeSpecificEditFields();
+
+	CToolTipCtrl m_ToolTip;
 public:
 
 	AGCPadloadGenerator agc;

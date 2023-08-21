@@ -21,10 +21,12 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV-Unterstützung
 
+	BOOL PreTranslateMessage(MSG* pMsg);
 
 // Implementierung
 protected:
 	HICON m_hIcon;
+	CToolTipCtrl m_ToolTip;
 
 	// Generierte Funktionen für die Meldungstabellen
 	virtual BOOL OnInitDialog();
@@ -38,6 +40,7 @@ protected:
 
 	void UpdateRopeSpecificEditFields();
 
+	void Apollo11Padload(int LaunchDay);
 	void Apollo12Padload();
 	void Apollo13Padload();
 	void Apollo14Padload();
@@ -84,4 +87,19 @@ public:
 	CEdit LODPADBox;
 	CEdit ALFAPADBox;
 	CEdit P37RANGEBox;
+	CEdit EMDOTBox;
+	CEdit MinImp1Box;
+	CEdit MinImp2Box;
+	CEdit MinImp3Box;
+	CEdit MinImp4Box;
+	CStatic MinImp1Label;
+	CStatic MinImp2Label;
+	CStatic MinImp3Label;
+	CStatic MinImp4Label;
+	CStatic MinImp1Unit;
+	CStatic MinImp2Unit;
+	CStatic MinImp3Unit;
+	CStatic MinImp4Unit;
+	CEdit TRUNSFBox;
+	CEdit SHAFTSFBox;
 };

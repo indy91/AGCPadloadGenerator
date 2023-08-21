@@ -46,6 +46,23 @@ struct BlockIData
 
 struct BlockCMCIIData
 {
+	//All CMC except Colossus 237
+	double EMDOT = 0.0;
+
+	//Comanche 45 to 108
+	double EK1VAL = 0.0;
+	//Comanche 55 to 108
+	double EK2VAL = 0.0;
+	double EK3VAL = 0.0;
+	double FANG = 0.0;
+	//Artemis 72
+	double EIMP1SEC = 0.0;
+	double EFIMP01 = 0.0;
+	double EFIMP16 = 0.0;
+	//Comanche 108 and Artemis 72
+	double TRUNSF = 0.0; // P/REV/CS
+	double SHAFTSF = 0.0; //
+
 	//Skylark only
 	double C12ALPHA = 0.0; //Used in Docked DAP, SEC2/DEG
 	double ECP = 0.0; //Used in docked DAP, unitless

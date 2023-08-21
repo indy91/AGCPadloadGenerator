@@ -99,9 +99,32 @@ BEGIN_MESSAGE_MAP(LGCPadloadGenerator, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK1, &LGCPadloadGenerator::OnBnClickedCheck1)
 END_MESSAGE_MAP()
 
+BOOL LGCPadloadGenerator::PreTranslateMessage(MSG* pMsg)
+{
+	m_ToolTip.RelayEvent(pMsg);
+
+	return CDialog::PreTranslateMessage(pMsg);
+}
+
 BOOL LGCPadloadGenerator::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+
+	//Create the ToolTip control
+	if (!m_ToolTip.Create(this))
+	{
+		TRACE0("Unable to create the ToolTip!");
+	}
+	else
+	{
+		m_ToolTip.AddTool(&UNITWBox, _T("Time in days from liftoff at which Earth rotations are exactly accurate"));
+		m_ToolTip.AddTool(&T504LMBox, _T("Time in days from liftoff at which Moon rotations are exactly accurate"));
+
+		m_ToolTip.AddTool(&WRENDPOSBox, _T("W matrix position initialization for rendezvous"));
+		m_ToolTip.AddTool(&WRENDVELBox, _T("W matrix velocity initialization for rendezvous"));
+		m_ToolTip.AddTool(&RMAXBox, _T("Maximum automatic rendezvous position update"));
+		m_ToolTip.AddTool(&VMAXBox, _T("Maximum automatic rendezvous velocity update"));
+	}
 
 	MissionBox.AddString(L"Manual");
 	MissionBox.AddString(L"Apollo 9");

@@ -82,6 +82,16 @@
 #define IDC_EDIT50                      1053
 #define IDC_EDIT51                      1054
 #define IDC_BUTTON4                     1055
+#define IDC_DATETIMEPICKER1             1057
+#define IDC_STATIC20                    1058
+#define IDC_MINIMP_1                    1059
+#define IDC_MINIMP_2                    1060
+#define IDC_MINIMP_3                    1061
+#define IDC_MINIMP_4                    1062
+#define IDC_MINIMP_1U                   1063
+#define IDC_MINIMP_2U                   1064
+#define IDC_MINIMP_3U                   1065
+#define IDC_MINIMP_4U                   1066
 
 // Next default values for new objects
 // 
@@ -89,7 +99,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1056
+#define _APS_NEXT_CONTROL_VALUE         1067
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

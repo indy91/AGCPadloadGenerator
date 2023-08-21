@@ -67,6 +67,21 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT24, LODPADBox);
 	DDX_Control(pDX, IDC_EDIT25, ALFAPADBox);
 	DDX_Control(pDX, IDC_EDIT26, P37RANGEBox);
+	DDX_Control(pDX, IDC_EDIT27, EMDOTBox);
+	DDX_Control(pDX, IDC_EDIT28, MinImp1Box);
+	DDX_Control(pDX, IDC_EDIT29, MinImp2Box);
+	DDX_Control(pDX, IDC_EDIT30, MinImp3Box);
+	DDX_Control(pDX, IDC_EDIT31, MinImp4Box);
+	DDX_Control(pDX, IDC_MINIMP_1, MinImp1Label);
+	DDX_Control(pDX, IDC_MINIMP_2, MinImp2Label);
+	DDX_Control(pDX, IDC_MINIMP_3, MinImp3Label);
+	DDX_Control(pDX, IDC_MINIMP_4, MinImp4Label);
+	DDX_Control(pDX, IDC_MINIMP_1U, MinImp1Unit);
+	DDX_Control(pDX, IDC_MINIMP_2U, MinImp2Unit);
+	DDX_Control(pDX, IDC_MINIMP_3U, MinImp3Unit);
+	DDX_Control(pDX, IDC_MINIMP_4U, MinImp4Unit);
+	DDX_Control(pDX, IDC_EDIT32, TRUNSFBox);
+	DDX_Control(pDX, IDC_EDIT33, SHAFTSFBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -103,6 +118,50 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);
 	SetIcon(m_hIcon, FALSE);
 
+	//Create the ToolTip control
+	if (!m_ToolTip.Create(this))
+	{
+		TRACE0("Unable to create the ToolTip!");
+	}
+	else
+	{
+		// Add tool tips to the controls, either by hard coded string 
+		// or using the string table resource
+
+		m_ToolTip.AddTool(&UNITWBox, _T("Time in days from liftoff at which Earth rotations are exactly accurate"));
+		m_ToolTip.AddTool(&TLANDBox, _T("Time in days from liftoff at which Moon rotations are exactly accurate"));
+		m_ToolTip.AddTool(&EphemerisSpanBox, _T("Duration of accuracy of lunar ephemeris"));
+		m_ToolTip.AddTool(&CDUCHKWDBox, _T("Delay before checking IMU CDU after an optics mark"));
+		m_ToolTip.AddTool(&HORIZALTBox, _T("Horizon altitude used in P23 above Fischer ellipse"));
+		m_ToolTip.AddTool(&RTEDBox, _T("Constant term for desired flight path angle cotangent in P37"));
+		m_ToolTip.AddTool(&EMSAltBox, _T("Entry monitoring system initialization altitude"));
+		m_ToolTip.AddTool(&LADPADBox, _T("Nominal L/D"));
+		m_ToolTip.AddTool(&LODPADBox, _T("Final phase L/D"));
+		m_ToolTip.AddTool(&ALFAPADBox, _T("Nominal entry trim angle (expected to be a negative number)"));
+		m_ToolTip.AddTool(&P37RANGEBox, _T("Override on entry range (not time) in P37 if cell is non-zero"));
+		m_ToolTip.AddTool(&PACTOFFBox, _T("TVC DAP pitch trim"));
+		m_ToolTip.AddTool(&YACTOFFBox, _T("TVC DAP yaw trim"));
+		m_ToolTip.AddTool(&EMDOTBox, _T("Mass flow rate for SPS engine"));
+		m_ToolTip.AddTool(&LATSPLBox, _T("Target latitude for Mode III abort"));
+		m_ToolTip.AddTool(&LNGSPLBox, _T("Target longitude for Mode III abort"));
+
+		m_ToolTip.AddTool(&ALTVARBox, _T("A priori measurement accuracy of back-up optics in R23"));
+		m_ToolTip.AddTool(&WRENDPOSBox, _T("W matrix position initialization for rendezvous"));
+		m_ToolTip.AddTool(&WRENDVELBox, _T("W matrix velocity initialization for rendezvous"));
+		m_ToolTip.AddTool(&RMAXBox, _T("Maximum automatic rendezvous position update"));
+		m_ToolTip.AddTool(&VMAXBox, _T("Maximum automatic rendezvous velocity update"));
+
+		m_ToolTip.AddTool(&MinImp1Box, _T("None"));
+		m_ToolTip.AddTool(&MinImp2Box, _T("None"));
+		m_ToolTip.AddTool(&MinImp3Box, _T("None"));
+		m_ToolTip.AddTool(&MinImp4Box, _T("None"));
+
+		m_ToolTip.AddTool(&TRUNSFBox, _T("Scale factor for rate command to optics trunnion in P24"));
+		m_ToolTip.AddTool(&SHAFTSFBox, _T("Scale factor for rate command to optics shaft in P24"));
+
+		m_ToolTip.Activate(TRUE);
+	}
+
 	Launchpad.AddString(L"LC-34");
 	Launchpad.AddString(L"LC-39A");
 	Launchpad.AddString(L"LC-39B");
@@ -134,6 +193,8 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	MissionBox.AddString(L"Apollo 15");
 	MissionBox.AddString(L"Apollo 16");
 	MissionBox.AddString(L"Apollo 17");
+	MissionBox.AddString(L"Apollo 11 July 18");
+	MissionBox.AddString(L"Apollo 11 July 21");
 	MissionBox.SetCurSel(0);
 
 	TLANDBox.SetWindowText(L"4.5");
@@ -163,8 +224,23 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	LODPADBox.SetWindowText(L"0.18");
 	ALFAPADBox.SetWindowText(L"-20.0");
 	P37RANGEBox.SetWindowText(L"0.0");
+	EMDOTBox.SetWindowText(L"65.272");
+
+	TRUNSFBox.SetWindowText(L"0.0");
+	SHAFTSFBox.SetWindowText(L"0.0");
+	MinImp1Box.SetWindowText(L"0.0");
+	MinImp2Box.SetWindowText(L"0.0");
+	MinImp3Box.SetWindowText(L"0.0");
+	MinImp4Box.SetWindowText(L"0.0");
 
 	return TRUE;
+}
+
+BOOL CAGCPadloadGeneratorGUIDlg::PreTranslateMessage(MSG* pMsg)
+{
+	m_ToolTip.RelayEvent(pMsg);
+
+	return CDialog::PreTranslateMessage(pMsg);
 }
 
 void CAGCPadloadGeneratorGUIDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -237,6 +313,24 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.BLOCKII.LODPAD = Utilities::Text2Double(&LODPADBox);
 	agc.BLOCKII.ALFAPAD = Utilities::Text2Double(&ALFAPADBox);
 	agc.BLOCKII.P37RANGE = Utilities::Text2Double(&P37RANGEBox);
+	agc.CMCDATA.EMDOT = Utilities::Text2Double(&EMDOTBox);
+
+	agc.CMCDATA.TRUNSF = Utilities::Text2Double(&TRUNSFBox);
+	agc.CMCDATA.SHAFTSF = Utilities::Text2Double(&SHAFTSFBox);
+
+	if (RopeNameBox.GetCurSel() <= CMC_COMANCE0108)
+	{
+		agc.CMCDATA.EK1VAL = Utilities::Text2Double(&MinImp1Box);
+		agc.CMCDATA.EK2VAL = Utilities::Text2Double(&MinImp2Box);
+		agc.CMCDATA.EK3VAL = Utilities::Text2Double(&MinImp3Box);
+		agc.CMCDATA.FANG = Utilities::Text2Double(&MinImp4Box);
+	}
+	else
+	{
+		agc.CMCDATA.EIMP1SEC = Utilities::Text2Double(&MinImp1Box);
+		agc.CMCDATA.EFIMP01 = Utilities::Text2Double(&MinImp2Box);
+		agc.CMCDATA.EFIMP16 = Utilities::Text2Double(&MinImp3Box);
+	}
 
 	Launchpad.GetWindowText(string);
 	std::wstring ws = std::wstring(string.GetString());
@@ -356,6 +450,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		LADPADBox.SetWindowTextW(L"0.27");
 		LODPADBox.SetWindowTextW(L"0.207");
 		ALFAPADBox.SetWindowTextW(L"-19.55");
+		EMDOTBox.SetWindowTextW(L"65.272");
 		break;
 	case 4: //Apollo 10
 		RopeNameBox.SetCurSel(CMC_COMANCE045);
@@ -379,28 +474,18 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		LODPADBox.SetWindowTextW(L"0.207");
 		ALFAPADBox.SetWindowTextW(L"-19.55");
 		P37RANGEBox.SetWindowTextW(L"1221.5");
+		EMDOTBox.SetWindowTextW(L"65.272");
+		MinImp1Box.SetWindowTextW(L"20143.2");
+		MinImp4Box.SetWindowTextW(L"20240.0");
 		break;
 	case 5: //Apollo 11
-		RopeNameBox.SetCurSel(CMC_COMANCE055);
-		EphemerisSpanBox.SetWindowTextW(L"10.5");
-		LaunchMJDInput.SetWindowTextW(L"40418.5638889");
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		LSAltitudeBox.SetWindowTextW(L"-2671.9684");
-		LSLatitudeBox.SetWindowTextW(L"0.691395");
-		LSLongitudeBox.SetWindowTextW(L"23.71689");
-		EMSAltBox.SetWindowTextW(L"294084.3");
-		LaunchAzimuthBox.SetWindowTextW(L"72.05897");
-		HORIZALTBox.SetWindowTextW(L"24000");
-		ALTVARBox.SetWindowText(L"1.5258e-05");
-		CSMMASSBox.SetWindowTextW(L"63386.7");
-		LEMMASSBox.SetWindowTextW(L"33275.6");
-		PACTOFFBox.SetWindowTextW(L"-1.541");
-		YACTOFFBox.SetWindowTextW(L"1.321");
-		LADPADBox.SetWindowTextW(L"0.27");
-		LODPADBox.SetWindowTextW(L"0.207");
-		ALFAPADBox.SetWindowTextW(L"-19.55");
-		P37RANGEBox.SetWindowTextW(L"1221.5");
+		Apollo11Padload(16);
+		break;
+	case 12: //Apollo 11 July 18 launch
+		Apollo11Padload(18);
+		break;
+	case 13: //Apollo 11 July 21 launch
+		Apollo11Padload(21);
 		break;
 	case 6: //Apollo 12
 		Apollo12Padload();
@@ -449,6 +534,176 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 	{
 		P37RANGEBox.SetReadOnly(false);
 	}
+
+	if (RopeNameBox.GetCurSel() <= CMC_COMANCE072)
+	{
+		TRUNSFBox.SetReadOnly(true);
+		SHAFTSFBox.SetReadOnly(true);
+	}
+	else
+	{
+		TRUNSFBox.SetReadOnly(false);
+		SHAFTSFBox.SetReadOnly(false);
+	}
+
+	//SPS Performance
+
+	//Colossus 237: None
+	//Colossus 249: EMDOT
+	//Comanche 45: EMDOT, EK1VAL, FANG
+	//Comanche 55-108: EMDOT, EK1VAL, EK2VAL, EK3VAL, FANG
+	//Artemis 72: EMDOT, EIMP1SEC, EFIMP01, EFIMP16
+
+	switch (RopeNameBox.GetCurSel())
+	{
+	case CMC_COLOSSUS237:
+	case CMC_COLOSSUS249:
+		if (RopeNameBox.GetCurSel() == CMC_COLOSSUS237)
+		{
+			EMDOTBox.SetReadOnly(true);
+		}
+		else
+		{
+			EMDOTBox.SetReadOnly(false);
+		}
+		MinImp1Box.SetReadOnly(true);
+		MinImp2Box.SetReadOnly(true);
+		MinImp3Box.SetReadOnly(true);
+		MinImp4Box.SetReadOnly(true);
+		MinImp1Label.SetWindowTextW(L"NONE");
+		MinImp2Label.SetWindowTextW(L"NONE");
+		MinImp3Label.SetWindowTextW(L"NONE");
+		MinImp4Label.SetWindowTextW(L"NONE");
+		MinImp1Unit.SetWindowTextW(L"");
+		MinImp2Unit.SetWindowTextW(L"");
+		MinImp3Unit.SetWindowTextW(L"");
+		MinImp4Unit.SetWindowTextW(L"");
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp1Box);
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp2Box);
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp3Box);
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp4Box);
+		break;
+	case CMC_COMANCE045:
+		EMDOTBox.SetReadOnly(false);
+		MinImp1Box.SetReadOnly(false);
+		MinImp2Box.SetReadOnly(true);
+		MinImp3Box.SetReadOnly(true);
+		MinImp4Box.SetReadOnly(false);
+		MinImp1Label.SetWindowTextW(L"EK1VAL");
+		MinImp2Label.SetWindowTextW(L"NONE");
+		MinImp3Label.SetWindowTextW(L"NONE");
+		MinImp4Label.SetWindowTextW(L"FANG");
+		MinImp1Unit.SetWindowTextW(L"lbf/sec");
+		MinImp2Unit.SetWindowTextW(L"");
+		MinImp3Unit.SetWindowTextW(L"");
+		MinImp4Unit.SetWindowTextW(L"lbf");
+		m_ToolTip.UpdateTipText(_T("SPS impulse acquired from a one second burn"), &MinImp1Box);
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp2Box);
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp3Box);
+		m_ToolTip.UpdateTipText(_T("SPS thrust used to estimate burn time when burn time is less than 6 sec"), &MinImp4Box);
+		break;
+	case CMC_COMANCE055:
+	case CMC_COMANCE067:
+	case CMC_COMANCE072:
+	case CMC_COMANCE0108:
+		EMDOTBox.SetReadOnly(false);
+		MinImp1Box.SetReadOnly(false);
+		MinImp2Box.SetReadOnly(false);
+		MinImp3Box.SetReadOnly(false);
+		MinImp4Box.SetReadOnly(false);
+		MinImp1Label.SetWindowTextW(L"EK1VAL");
+		MinImp2Label.SetWindowTextW(L"EK2VAL");
+		MinImp3Label.SetWindowTextW(L"EK3VAL");
+		MinImp4Label.SetWindowTextW(L"FANG");
+		MinImp1Unit.SetWindowTextW(L"lbf/sec");
+		MinImp2Unit.SetWindowTextW(L"lbf/sec");
+		MinImp3Unit.SetWindowTextW(L"lbf");
+		MinImp4Unit.SetWindowTextW(L"lbf");
+		m_ToolTip.UpdateTipText(_T("SPS impulse acquired from a one second burn"), &MinImp1Box);
+		m_ToolTip.UpdateTipText(_T("SPS minimum impulse constant used to estimate burn time when burn time is less than 1.0 sec"), &MinImp2Box);
+		m_ToolTip.UpdateTipText(_T("SPS minimum constant equal to the slope of the minimum impulse curve. Used to estimate burn time when burn time is less than 1.0 sec"), &MinImp3Box);
+		m_ToolTip.UpdateTipText(_T("SPS thrust used to estimate burn time when burn time is less than 6 sec"), &MinImp4Box);
+		break;
+	default:
+		EMDOTBox.SetReadOnly(false);
+		MinImp1Box.SetReadOnly(false);
+		MinImp2Box.SetReadOnly(false);
+		MinImp3Box.SetReadOnly(false);
+		MinImp4Box.SetReadOnly(true);
+		MinImp1Label.SetWindowTextW(L"EIMP1SEC");
+		MinImp2Label.SetWindowTextW(L"EFIMP01");
+		MinImp3Label.SetWindowTextW(L"EFIMP16");
+		MinImp4Label.SetWindowTextW(L"NONE");
+		MinImp1Unit.SetWindowTextW(L"lbf/sec");
+		MinImp2Unit.SetWindowTextW(L"lbf");
+		MinImp3Unit.SetWindowTextW(L"lbf");
+		MinImp4Unit.SetWindowTextW(L"");
+		m_ToolTip.UpdateTipText(_T("Impulse from first second of SPS thrusting"), &MinImp1Box);
+		m_ToolTip.UpdateTipText(_T("Slope of minimum impulse curve for SPS 0-1 second"), &MinImp2Box);
+		m_ToolTip.UpdateTipText(_T("Slope of minimum impulse curve for SPS 1-6 seconds"), &MinImp3Box);
+		m_ToolTip.UpdateTipText(_T("None"), &MinImp4Box);
+		break;
+	}
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
+{
+	if (LaunchDay == 16)
+	{
+		LaunchMJDInput.SetWindowTextW(L"40418.5638889");
+		LSAltitudeBox.SetWindowTextW(L"-2671.9684");
+		LSLatitudeBox.SetWindowTextW(L"0.691395");
+		LSLongitudeBox.SetWindowTextW(L"23.71689");
+		LaunchAzimuthBox.SetWindowTextW(L"72.05897");
+	}
+	else if (LaunchDay == 18)
+	{
+		LaunchMJDInput.SetWindowTextW(L"40420.647222");
+		LSAltitudeBox.SetWindowTextW(L"-1817.3");
+		LSLatitudeBox.SetWindowTextW(L"0.35277778");
+		LSLongitudeBox.SetWindowTextW(L"-1.29916667");
+		LaunchAzimuthBox.SetWindowTextW(L"89.295");
+	}
+	else
+	{
+		LaunchMJDInput.SetWindowTextW(L"40423.672905");
+		LSAltitudeBox.SetWindowTextW(L"-2314.0");
+		LSLatitudeBox.SetWindowTextW(L"1.67805556");
+		LSLongitudeBox.SetWindowTextW(L"-41.89916667");
+		LaunchAzimuthBox.SetWindowTextW(L"94.6775");
+	}
+
+	RopeNameBox.SetCurSel(CMC_COMANCE055);
+	EphemerisSpanBox.SetWindowTextW(L"10.5");
+
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	EMSAltBox.SetWindowTextW(L"294084.3");
+	HORIZALTBox.SetWindowTextW(L"24000");
+	ALTVARBox.SetWindowTextW(L"1.5258e-05");
+	CSMMASSBox.SetWindowTextW(L"63386.7");
+	LEMMASSBox.SetWindowTextW(L"33275.6");
+	PACTOFFBox.SetWindowTextW(L"-1.541");
+	YACTOFFBox.SetWindowTextW(L"1.321");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-19.55");
+	P37RANGEBox.SetWindowTextW(L"1221.5");
+	EMDOTBox.SetWindowTextW(L"66.64");
+	MinImp1Box.SetWindowTextW(L"20143.2");
+	MinImp2Box.SetWindowTextW(L"4909.1");
+	MinImp3Box.SetWindowTextW(L"25454.5");
+	MinImp4Box.SetWindowTextW(L"20240.0");
+
+	agc.BLOCKII.POLYNUM[0] = 2.667379e-1;
+	agc.BLOCKII.POLYNUM[1] = 0.3714781e-1;
+	agc.BLOCKII.POLYNUM[2] = 0.917483e-2;
+	agc.BLOCKII.POLYNUM[3] = 0.7781624e-4;
+	agc.BLOCKII.POLYNUM[4] = -0.2593124e-5;
+	agc.BLOCKII.POLYNUM[5] = 0.1818239e-7;
+	agc.BLOCKII.POLYNUM[6] = -0.4160838e-10;
+	agc.BLOCKII.RPSTART = 11.85;
+	agc.BLOCKII.POLYSTOP = 147.25;
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
@@ -472,6 +727,21 @@ void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
 	LODPADBox.SetWindowTextW(L"0.207");
 	ALFAPADBox.SetWindowTextW(L"-20.5");
 	P37RANGEBox.SetWindowTextW(L"1205.8");
+	EMDOTBox.SetWindowTextW(L"66.95");
+	MinImp1Box.SetWindowTextW(L"19293.0");
+	MinImp2Box.SetWindowTextW(L"4909.1");
+	MinImp3Box.SetWindowTextW(L"25454.5");
+	MinImp4Box.SetWindowTextW(L"20260.0");
+
+	agc.BLOCKII.POLYNUM[0] = 1.1940272e-1;
+	agc.BLOCKII.POLYNUM[1] = 8.0761057e-2;
+	agc.BLOCKII.POLYNUM[2] = 1.4609205e-2;
+	agc.BLOCKII.POLYNUM[3] = -1.9841095e-4;
+	agc.BLOCKII.POLYNUM[4] = 1.7966877e-6;
+	agc.BLOCKII.POLYNUM[5] = -1.1164227e-8;
+	agc.BLOCKII.POLYNUM[6] = 2.9494747e-11;
+	agc.BLOCKII.RPSTART = 12.6;
+	agc.BLOCKII.POLYSTOP = 145.4;
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
@@ -495,10 +765,15 @@ void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
 	LODPADBox.SetWindowTextW(L"0.18");
 	ALFAPADBox.SetWindowTextW(L"-21.49");
 	P37RANGEBox.SetWindowTextW(L"1185.64");
+	EMDOTBox.SetWindowTextW(L"67.6");
+	MinImp1Box.SetWindowTextW(L"18848.0");
+	MinImp2Box.SetWindowTextW(L"6606.5");
+	MinImp3Box.SetWindowTextW(L"25454.5");
+	MinImp4Box.SetWindowTextW(L"20385.0");
 
 	agc.BLOCKII.POLYNUM[0] = -7.646894e-2;
 	agc.BLOCKII.POLYNUM[1] = 1.79988e-1;
-	agc.BLOCKII.POLYNUM[2] = 9.298907e-4;
+	agc.BLOCKII.POLYNUM[2] = 9.298907e-3;
 	agc.BLOCKII.POLYNUM[3] = -1.49242e-4;
 	agc.BLOCKII.POLYNUM[4] = 2.078269e-6;
 	agc.BLOCKII.POLYNUM[5] = -1.601873e-8;
@@ -528,6 +803,13 @@ void CAGCPadloadGeneratorGUIDlg::Apollo14Padload()
 	LODPADBox.SetWindowTextW(L"0.207");
 	ALFAPADBox.SetWindowTextW(L"-19.06");
 	P37RANGEBox.SetWindowTextW(L"1187.35");
+	EMDOTBox.SetWindowTextW(L"67.5");
+	MinImp1Box.SetWindowTextW(L"19965.7");
+	MinImp2Box.SetWindowTextW(L"4909.1");
+	MinImp3Box.SetWindowTextW(L"24874.8");
+	MinImp4Box.SetWindowTextW(L"20390.0");
+	TRUNSFBox.SetWindowTextW(L"1269760.0");
+	SHAFTSFBox.SetWindowTextW(L"659456.0");
 
 	agc.BLOCKII.POLYNUM[0] = 1.405176e-1;
 	agc.BLOCKII.POLYNUM[1] = 2.2886283e-1;
@@ -552,8 +834,8 @@ void CAGCPadloadGeneratorGUIDlg::Apollo15Padload()
 	LSLongitudeBox.SetWindowTextW(L"3.65389");
 	EMSAltBox.SetWindowTextW(L"300781.4");
 	LaunchAzimuthBox.SetWindowTextW(L"80.08868");
-	LATSPLBox.SetWindowText(L"20.3");
-	LNGSPLBox.SetWindowText(L"-19.5");
+	LATSPLBox.SetWindowTextW(L"20.3");
+	LNGSPLBox.SetWindowTextW(L"-19.5");
 	HORIZALTBox.SetWindowTextW(L"28000");
 	CSMMASSBox.SetWindowTextW(L"66915.2");
 	LEMMASSBox.SetWindowTextW(L"36206.2");
@@ -563,6 +845,12 @@ void CAGCPadloadGeneratorGUIDlg::Apollo15Padload()
 	LODPADBox.SetWindowTextW(L"0.207");
 	ALFAPADBox.SetWindowTextW(L"-18.64");
 	P37RANGEBox.SetWindowTextW(L"1114.55");
+	EMDOTBox.SetWindowTextW(L"67.5");
+	MinImp1Box.SetWindowTextW(L"19538.26");
+	MinImp2Box.SetWindowTextW(L"24447.36");
+	MinImp3Box.SetWindowTextW(L"19989.0");
+	TRUNSFBox.SetWindowTextW(L"1269760.0");
+	SHAFTSFBox.SetWindowTextW(L"647168.0");
 
 	agc.BLOCKII.POLYNUM[0] = 1.7813387e-1;
 	agc.BLOCKII.POLYNUM[1] = 1.8310605e-2;
@@ -596,8 +884,14 @@ void CAGCPadloadGeneratorGUIDlg::Apollo16Padload()
 	LODPADBox.SetWindowTextW(L"0.207");
 	ALFAPADBox.SetWindowTextW(L"-18.51");
 	P37RANGEBox.SetWindowTextW(L"1086.533");
-	LATSPLBox.SetWindowText(L"26.5");
-	LNGSPLBox.SetWindowText(L"-17.0");
+	LATSPLBox.SetWindowTextW(L"26.5");
+	LNGSPLBox.SetWindowTextW(L"-17.0");
+	EMDOTBox.SetWindowTextW(L"65.97842");
+	MinImp1Box.SetWindowTextW(L"19286.838");
+	MinImp2Box.SetWindowTextW(L"24195.938");
+	MinImp3Box.SetWindowTextW(L"20779.0");
+	TRUNSFBox.SetWindowTextW(L"1269760.0");
+	SHAFTSFBox.SetWindowTextW(L"651264.0");
 
 	agc.BLOCKII.POLYNUM[0] = -9.5207497e-2;
 	agc.BLOCKII.POLYNUM[1] = 1.9666296e-1;
@@ -631,8 +925,14 @@ void CAGCPadloadGeneratorGUIDlg::Apollo17Padload()
 	LODPADBox.SetWindowTextW(L"0.207");
 	ALFAPADBox.SetWindowTextW(L"-18.97");
 	P37RANGEBox.SetWindowTextW(L"1074.63");
-	LATSPLBox.SetWindowText(L"26.35");
-	LNGSPLBox.SetWindowText(L"-17.1");
+	LATSPLBox.SetWindowTextW(L"26.35");
+	LNGSPLBox.SetWindowTextW(L"-17.1");
+	EMDOTBox.SetWindowTextW(L"66.23333");
+	MinImp1Box.SetWindowTextW(L"19575.168");
+	MinImp2Box.SetWindowTextW(L"24484.268");
+	MinImp3Box.SetWindowTextW(L"20281.0");
+	TRUNSFBox.SetWindowTextW(L"1286144.0");
+	SHAFTSFBox.SetWindowTextW(L"659456.0");
 
 	agc.BLOCKII.POLYNUM[0] = -3.7352617e-1;
 	agc.BLOCKII.POLYNUM[1] = 2.4436145e-1;

@@ -14,7 +14,7 @@ int  ELP82(double mjd, double *r);
 
 const double R_Moon = 1.73809e6;			///< Radius of the moon
 const double R_Earth = 6373338.0;			///< Radius of the Earth at the launch pad
-const double LBS2KG = 0.453592;				///< Pound mass to kilograms
+const double LBS2KG = 0.45359237;			///< Pound mass to kilograms
 const double LBF2N = LBS2KG * 9.80665;		///< Pound mass to kilograms
 const double FT2M = 0.3048;					///< Feet to meters
 const double w_Earth = 7.29211515e-05;
@@ -356,6 +356,10 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKII.IGNAOSQ = 0.0;
 	BLOCKII.IGNAOSR = 0.0;
 	BLOCKII.DELTTFAP = -90.0;
+
+	CMCDATA.EIMP1SEC = 19575.168;
+	CMCDATA.EFIMP01 = 24484.268;
+	CMCDATA.EFIMP16 = 20281.0;
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -706,7 +710,7 @@ void AGCPadloadGenerator::SetPadData(Launchpad pad)
 
 		TAZEL[0] = 253.192 - 360.0;
 		TAZEL[1] = -2.0112;
-		TAZEL[2] = 291.187 - 360.0;
+		TAZEL[2] = -68.81059444;// 291.187 - 360.0;
 		TAZEL[3] = -2.0158;
 	}
 	else if (pad == Launchpad::LC39B)
@@ -3331,7 +3335,7 @@ void AGCPadloadGenerator::CMCDefaults(bool IsC108)
 	SaveEMEM(02377, iTemp);
 
 	//AZIMUTH
-	dTemp = -90.0 / 360.0; //-90°
+	dTemp = PadAzimuth / 360.0;
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(02400, iTemp);
 	SaveEMEM(02401, iTemp2);
@@ -3521,7 +3525,7 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 	dTemp = 11.85*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
+	//POLYSTOP
 	dTemp = -147.25*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
@@ -3541,7 +3545,7 @@ void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 	//FLAGWRD8
 	SaveEMEM(0104, 0);
 	//EMDOT
-	dTemp = SPS_THRUST / SPS_ISP;
+	dTemp = CMCDATA.EMDOT*LBS2KG;
 	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(0110, iTemp);
 	//DUMPCNT
@@ -3702,7 +3706,7 @@ void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 	dTemp = 11.85*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
+	//POLYSTOP
 	dTemp = -147.25*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
@@ -3733,7 +3737,7 @@ void AGCPadloadGenerator::Comanche55Padload()
 	//FLAGWRD8
 	SaveEMEM(0104, 0);
 	//EMDOT
-	dTemp = SPS_THRUST / SPS_ISP;
+	dTemp = CMCDATA.EMDOT*LBS2KG;
 	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(0110, iTemp);
 	//DUMPCNT
@@ -3775,16 +3779,20 @@ void AGCPadloadGenerator::Comanche55Padload()
 	SaveEMEM(01477, 0);
 
 	//EK1VAL
-	SaveEMEM(01767, 01);
-	SaveEMEM(01770, 030000);
+	DoubleToBuffer(CMCDATA.EK1VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01767, iTemp);
+	SaveEMEM(01770, iTemp2);
 	//EK2VAL
-	SaveEMEM(01771, 0);
-	SaveEMEM(01772, 015514);
+	DoubleToBuffer(CMCDATA.EK2VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01771, iTemp);
+	SaveEMEM(01772, iTemp2);
 	//EK3VAL
-	SaveEMEM(01773, 0552);
+	iTemp = SingleToBuffer(CMCDATA.EK3VAL*LBF2N / pow(100.0, 2), 9);
+	SaveEMEM(01773, iTemp);
 	//FANG
-	SaveEMEM(01774, 02200);
-	SaveEMEM(01775, 015070);
+	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
+	SaveEMEM(01774, iTemp);
+	SaveEMEM(01775, iTemp2);
 	//E3J22R3M
 	SaveEMEM(01776, 0);
 	//E32C3IRM
@@ -3797,15 +3805,15 @@ void AGCPadloadGenerator::Comanche55Padload()
 	SaveEMEM(02634, iTemp2);
 
 	//LADPAD
-	dTemp = 0.27;
+	dTemp = BLOCKII.LADPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
 	SaveEMEM(03007, iTemp);
 	//LODPAD
-	dTemp = 0.207;
+	dTemp = BLOCKII.LODPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
 	SaveEMEM(03010, iTemp);
 	//ALFAPAD
-	dTemp = -19.55 / 360.0;
+	dTemp = BLOCKII.ALFAPAD / 360.0;
 	iTemp = SingleToBuffer(dTemp, -1);
 	SaveEMEM(03011, iTemp);
 
@@ -3873,30 +3881,16 @@ void AGCPadloadGenerator::Comanche55Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(03074, iTemp);
 	//POLYNUM
-	SaveEMEM(03261, 05);
-	SaveEMEM(03262, 0);
-	SaveEMEM(03263, 014107);
-	SaveEMEM(03264, 010);
-	SaveEMEM(03265, 024775);
-	SaveEMEM(03266, 0536);
-	SaveEMEM(03267, 010550);
-	SaveEMEM(03270, 0746);
-	SaveEMEM(03271, 027545);
-	SaveEMEM(03272, 072636);
-	SaveEMEM(03273, 060425);
-	SaveEMEM(03274, 05754);
-	SaveEMEM(03275, 036030);
-	SaveEMEM(03276, 075607);
-	SaveEMEM(03277, 053465);
+	SavePOLYNUM(03261);
 	//SATRLRT
 	SaveEMEM(03300, 0);
 	SaveEMEM(03301, 016441);
 	//RPSTART
-	dTemp = 11.85*100.0;
+	dTemp = BLOCKII.RPSTART*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
-	dTemp = -147.25*100.0;
+	//POLYSTOP
+	dTemp = -BLOCKII.POLYSTOP*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
 	//SATRATE
@@ -3927,7 +3921,7 @@ void AGCPadloadGenerator::Comanche67Padload()
 	//Bit 8 set: SURFFLAG. LM on lunar surface
 	SaveEMEM(0104, 0200);
 	//EMDOT
-	dTemp = SPS_THRUST / SPS_ISP;
+	dTemp = CMCDATA.EMDOT*LBS2KG;
 	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(0110, iTemp);
 	//PIPTIME
@@ -3967,16 +3961,20 @@ void AGCPadloadGenerator::Comanche67Padload()
 	SaveEMEM(01477, 0);
 
 	//EK1VAL
-	SaveEMEM(01767, 01);
-	SaveEMEM(01770, 025506);
+	DoubleToBuffer(CMCDATA.EK1VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01767, iTemp);
+	SaveEMEM(01770, iTemp2);
 	//EK2VAL
-	SaveEMEM(01771, 0);
-	SaveEMEM(01772, 015514);
+	DoubleToBuffer(CMCDATA.EK2VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01771, iTemp);
+	SaveEMEM(01772, iTemp2);
 	//EK3VAL
-	SaveEMEM(01773, 0552);
+	iTemp = SingleToBuffer(CMCDATA.EK3VAL*LBF2N / pow(100.0, 2), 9);
+	SaveEMEM(01773, iTemp);
 	//FANG
-	SaveEMEM(01774, 02201);
-	SaveEMEM(01775, 021431);
+	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
+	SaveEMEM(01774, iTemp);
+	SaveEMEM(01775, iTemp2);
 	//E3J22R3M
 	SaveEMEM(01776, 0);
 	//E32C3IRM
@@ -4065,30 +4063,16 @@ void AGCPadloadGenerator::Comanche67Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(03074, iTemp);
 	//POLYNUM
-	SaveEMEM(03261, 05);
-	SaveEMEM(03262, 0);
-	SaveEMEM(03263, 05336);
-	SaveEMEM(03264, 022);
-	SaveEMEM(03265, 032145);
-	SaveEMEM(03266, 01055);
-	SaveEMEM(03267, 027611);
-	SaveEMEM(03270, 075446);
-	SaveEMEM(03271, 076042);
-	SaveEMEM(03272, 03461);
-	SaveEMEM(03273, 010752);
-	SaveEMEM(03274, 074255);
-	SaveEMEM(03275, 056442);
-	SaveEMEM(03276, 01453);
-	SaveEMEM(03277, 014467);
+	SavePOLYNUM(03261);
 	//SATRLRT
 	SaveEMEM(03300, 0);
 	SaveEMEM(03301, 016441);
 	//RPSTART
-	dTemp = 12.6*100.0;
+	dTemp = BLOCKII.RPSTART*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
-	dTemp = -145.4*100.0;
+	//POLYSTOP
+	dTemp = -BLOCKII.POLYSTOP*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
 	//SATRATE
@@ -4175,7 +4159,7 @@ void AGCPadloadGenerator::Comanche72Padload()
 	//Bit 8 set: SURFFLAG. LM on lunar surface
 	SaveEMEM(0104, 0200);
 	//EMDOT
-	dTemp = SPS_THRUST / SPS_ISP;
+	dTemp = CMCDATA.EMDOT*LBS2KG;
 	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(0110, iTemp);
 	//PIPTIME
@@ -4208,16 +4192,20 @@ void AGCPadloadGenerator::Comanche72Padload()
 	iTemp = SingleToBuffer(ALTVAR, -16);
 	SaveEMEM(01352, iTemp);
 	//EK1VAL
-	SaveEMEM(01767, 01);
-	SaveEMEM(01770, 024315);
+	DoubleToBuffer(CMCDATA.EK1VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01767, iTemp);
+	SaveEMEM(01770, iTemp2);
 	//EK2VAL
-	SaveEMEM(01771, 0);
-	SaveEMEM(01772, 022274);
+	DoubleToBuffer(CMCDATA.EK2VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01771, iTemp);
+	SaveEMEM(01772, iTemp2);
 	//EK3VAL
-	SaveEMEM(01773, 0552);
+	iTemp = SingleToBuffer(CMCDATA.EK3VAL*LBF2N / pow(100.0, 2), 9);
+	SaveEMEM(01773, iTemp);
 	//FANG
-	SaveEMEM(01774, 02210);
-	SaveEMEM(01775, 025231);
+	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
+	SaveEMEM(01774, iTemp);
+	SaveEMEM(01775, iTemp2);
 	//E3J22R3M
 	SaveEMEM(01776, 0);
 	//E32C3IRM
@@ -4304,30 +4292,16 @@ void AGCPadloadGenerator::Comanche72Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(03074, iTemp);
 	//POLYNUM
-	SaveEMEM(03261, 05);
-	SaveEMEM(03262, 077777);
-	SaveEMEM(03263, 074411);
-	SaveEMEM(03264, 051);
-	SaveEMEM(03265, 036055);
-	SaveEMEM(03266, 0543);
-	SaveEMEM(03267, 0222);
-	SaveEMEM(03270, 076132);
-	SaveEMEM(03271, 057562);
-	SaveEMEM(03272, 04121);
-	SaveEMEM(03273, 033143);
-	SaveEMEM(03274, 072576);
-	SaveEMEM(03275, 053233);
-	SaveEMEM(03276, 02272);
-	SaveEMEM(03277, 037152);
+	SavePOLYNUM(03261);
 	//SATRLRT
 	SaveEMEM(03300, 0);
 	SaveEMEM(03301, 016441);
 	//RPSTART
-	dTemp = 11.85*100.0;
+	dTemp = BLOCKII.RPSTART*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
-	dTemp = -149.5*100.0;
+	//POLYSTOP
+	dTemp = -BLOCKII.POLYSTOP*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
 	//SATRATE
@@ -4447,28 +4421,34 @@ void AGCPadloadGenerator::Comanche108Padload()
 	iTemp = SingleToBuffer(ALTVAR, -16);
 	SaveEMEM(01354, iTemp);
 	//EMDOT
-	dTemp = SPS_THRUST / SPS_ISP;
+	dTemp = CMCDATA.EMDOT*LBS2KG;
 	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(01355, iTemp);
 	//EK1VAL
-	SaveEMEM(01765, 01);
-	SaveEMEM(01766, 027404);
+	DoubleToBuffer(CMCDATA.EK1VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01765, iTemp);
+	SaveEMEM(01766, iTemp2);
 	//EK2VAL
-	SaveEMEM(01767, 0);
-	SaveEMEM(01770, 015514);
+	DoubleToBuffer(CMCDATA.EK2VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01767, iTemp);
+	SaveEMEM(01770, iTemp2);
 	//EK3VAL
-	SaveEMEM(01771, 0542);
+	iTemp = SingleToBuffer(CMCDATA.EK3VAL*LBF2N / pow(100.0, 2), 9);
+	SaveEMEM(01771, iTemp);
 	//FANG
-	SaveEMEM(01772, 02210);
-	SaveEMEM(01773, 036321);
+	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
+	SaveEMEM(01772, iTemp);
+	SaveEMEM(01773, iTemp2);
 	//E3J22R3M
 	SaveEMEM(01774, 0);
 	//E32C3IRM
 	SaveEMEM(01775, 0);
 	//TRUNSF
-	SaveEMEM(01776, 0233);
+	iTemp = SingleToBuffer(CMCDATA.TRUNSF, 27);
+	SaveEMEM(01776, iTemp);
 	//SHAFTSF
-	SaveEMEM(01777, 0502);
+	iTemp = SingleToBuffer(CMCDATA.SHAFTSF, 25);
+	SaveEMEM(01777, iTemp);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -4553,30 +4533,16 @@ void AGCPadloadGenerator::Comanche108Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(03074, iTemp);
 	//POLYNUM
-	SaveEMEM(03261, 05);
-	SaveEMEM(03262, 0);
-	SaveEMEM(03263, 06312);
-	SaveEMEM(03264, 065);
-	SaveEMEM(03265, 012415);
-	SaveEMEM(03266, 0250);
-	SaveEMEM(03267, 027364);
-	SaveEMEM(03270, 0104);
-	SaveEMEM(03271, 031224);
-	SaveEMEM(03272, 077547);
-	SaveEMEM(03273, 050115);
-	SaveEMEM(03274, 077163);
-	SaveEMEM(03275, 074065);
-	SaveEMEM(03276, 0556);
-	SaveEMEM(03277, 032274);
+	SavePOLYNUM(03261);
 	//SATRLRT
 	SaveEMEM(03300, 0);
 	SaveEMEM(03301, 016441);
 	//RPSTART
-	dTemp = 12.6*100.0;
+	dTemp = BLOCKII.RPSTART*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03302, iTemp);
-	//RPSTOP
-	dTemp = -150.0*100.0;
+	//POLYSTOP
+	dTemp = -BLOCKII.POLYSTOP*100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(03303, iTemp);
 	//SATRATE
@@ -4647,23 +4613,31 @@ void AGCPadloadGenerator::Artemis72Padload()
 	iTemp = SingleToBuffer(ALTVAR, -16);
 	SaveEMEM(01347, iTemp);
 	//EMDOT
-	dTemp = SPS_THRUST / SPS_ISP;
+	dTemp = CMCDATA.EMDOT*LBS2KG;
 	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(01350, iTemp);
 	//EIMP1SEC
-	SaveEMEM(01763, 01532);
+	dTemp = CMCDATA.EIMP1SEC*LBF2N / 100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(01763, iTemp);
 	//EFIMP01
-	SaveEMEM(01764, 02064);
+	dTemp = CMCDATA.EFIMP01*LBF2N / 100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(01764, iTemp);
 	//EFIMP16
-	SaveEMEM(01765, 01634);
+	dTemp = CMCDATA.EFIMP16*LBF2N / 100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
+	SaveEMEM(01765, iTemp);
 	//E3J22R3M
 	SaveEMEM(01766, 0);
 	//E32C3IRM
 	SaveEMEM(01767, 0);
 	//TRUNSF
-	SaveEMEM(01770, 0233);
+	iTemp = SingleToBuffer(CMCDATA.TRUNSF, 27);
+	SaveEMEM(01770, iTemp);
 	//SHAFTSF
-	SaveEMEM(01771, 0476);
+	iTemp = SingleToBuffer(CMCDATA.SHAFTSF, 25);
+	SaveEMEM(01771, iTemp);
 
 	//DTF
 	dTemp = 0.3*100.0; //0.3 seconds
@@ -4999,6 +4973,10 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		sinI = 0.0267657905;
 		t0 = 41133;
 	}
+	else
+	{
+		//Error?
+	}
 
 	//EARTH ROTATIONS
 	brcsmjd = MJDOfNBYEpoch(epoch);
@@ -5143,6 +5121,9 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	debugfile << "\nLunar correction vector deviation analysis\n\n";
 
+	sprintf_s(Buffer, 256, "504LM = %lf %lf %lf\n\n", lm.x, lm.y, lm.z);
+	debugfile << Buffer;
+
 	//504LM deviation analysis
 	MJD = mjd_504LM - 3.0;
 
@@ -5159,7 +5140,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		MM = CalculateMoonTransformationMatrix(t_M, B_0, B_dot, Omega_I0, Omega_I_dot, F_0, F_dot, cosI, sinI);
 		RLS_BRCS2 = tmul(MM, RLS + crossp(lm, RLS));
 
-		err = acos(dotp(unit(RLS_BRCS), unit(RLS_BRCS2)))*R_Moon;
+		err = acos2(dotp(unit(RLS_BRCS), unit(RLS_BRCS2)))*R_Moon;
 
 		sprintf_s(Buffer, 256, "%.3f = %g (meters)\n", MJD, err);
 		debugfile << Buffer;
@@ -6133,7 +6114,7 @@ void AGCPadloadGenerator::Skylark048Padload()
 	SaveEMEM(02374, iTemp2);
 
 	//AZIMUTH
-	dTemp = -90.0 / 360.0; //-90°
+	dTemp = PadAzimuth / 360.0;
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(02400, iTemp);
 	SaveEMEM(02401, iTemp2);
