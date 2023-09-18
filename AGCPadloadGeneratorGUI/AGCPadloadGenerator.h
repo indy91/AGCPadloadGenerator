@@ -46,6 +46,13 @@ struct BlockIData
 
 struct BlockCMCIIData
 {
+	//All CMC
+
+	//P23 W-Matrix initial position error, ft
+	double WMIDPOS;
+	//P23 W-Matrix initial velocity error, ft/s
+	double WMIDVEL;
+
 	//All CMC except Colossus 237
 	double EMDOT = 0.0;
 
@@ -99,6 +106,8 @@ struct BlockIIData
 	double RMAX;
 	//P20 W-Matrix maximum velocity deviation that gets processed automatically, ft/s
 	double VMAX;
+	//P-20, ft/s
+	double RVARMIN;
 
 	//CMC Only
 

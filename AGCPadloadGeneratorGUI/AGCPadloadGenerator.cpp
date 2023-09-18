@@ -323,6 +323,7 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	BLOCKII.WTRUN = 15.0; //mr
 	BLOCKII.RMAX = 2000.0;		// 2000 ft
 	BLOCKII.VMAX = 2.0;			// 2 ft/s
+	BLOCKII.RVARMIN = 40000.0; // (200 ft)^2
 	BLOCKII.SHAFTVAR = 1.0;
 	BLOCKII.TRUNVAR = 1.0;
 	BLOCKII.WSURFPOS = 0.0;
@@ -360,6 +361,8 @@ AGCPadloadGenerator::AGCPadloadGenerator()
 	CMCDATA.EIMP1SEC = 19575.168;
 	CMCDATA.EFIMP01 = 24484.268;
 	CMCDATA.EFIMP16 = 20281.0;
+	CMCDATA.WMIDPOS = 30000.0;	// 10000 ft
+	CMCDATA.WMIDVEL = 30.0;		// 10 ft/s
 }
 
 AGCPadloadGenerator::~AGCPadloadGenerator()
@@ -729,7 +732,7 @@ void AGCPadloadGenerator::SetPadData(Launchpad pad)
 	{
 		PadLat = 28.5217969;
 		PadLong = 279.4387535;
-		PadAlt = 5.66;
+		PadAlt = 44.0;
 		PadAzimuth = -80.0;
 
 		TAZEL[0] = 309.6 - 360.0;
@@ -3240,6 +3243,8 @@ void AGCPadloadGenerator::CMCDefaults(bool IsC108)
 {
 	//Contains padloads that never change their address in all of Colossus
 
+	//IsC108: Comanche 108 specific address differences
+
 	//CDUCHKWD (5 centiseconds)
 	//Single precision erasable memory constant, program notation
 	//"CDUCHKWD", scale factor B14, used to specify (if positive non -
@@ -3362,21 +3367,14 @@ void AGCPadloadGenerator::CMCDefaults(bool IsC108)
 	iTemp = SingleToBuffer(dTemp, -2);
 	SaveEMEM(02435, iTemp);
 
-	//WMIDPOS
-	dTemp = 30000.0*0.3048; //30k feet
-	iTemp = SingleToBuffer(dTemp, 19);
-	SaveEMEM(03000, iTemp);
-	//WMIDVEL
-	dTemp = 30.0*0.3048 / 100.0; //30 ft/s
-	iTemp = SingleToBuffer(dTemp, 0);
-	SaveEMEM(03001, iTemp);
 	//RVAR
 	SaveEMEM(03002, 0);
 	SaveEMEM(03003, 0);
 	//RVARMIN
-	SaveEMEM(03004, 077777);
-	SaveEMEM(03005, 077777);
-	SaveEMEM(03006, 042757);
+	TripleToBuffer(-BLOCKII.RVARMIN*pow(FT2M, 2), 40, iTemp, iTemp2, iTemp3);
+	SaveEMEM(03004, iTemp);
+	SaveEMEM(03005, iTemp2);
+	SaveEMEM(03006, iTemp3);
 
 	//LAT(SPL)
 	dTemp = BLOCKII.LAT_SPL / 360.0;
@@ -3440,6 +3438,15 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
+
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M / sqrt(3.0);
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0 / sqrt(3.0);
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
 
 	//LADPAD
 	dTemp = 0.3;
@@ -3600,11 +3607,13 @@ void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 	SaveEMEM(01477, 0);
 
 	//EK1VAL
-	SaveEMEM(01767, 01);
-	SaveEMEM(01770, 030000);
+	DoubleToBuffer(CMCDATA.EK1VAL*LBF2N / 100.0, 23, iTemp, iTemp2);
+	SaveEMEM(01767, iTemp);
+	SaveEMEM(01770, iTemp2);
 	//FANG
-	SaveEMEM(01771, 02200);
-	SaveEMEM(01772, 015070);
+	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
+	SaveEMEM(01771, iTemp);
+	SaveEMEM(01772, iTemp2);
 
 	if (IsR2)
 	{
@@ -3620,16 +3629,25 @@ void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
 
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M / sqrt(3.0);
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0 / sqrt(3.0);
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
+
 	//LADPAD
-	dTemp = 0.27;
+	dTemp = BLOCKII.LADPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
 	SaveEMEM(03007, iTemp);
 	//LODPAD
-	dTemp = 0.207;
+	dTemp = BLOCKII.LODPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
 	SaveEMEM(03010, iTemp);
 	//ALFAPAD
-	dTemp = -19.55 / 360.0;
+	dTemp = BLOCKII.ALFAPAD / 360.0;
 	iTemp = SingleToBuffer(dTemp, -1);
 	SaveEMEM(03011, iTemp);
 
@@ -3817,6 +3835,15 @@ void AGCPadloadGenerator::Comanche55Padload()
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
 
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M;
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
+
 	//LADPAD
 	dTemp = BLOCKII.LADPAD;
 	iTemp = SingleToBuffer(dTemp, 0);
@@ -3998,6 +4025,15 @@ void AGCPadloadGenerator::Comanche67Padload()
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
+
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M;
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
 
 	//LADPAD
 	dTemp = 0.27;
@@ -4229,6 +4265,15 @@ void AGCPadloadGenerator::Comanche72Padload()
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
+
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M;
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
 
 	//LADPAD
 	dTemp = 0.3;
@@ -4469,6 +4514,15 @@ void AGCPadloadGenerator::Comanche108Padload()
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
 
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M;
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
+
 	//LADPAD
 	dTemp = 0.27;
 	iTemp = SingleToBuffer(dTemp, 0);
@@ -4691,6 +4745,15 @@ void AGCPadloadGenerator::Artemis72Padload()
 	DoubleToBuffer(dTemp, 0, iTemp, iTemp2);
 	SaveEMEM(02633, iTemp);
 	SaveEMEM(02634, iTemp2);
+
+	//WMIDPOS
+	dTemp = CMCDATA.WMIDPOS*FT2M;
+	iTemp = SingleToBuffer(dTemp, 19);
+	SaveEMEM(03000, iTemp);
+	//WMIDVEL
+	dTemp = CMCDATA.WMIDVEL*FT2M / 100.0;
+	iTemp = SingleToBuffer(dTemp, 0);
+	SaveEMEM(03001, iTemp);
 
 	//LADPAD
 	dTemp = BLOCKII.LADPAD;

@@ -40,6 +40,7 @@ protected:
 
 	void UpdateRopeSpecificEditFields();
 
+	void Apollo10Padload();
 	void Apollo11Padload(int LaunchDay);
 	void Apollo12Padload();
 	void Apollo13Padload();
@@ -102,4 +103,7 @@ public:
 	CStatic MinImp4Unit;
 	CEdit TRUNSFBox;
 	CEdit SHAFTSFBox;
+	CEdit WMIDPOSBox;
+	CEdit WMIDVELBox;
+	CEdit RVARMINBox;
 };

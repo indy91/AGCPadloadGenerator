@@ -82,6 +82,9 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MINIMP_4U, MinImp4Unit);
 	DDX_Control(pDX, IDC_EDIT32, TRUNSFBox);
 	DDX_Control(pDX, IDC_EDIT33, SHAFTSFBox);
+	DDX_Control(pDX, IDC_EDIT34, WMIDPOSBox);
+	DDX_Control(pDX, IDC_EDIT35, WMIDVELBox);
+	DDX_Control(pDX, IDC_EDIT36, RVARMINBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -150,6 +153,9 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 		m_ToolTip.AddTool(&WRENDVELBox, _T("W matrix velocity initialization for rendezvous"));
 		m_ToolTip.AddTool(&RMAXBox, _T("Maximum automatic rendezvous position update"));
 		m_ToolTip.AddTool(&VMAXBox, _T("Maximum automatic rendezvous velocity update"));
+		m_ToolTip.AddTool(&RVARMINBox, _T("Minimum variance for VHF measurement"));
+		m_ToolTip.AddTool(&WMIDPOSBox, _T("W-matrix position error initialization for midcourse navigation (P23)"));
+		m_ToolTip.AddTool(&WMIDVELBox, _T("W-matrix velocity error initialization for midcourse navigation (P23)"));
 
 		m_ToolTip.AddTool(&MinImp1Box, _T("None"));
 		m_ToolTip.AddTool(&MinImp2Box, _T("None"));
@@ -214,6 +220,9 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	WRENDVELBox.SetWindowText(L"3.048");
 	RMAXBox.SetWindowText(L"2000");
 	VMAXBox.SetWindowText(L"2");
+	RVARMINBox.SetWindowText(L"40000");
+	WMIDPOSBox.SetWindowText(L"30000");
+	WMIDVELBox.SetWindowText(L"30");
 	LATSPLBox.SetWindowText(L"26.48");
 	LNGSPLBox.SetWindowText(L"-17.05");
 	CSMMASSBox.SetWindowText(L"63386.7");
@@ -303,6 +312,9 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.BLOCKII.WRENDVEL = Utilities::Text2Double(&WRENDVELBox);
 	agc.BLOCKII.RMAX = Utilities::Text2Double(&RMAXBox);
 	agc.BLOCKII.VMAX = Utilities::Text2Double(&VMAXBox);
+	agc.BLOCKII.RVARMIN = Utilities::Text2Double(&RVARMINBox);
+	agc.CMCDATA.WMIDPOS = Utilities::Text2Double(&WMIDPOSBox);
+	agc.CMCDATA.WMIDVEL = Utilities::Text2Double(&WMIDVELBox);
 	agc.BLOCKII.LAT_SPL = Utilities::Text2Double(&LATSPLBox);
 	agc.BLOCKII.LNG_SPL = Utilities::Text2Double(&LNGSPLBox);
 	agc.BLOCKII.CSMMass = Utilities::Text2Double(&CSMMASSBox);
@@ -369,6 +381,10 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	WRENDVELBox.SetWindowText(L"3.048");
 	RMAXBox.SetWindowText(L"2000");
 	VMAXBox.SetWindowText(L"2");
+	RVARMINBox.SetWindowText(L"40000");
+	WMIDPOSBox.SetWindowText(L"30000");
+	WMIDVELBox.SetWindowText(L"30");
+
 	LATSPLBox.SetWindowText(L"26.48");
 	LNGSPLBox.SetWindowText(L"-17.05");
 
@@ -453,30 +469,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		EMDOTBox.SetWindowTextW(L"65.272");
 		break;
 	case 4: //Apollo 10
-		RopeNameBox.SetCurSel(CMC_COMANCE045);
-		LaunchMJDInput.SetWindowTextW(L"40359.7006944");
-		Launchpad.SetCurSel(2); //LC-39B
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		LSAltitudeBox.SetWindowTextW(L"-3073.26");
-		LSLatitudeBox.SetWindowTextW(L"0.71388");
-		LSLongitudeBox.SetWindowTextW(L"23.707773");
-		EMSAltBox.SetWindowTextW(L"294084.3");
-		LaunchAzimuthBox.SetWindowTextW(L"72.028");
-		HORIZALTBox.SetWindowTextW(L"24000");
-		ALTVARBox.SetWindowText(L"1.5258e-05");
-		CSMMASSBox.SetWindowTextW(L"63904.0");
-		LEMMASSBox.SetWindowTextW(L"31579.7");
-		PACTOFFBox.SetWindowTextW(L"-1.48");
-		YACTOFFBox.SetWindowTextW(L"1.35");
-
-		//TBD
-		LADPADBox.SetWindowTextW(L"0.27");
-		LODPADBox.SetWindowTextW(L"0.207");
-		ALFAPADBox.SetWindowTextW(L"-19.55");
-		P37RANGEBox.SetWindowTextW(L"1221.5");
-		EMDOTBox.SetWindowTextW(L"65.272");
-		MinImp1Box.SetWindowTextW(L"20143.2");
-		MinImp4Box.SetWindowTextW(L"20240.0");
+		Apollo10Padload();
 		break;
 	case 5: //Apollo 11
 		Apollo11Padload(16);
@@ -644,6 +637,36 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		m_ToolTip.UpdateTipText(_T("None"), &MinImp4Box);
 		break;
 	}
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo10Padload()
+{
+	RopeNameBox.SetCurSel(CMC_COMANCE045);
+	EphemerisSpanBox.SetWindowTextW(L"10.5");
+	LaunchMJDInput.SetWindowTextW(L"40359.7006944");
+	Launchpad.SetCurSel(2); //LC-39B
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-3073.26");
+	LSLatitudeBox.SetWindowTextW(L"0.71388");
+	LSLongitudeBox.SetWindowTextW(L"23.707773");
+	EMSAltBox.SetWindowTextW(L"300997.3");
+	LaunchAzimuthBox.SetWindowTextW(L"72.028");
+	HORIZALTBox.SetWindowTextW(L"24000");
+	ALTVARBox.SetWindowText(L"1.5258e-05");
+	CSMMASSBox.SetWindowTextW(L"63904.0");
+	LEMMASSBox.SetWindowTextW(L"31579.7");
+	PACTOFFBox.SetWindowTextW(L"-1.48");
+	YACTOFFBox.SetWindowTextW(L"1.35");
+	EMDOTBox.SetWindowTextW(L"66.957");
+	MinImp1Box.SetWindowTextW(L"19840.1");
+	MinImp4Box.SetWindowTextW(L"20180.0");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-19.6");
+	P37RANGEBox.SetWindowTextW(L"1236.0");
+	RVARMINBox.SetWindowText(L"900");
+	WMIDPOSBox.SetWindowText(L"5700");
+	WMIDVELBox.SetWindowText(L"5.73"); //TBD: Gives the right octal, but improve this
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
