@@ -191,6 +191,66 @@ class AGCPadloadGenerator
 		LC37B
 	};
 
+	struct PIOSDataSet
+	{
+		enum PIOSDataSetNames
+		{
+			PIOSDataError,
+			B1950,
+			NBY68,
+			NBY69,
+			NBY70_V1, //"Bad" version flown on Apollo 11
+			NBY70_V2, //Correct version flown Apollo 12-13
+			NBY70_V3, //ArtemisNBY70
+			NBY71,
+			NBY72
+		};
+
+		int epoch = 0;
+		double w_E = 0.0;
+		double B_0 = 0.0;
+		double Omega_I0 = 0.0;
+		double F_0 = 0.0;
+		double B_dot = 0.0;
+		double Omega_I_dot = 0.0;
+		double F_dot = 0.0;
+		double cosI = 0.0;
+		double sinI = 0.0;
+		double t0 = 0.0;
+		bool AZ0Hardcoded = false;
+		double AZ0 = 0.0;
+	};
+
+	enum AGCVersions
+	{
+		AGCVersionError,
+		Solarium055,
+		Sundisk282,
+		Colossus237,
+		Colossus249,
+		Comanche045,
+		Comanche055,
+		Comanche067,
+		Comanche072,
+		Comanche108,
+		Artemis072,
+		Artemis072NBY70,
+		Artemis072NBY71,
+		Sunburst120,
+		Sundance306,
+		Luminary069,
+		Luminary069R2,
+		Luminary099,
+		Luminary116,
+		Luminary131,
+		Luminary131R1,
+		Luminary178,
+		Luminary210,
+		Zerlina56,
+		Zerlina56NBY72,
+		Skylark048
+	};
+
 public:
 	AGCPadloadGenerator();
 	~AGCPadloadGenerator();
@@ -236,7 +296,7 @@ public:
 protected:
 	void SaveEMEM(int address, int value);
 	void WriteEMEM(int address, int value, bool cmc);
-	void AGCCorrectionVectors(std::string rope, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance);
+	void AGCCorrectionVectors(PIOSDataSet dataset, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance);
 	void AGCEphemeris(double T0, int Epoch, double TEphem0, double Span);
 
 	int clbkEphemeris(int body, double mjd, int req, double *ret);
@@ -251,6 +311,12 @@ protected:
 	MATRIX3 SolariumEarthFixedToSM(double lat, double lng, double azi);
 	double Solarium055DTEPOCHCalculation(double A_Z0, double MJD_0, double MJD_L, double lng);
 	double HANGLE(int E, int Y, int D);
+
+	AGCVersions GetCMCVersion(std::string name);
+	AGCVersions GetLGCVersion(std::string name);
+
+	PIOSDataSet::PIOSDataSetNames GetPIOSDataSetName(AGCVersions rope);
+	PIOSDataSet GetPIOSDataSet(PIOSDataSet::PIOSDataSetNames name);
 
 	std::vector<EMEM> arr;
 	std::ofstream myfile, debugfile;

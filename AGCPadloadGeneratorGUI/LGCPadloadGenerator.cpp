@@ -15,6 +15,7 @@
 #define LGC_LUMINARY178 6
 #define LGC_LUMINARY210 7
 #define LGC_ZERLINA056 8
+#define LGC_ZERLINA056NBY72 9
 
 // LGCPadloadGenerator-Dialog
 
@@ -147,6 +148,7 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	RopeNameBox.AddString(L"Luminary178");
 	RopeNameBox.AddString(L"Luminary210");
 	RopeNameBox.AddString(L"Zerlina56");
+	RopeNameBox.AddString(L"Zerlina56NBY72");
 	RopeNameBox.SetCurSel(LGC_LUMINARY116);
 
 	UpdateRopeSpecificEditFields();
@@ -711,7 +713,7 @@ void LGCPadloadGenerator::UpdateRopeSpecificEditFields()
 		KIGNVBox.SetReadOnly(false);
 	}
 
-	if (RopeNameBox.GetCurSel() == LGC_LUMINARY178 || RopeNameBox.GetCurSel() == LGC_LUMINARY210 || RopeNameBox.GetCurSel() == LGC_ZERLINA056)
+	if (RopeNameBox.GetCurSel() == LGC_LUMINARY178 || RopeNameBox.GetCurSel() == LGC_LUMINARY210 || RopeNameBox.GetCurSel() == LGC_ZERLINA056 || RopeNameBox.GetCurSel() == LGC_ZERLINA056NBY72)
 	{
 		ABSC0Box.SetReadOnly(false); ABSC1Box.SetReadOnly(false); ABSC2Box.SetReadOnly(false); ABSC3Box.SetReadOnly(false); ABSC4Box.SetReadOnly(false);
 		SLOPE0Box.SetReadOnly(false); SLOPE1Box.SetReadOnly(false); SLOPE2Box.SetReadOnly(false); SLOPE3Box.SetReadOnly(false); SLOPE4Box.SetReadOnly(false);

@@ -395,7 +395,9 @@ void AGCPadloadGenerator::WriteEMEM(int address, int value, bool cmc)
 
 void AGCPadloadGenerator::RunLGC()
 {
+	//Clear erasable data
 	arr.clear();
+	//Open padload file
 	myfile.open("Padload.txt");
 
 	//Launch MJD rounded down to the next 12 hours
@@ -403,81 +405,58 @@ void AGCPadloadGenerator::RunLGC()
 	//Midnight day before launch
 	PrelaunchMJD = floor(LaunchMJD) - 1.0;
 
-	//MJD of preceding July 1st, midnight
-	double AGCEphemTEphemZero;
-	int Epoch;
+	//Get rope number
+	AGCVersions AGCVersion = GetLGCVersion(RopeName);
+	if (AGCVersion == AGCVersions::AGCVersionError) return;
 
-	if (RopeName == "Sundance306" || RopeName == "Luminary069" || RopeName == "Luminary069R2")
+	//Get PIOS data set
+	PIOSDataSet DataSet = GetPIOSDataSet(GetPIOSDataSetName(AGCVersion));
+
+	switch (AGCVersion)
 	{
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 40038.0;
-		Epoch = 1969;
-
-		if (RopeName == "Sundance306")
-		{
+		case Sundance306:
 			Sundance306Defaults();
-		}
-		else if (RopeName == "Luminary069")
-		{
+			break;
+		case Luminary069:
 			Luminary069Padload(false);
-		}
-		else
-		{
+			break;
+		case Luminary069R2:
 			Luminary069Padload(true);
-		}
-	}
-	else if (RopeName == "Luminary099" || RopeName == "Luminary116" || RopeName == "Luminary131" || RopeName == "Luminary131R1")
-	{
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 40403.0;
-		Epoch = 1970;
-
-		if (RopeName == "Luminary099")
-		{
+			break;
+		case Luminary099:
 			Luminary099Padload();
-		}
-		else if (RopeName == "Luminary116")
-		{
+			break;
+		case Luminary116:
 			Luminary116Padload();
-		}
-		else
-		{
+			break;
+		case Luminary131:
+			return; //Error
+		case Luminary131R1:
 			Luminary131Padload();
-		}
-	}
-	else if (RopeName == "Luminary178" || RopeName == "Zerlina56")
-	{
-		if (RopeName == "Luminary178")
-		{
+			break;
+		case Luminary178:
 			Luminary178Padload();
-		}
-		else
-		{
+			break;
+		case Luminary210:
+			Luminary210Padload();
+			break;
+		case Zerlina56:
+		case Zerlina56NBY72:
 			Zerlina56Padload();
-		}
-
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 40768.0;
-		Epoch = 1971;
-	}
-	else
-	{
-		Luminary210Padload();
-
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 41133.0;
-		Epoch = 1972;
+			break;
+		default: //Error
+			return;
 	}
 
 	//Calculate padload TEPHEM
-	TEPHEM = (LaunchMJD - AGCEphemTEphemZero)*24.0*3600.0*100.0;
+	TEPHEM = (LaunchMJD - DataSet.t0)*24.0*3600.0*100.0;
 
 	TripleToBuffer(TEPHEM, 42, iTemp, iTemp2, iTemp3);
 	SaveEMEM(01706, iTemp);
 	SaveEMEM(01707, iTemp2);
 	SaveEMEM(01710, iTemp3);
 
-	AGCCorrectionVectors(RopeName, AGCEphemStartTime, T_UNITW, T_504LM, false, RopeName == "Sundance306");
+	AGCCorrectionVectors(DataSet, AGCEphemStartTime, T_UNITW, T_504LM, false, RopeName == "Sundance306");
 
 	//End
 	std::sort(arr.begin(), arr.end());
@@ -578,104 +557,73 @@ void AGCPadloadGenerator::RunCMC()
 
 	myfile.open("Padload.txt");
 
+	//Get rope number
+	AGCVersions AGCVersion = GetCMCVersion(RopeName);
+	if (AGCVersion == AGCVersions::AGCVersionError) return;
+
+	//Get PIOS data set
+	PIOSDataSet DataSet = GetPIOSDataSet(GetPIOSDataSetName(AGCVersion));
+
 	//Launch MJD rounded down to the next 12 hours
 	double AGCEphemStartTime = floor(LaunchMJD*2.0) / 2.0;
 	//Midnight day before launch
 	PrelaunchMJD = floor(LaunchMJD) - 1.0;
 
-	//MJD of preceding July 1st, midnight
-	double AGCEphemTEphemZero;
-	int Epoch;
-
-	if (RopeName == "Colossus237" || RopeName == "Colossus249" || RopeName == "Comanche045")
+	switch (AGCVersion)
 	{
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 40038.0;
-		Epoch = 1969;
-
-		if (RopeName == "Colossus237")
-		{
-			Colossus237_249_Defaults(false);
-		}
-		else if (RopeName == "Colossus249")
-		{
-			Colossus237_249_Defaults(true);
-		}
-		else
-		{
-			Comanche45Padload(true);
-		}
-	}
-	else if (RopeName == "Comanche055" || RopeName == "Comanche067" || RopeName == "Comanche072" || RopeName == "Artemis072NBY70")
-	{
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 40403.0;
-		Epoch = 1970;
-
-		if (RopeName == "Comanche055")
-		{
-			Comanche55Padload();
-		}
-		else if (RopeName == "Comanche067")
-		{
-			Comanche67Padload();
-		}
-		else if (RopeName == "Comanche072")
-		{
-			Comanche72Padload();
-		}
-		else
-		{
-			Artemis72Padload(); //Artemis072NBY70, but it's the same
-		}
-	}
-	else if (RopeName == "Artemis072NBY71" || RopeName == "Comanche108")
-	{
-		if (RopeName == "Comanche108")
-		{
-			Comanche108Padload();
-		}
-		else
-		{
-			Artemis72Padload(); //Artemis072NBY71, but it's the same
-		}
-		
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 40768.0;
-		Epoch = 1971;
-	}
-	else if (RopeName == "Artemis072")
-	{
+	case Colossus237:
+		Colossus237_249_Defaults(false);
+		break;
+	case Colossus249:
+		Colossus237_249_Defaults(true);
+		break;
+	case Comanche045:
+		Comanche45Padload(true);
+		break;
+	case Comanche055:
+		Comanche55Padload();
+		break;
+	case Comanche067:
+		Comanche67Padload();
+		break;
+	case Comanche072:
+		Comanche72Padload();
+		break;
+	case Comanche108:
+		Comanche108Padload();
+		break;
+	case Artemis072:
+	case Artemis072NBY70:
+	case Artemis072NBY71:
 		Artemis72Padload();
-
-		//MJD of preceding July 1st, midnight
-		AGCEphemTEphemZero = 41133.0;
-		Epoch = 1972;
-	}
-	else
+		break;
+	case Skylark048:
 	{
 		int Year = 1950;
 
 		do
 		{
 			Year++;
-			AGCEphemTEphemZero = JD2MJD(TJUDAT(Year - 1, 7, 1));
-		} while (AGCEphemTEphemZero < PrelaunchMJD);
+			DataSet.t0 = JD2MJD(TJUDAT(Year - 1, 7, 1));
+		} while (DataSet.t0 < PrelaunchMJD);
 
-		AGCEphemTEphemZero = JD2MJD(TJUDAT(Year - 2, 7, 1));
-		Epoch = 1950;
+		DataSet.t0 = JD2MJD(TJUDAT(Year - 2, 7, 1));
 
 		Skylark048Padload();
-		SkylarkSolarEphemeris(MJD2JD(LaunchMJD), MJD2JD(AGCEphemTEphemZero));
-		SkylarkCorrectionMatrix(MJD2JD(LaunchMJD), MJD2JD(AGCEphemTEphemZero));
+		SkylarkSolarEphemeris(MJD2JD(LaunchMJD), MJD2JD(DataSet.t0));
+		SkylarkCorrectionMatrix(MJD2JD(LaunchMJD), MJD2JD(DataSet.t0));
+	}
+	break;
+	default:
+		return; //Error
 	}
 
 	//Calculate padload TEPHEM
-	TEPHEM = (PrelaunchMJD - AGCEphemTEphemZero)*24.0*3600.0*100.0;
+	TEPHEM = (PrelaunchMJD - DataSet.t0)*24.0*3600.0*100.0;
 
 	TripleToBuffer(TEPHEM, 42, iTemp, iTemp2, iTemp3);
 
-	if (RopeName == "Skylark048")
+	if (AGCVersion == Skylark048)
 	{
 		SaveEMEM(01700, iTemp);
 		SaveEMEM(01701, iTemp2);
@@ -687,8 +635,8 @@ void AGCPadloadGenerator::RunCMC()
 		SaveEMEM(01707, iTemp2);
 		SaveEMEM(01710, iTemp3);
 
-		AGCCorrectionVectors(RopeName, AGCEphemStartTime, T_UNITW, T_504LM, true, false);
-		AGCEphemeris(AGCEphemStartTime, Epoch, AGCEphemTEphemZero, EphemerisSpan);
+		AGCCorrectionVectors(DataSet, AGCEphemStartTime, T_UNITW, T_504LM, true, false);
+		AGCEphemeris(AGCEphemStartTime, DataSet.epoch, DataSet.t0, EphemerisSpan);
 	}
 
 	//End
@@ -4965,13 +4913,241 @@ MATRIX3 AGCPadloadGenerator::CalculateMoonTransformationMatrix(double t_M, doubl
 	return mul(M4, mul(M3, mul(M2, M1)));
 }
 
-void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance)
+AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetCMCVersion(std::string name)
+{
+	if (name == "Colossus237")
+	{
+		return AGCVersions::Colossus237;
+	}
+	else if (name == "Colossus249")
+	{
+		return AGCVersions::Colossus249;
+	}
+	else if (name == "Comanche045")
+	{
+		return AGCVersions::Comanche045;
+	}
+	else if (name == "Comanche055")
+	{
+		return AGCVersions::Comanche055;
+	}
+	else if (name == "Comanche067")
+	{
+		return AGCVersions::Comanche067;
+	}
+	else if (name == "Comanche072")
+	{
+		return AGCVersions::Comanche072;
+	}
+	else if (name == "Artemis072")
+	{
+		return AGCVersions::Artemis072;
+	}
+	else if (name == "Artemis072NBY70")
+	{
+		return AGCVersions::Artemis072NBY70;
+	}
+	else if (name == "Artemis072NBY71")
+	{
+		return AGCVersions::Artemis072NBY71;
+	}
+	else if (name == "Skylark048")
+	{
+		return AGCVersions::Skylark048;
+	}
+
+	return AGCVersions::AGCVersionError;
+}
+
+AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetLGCVersion(std::string name)
+{
+	if (name == "Sundance306")
+	{
+		return AGCVersions::Sundance306;
+	}
+	else if (name == "Luminary069")
+	{
+		return AGCVersions::Luminary069;
+	}
+	else if (name == "Luminary069R2")
+	{
+		return AGCVersions::Luminary069R2;
+	}
+	else if (name == "Luminary099")
+	{
+		return AGCVersions::Luminary099;
+	}
+	else if (name == "Luminary116")
+	{
+		return AGCVersions::Luminary116;
+	}
+	else if (name == "Luminary131")
+	{
+		return AGCVersions::Luminary131;
+	}
+	else if (name == "Luminary131R1")
+	{
+		return AGCVersions::Luminary131R1;
+	}
+	else if (name == "Luminary178")
+	{
+		return AGCVersions::Luminary178;
+	}
+	else if (name == "Zerlina56")
+	{
+		return AGCVersions::Zerlina56;
+	}
+	else if (name == "Zerlina56NBY72")
+	{
+		return AGCVersions::Zerlina56NBY72;
+	}
+
+	return AGCVersions::AGCVersionError;
+}
+
+AGCPadloadGenerator::PIOSDataSet::PIOSDataSetNames AGCPadloadGenerator::GetPIOSDataSetName(AGCVersions rope)
+{
+	switch (rope)
+	{
+		case AGCVersions::Skylark048:
+			return PIOSDataSet::B1950;
+		case AGCVersions::Colossus237:
+		case AGCVersions::Colossus249:
+		case AGCVersions::Comanche045:
+		case AGCVersions::Sundance306:
+		case AGCVersions::Luminary069:
+		case AGCVersions::Luminary069R2:
+			return PIOSDataSet::NBY69;
+		case AGCVersions::Comanche055:
+		case AGCVersions::Luminary099:
+			return PIOSDataSet::NBY70_V1;
+		case AGCVersions::Comanche067:
+		case AGCVersions::Luminary116:
+		case AGCVersions::Comanche072:
+		case AGCVersions::Luminary131:
+		case AGCVersions::Luminary131R1:
+			return PIOSDataSet::NBY70_V2;
+		case AGCVersions::Artemis072NBY70:
+			return PIOSDataSet::NBY70_V3;
+		case AGCVersions::Comanche108:
+		case AGCVersions::Luminary178:
+		case AGCVersions::Artemis072NBY71:
+		case AGCVersions::Zerlina56:
+			return PIOSDataSet::NBY71;
+		case AGCVersions::Artemis072:
+		case AGCVersions::Luminary210:
+		case AGCVersions::Zerlina56NBY72:
+			return PIOSDataSet::NBY72;
+	}
+
+	return PIOSDataSet::PIOSDataSetNames::PIOSDataError;
+}
+
+AGCPadloadGenerator::PIOSDataSet AGCPadloadGenerator::GetPIOSDataSet(AGCPadloadGenerator::PIOSDataSet::PIOSDataSetNames name)
+{
+	AGCPadloadGenerator::PIOSDataSet set;
+
+	switch (name)
+	{
+	case PIOSDataSet::B1950:
+		set.epoch = 1950;
+		break;
+	case PIOSDataSet::NBY69:
+		set.epoch = 1969;
+		set.w_E = 7.29211515e-5;
+		set.B_0 = 0.409164173;
+		set.Omega_I0 = -6.03249419;
+		set.F_0 = 2.61379488;
+		set.B_dot = -7.19756666e-14;
+		set.Omega_I_dot = -1.07047016e-8;
+		set.F_dot = 2.67240019e-6;
+		set.cosI = 0.99964115;
+		set.sinI = 0.02678760;
+		set.t0 = 40038.0;
+		break;
+	case PIOSDataSet::NBY70_V1:
+		set.epoch = 1970;
+		set.w_E = 7.29211319606104e-5;
+		set.B_0 = 0.40916190299;
+		set.Omega_I0 = 6.1965366255107;
+		set.F_0 = 5.20932947411685;
+		set.B_dot = -7.19757301e-14;
+		set.Omega_I_dot = -1.07047011e-8;
+		set.F_dot = 2.67240410e-6;
+		set.cosI = 0.99964173;
+		set.sinI = 0.02676579;
+		set.t0 = 40403.0;
+		break;
+	case PIOSDataSet::NBY70_V2:
+		set.epoch = 1970;
+		set.w_E = 7.292115145489943e-05;
+		set.B_0 = 0.4091619030;
+		set.Omega_I0 = 6.196536640;
+		set.F_0 = 5.209327056;
+		set.B_dot = -7.197573418e-14;
+		set.Omega_I_dot = -1.070470170e-8;
+		set.F_dot = 2.672404256e-6;
+		set.cosI = 0.9996417320;
+		set.sinI = 0.02676579050;
+		set.t0 = 40403.0;
+		break;
+	case PIOSDataSet::NBY70_V3:
+		set.epoch = 1970;
+		set.w_E = 7.292115145489943e-05;
+		set.B_0 = 0.4091619030;
+		set.Omega_I0 = 6.196536640;
+		set.F_0 = 5.209327056;
+		set.B_dot = -7.197573418e-14;
+		set.Omega_I_dot = -1.070470170e-8;
+		set.F_dot = 2.672404256e-6;
+		set.cosI = 0.9996417320;
+		set.sinI = 0.02676579050;
+		set.t0 = 40403.0;
+		set.AZ0Hardcoded = true;
+		set.AZ0 = 4.867316151485891;
+		break;
+	case PIOSDataSet::NBY71:
+		set.epoch = 1971;
+		set.w_E = 7.292115147e-5;
+		set.B_0 = 0.40915963316;
+		set.Omega_I0 = 5.859196887;
+		set.F_0 = 1.5216749598;
+		set.B_dot = -7.1975797907e-14;
+		set.Omega_I_dot = -1.070470151e-8;
+		set.F_dot = 2.6724042552e-6;
+		set.cosI = 0.999641732;
+		set.sinI = 0.0267657905;
+		set.t0 = 40768.0;
+		set.AZ0Hardcoded = true;
+		set.AZ0 = 4.8631512705;
+		break;
+	default:
+		set.epoch = 1972;
+		set.w_E = 7.29211514667e-5;
+		set.B_0 = 0.409157363336;
+		set.Omega_I0 = 5.52185714700;
+		set.F_0 = 4.11720655556;
+		set.B_dot = -7.19758599677e-14;
+		set.Omega_I_dot = -1.07047013100e-8;
+		set.F_dot = 2.67240425480e-6;
+		set.cosI = 0.999641732;
+		set.sinI = 0.0267657905;
+		set.t0 = 41133.0;
+		set.AZ0Hardcoded = true;
+		set.AZ0 = 4.85898502016;
+		break;
+	}
+
+	return set;
+}
+
+void AGCPadloadGenerator::AGCCorrectionVectors(PIOSDataSet dataset, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance)
 {
 	MATRIX3 R, Rot2, J2000, R2, R3, M, M_AGC;
 	VECTOR3 UNITW;
-	double mjd_UNITW, brcsmjd, w_E, t0, B_0, Omega_I0, F_0, B_dot, Omega_I_dot, F_dot, cosI, sinI;
+	double mjd_UNITW, brcsmjd;
 	double A_Z, A_Z0, mjd_504LM;
-	int mem, epoch;
+	int mem;
 
 	mjd_UNITW = mjd_launchday + dt_UNITW;
 	mjd_504LM = mjd_launchday + dt_504LM;
@@ -4979,83 +5155,8 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 	Rot2 = _M(1., 0., 0., 0., 0., 1., 0., 1., 0.);
 	R = GetRotationMatrix(BODY_EARTH, mjd_UNITW);
 
-	if (rope == "Colossus237" || rope == "Colossus249" || rope == "Comanche045" || rope == "Sundance306" || rope == "Luminary069" || rope == "Luminary069R2")
-	{
-		epoch = 1969;    //Nearest Besselian Year 1969
-		w_E = 7.29211515e-5;
-		B_0 = 0.409164173;
-		Omega_I0 = -6.03249419;
-		F_0 = 2.61379488;
-		B_dot = -7.19756666e-14;
-		Omega_I_dot = -1.07047016e-8;
-		F_dot = 2.67240019e-6;
-		cosI = 0.99964115;
-		sinI = 0.02678760;
-		t0 = 40038;
-	}
-	else if (rope == "Comanche055" || rope == "Luminary099")
-	{
-		epoch = 1970;				//Nearest Besselian Year 1970
-		w_E = 7.29211319606104e-5;
-		B_0 = 0.40916190299;
-		Omega_I0 = 6.1965366255107;
-		F_0 = 5.20932947411685;
-		B_dot = -7.19757301e-14;
-		Omega_I_dot = -1.07047011e-8;
-		F_dot = 2.67240410e-6;
-		cosI = 0.99964173;
-		sinI = 0.02676579;
-		t0 = 40403;
-	}
-	else if (rope == "Comanche067" || rope == "Luminary116" || rope == "Comanche072" || rope == "Luminary131" || rope == "Luminary131R1" || rope == "Artemis072NBY70")
-	{
-		epoch = 1970;				//Nearest Besselian Year 1970
-		w_E = 7.292115145489943e-05;
-		B_0 = 0.4091619030;
-		Omega_I0 = 6.196536640;
-		F_0 = 5.209327056;
-		B_dot = -7.197573418e-14;
-		Omega_I_dot = -1.070470170e-8;
-		F_dot = 2.672404256e-6;
-		cosI = 0.9996417320;
-		sinI = 0.02676579050;
-		t0 = 40403;
-	}
-	else if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71" || rope == "Zerlina56")
-	{
-		epoch = 1971;			//Nearest Besselian Year 1971
-		w_E = 7.292115147e-5;	//Comanche 108 (Apollo 14 CM AGC)
-		B_0 = 0.40915963316;
-		Omega_I0 = 5.859196887;
-		F_0 = 1.5216749598;
-		B_dot = -7.1975797907e-14;
-		Omega_I_dot = -1.070470151e-8;
-		F_dot = 2.6724042552e-6;
-		cosI = 0.999641732;
-		sinI = 0.0267657905;
-		t0 = 40768;
-	}
-	else if (rope == "Artemis072" || rope == "Luminary210")
-	{
-		epoch = 1972;			//Nearest Besselian Year 1972
-		w_E = 7.29211514667e-5; //Artemis 072 (Apollo 15 CM AGC)
-		B_0 = 0.409157363336;
-		Omega_I0 = 5.52185714700;
-		F_0 = 4.11720655556;
-		B_dot = -7.19758599677e-14;
-		Omega_I_dot = -1.07047013100e-8;
-		F_dot = 2.67240425480e-6;
-		cosI = 0.999641732;
-		sinI = 0.0267657905;
-		t0 = 41133;
-	}
-	else
-	{
-		//Error?
-	}
-
 	//EARTH ROTATIONS
-	brcsmjd = MJDOfNBYEpoch(epoch);
+	brcsmjd = MJDOfNBYEpoch(dataset.epoch);
 	J2000 = J2000EclToBRCSMJD(brcsmjd);
 	R2 = mul(tmat(Rot2), mul(R, Rot2));
 	R3 = mul(J2000, R2);
@@ -5064,29 +5165,14 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	A_Z = atan2(R3.m21, R3.m11);
 
-	bool AZ0Hardcoded = false;
-
-	//Hardcoded in Artemis 072 (modified for NBY 1970)
-	if (rope == "Artemis072NBY70")
+	//Hardcoded A_Z0?
+	if (dataset.AZ0Hardcoded)
 	{
-		A_Z0 = 4.867316151485891;
-		AZ0Hardcoded = true;
-	}
-	//Hardcoded in Comanche 108, Luminary 178, Zerlina 56 and Artemis 072 (modified for NBY 1971)
-	else if (rope == "Comanche108" || rope == "Luminary178" || rope == "Artemis072NBY71" || rope == "Zerlina56")
-	{
-		A_Z0 = 4.8631512705;
-		AZ0Hardcoded = true;
-	}
-	//Hardcoded in Artemis 072 and Luminary 210
-	else if (rope == "Artemis072" || rope == "Luminary210")
-	{
-		A_Z0 = 4.85898502016;
-		AZ0Hardcoded = true;
+		A_Z0 = dataset.AZ0;
 	}
 	else
 	{
-		A_Z0 = fmod((A_Z - w_E * (mjd_UNITW - t0) * 24.0 * 3600.0), PI2);  //AZ0 for mission
+		A_Z0 = fmod((A_Z - dataset.w_E * (mjd_UNITW - dataset.t0) * 24.0 * 3600.0), PI2);  //AZ0 for mission
 		if (A_Z0 < 0) A_Z0 += PI2;
 	}
 
@@ -5095,7 +5181,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	mem = 01711;
 
-	if (!AZ0Hardcoded)
+	if (dataset.AZ0Hardcoded == false)
 	{
 		DoubleToBuffer(A_Z0 / PI2, 0, iTemp, iTemp2);
 
@@ -5133,7 +5219,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	while (MJD < mjd_UNITW + 14.5)
 	{
-		t_M = (MJD - t0) * 24.0 * 3600.0;
+		t_M = (MJD - dataset.t0) * 24.0 * 3600.0;
 		RM = GetRotationMatrix(BODY_EARTH, MJD);
 
 		//Orbiter
@@ -5141,7 +5227,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		RLS_BRCS = mul(J2000, RLS_ecl);
 
 		//AGC
-		MM = CalculateEarthTransformationMatrix(t_M, A_Z0, w_E);
+		MM = CalculateEarthTransformationMatrix(t_M, A_Z0, dataset.w_E);
 		l_P = mul(MM, l);
 		RLS_BRCS2 = tmul(MM, RLS_Earth + crossp(l_P, RLS_Earth));
 
@@ -5164,9 +5250,9 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 	MATRIX3 M_AGC_M, R2M, R3M;
 	VECTOR3 lm;
 
-	t_M = (mjd_504LM - t0) * 24.0 * 3600.0;
+	t_M = (mjd_504LM - dataset.t0) * 24.0 * 3600.0;
 	RM = GetRotationMatrix(BODY_MOON, mjd_504LM);
-	MM = CalculateMoonTransformationMatrix(t_M, B_0, B_dot, Omega_I0, Omega_I_dot, F_0, F_dot, cosI, sinI);
+	MM = CalculateMoonTransformationMatrix(t_M, dataset.B_0, dataset.B_dot, dataset.Omega_I0, dataset.Omega_I_dot, dataset.F_0, dataset.F_dot, dataset.cosI, dataset.sinI);
 
 	R2M = mul(tmat(Rot2), mul(RM, Rot2));
 	R3M = mul(J2000, R2M);
@@ -5205,7 +5291,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 
 	while (MJD < mjd_504LM + 3.0)
 	{
-		t_M = (MJD - t0) * 24.0 * 3600.0;
+		t_M = (MJD - dataset.t0) * 24.0 * 3600.0;
 		RM = GetRotationMatrix(BODY_MOON, MJD);
 
 		//Orbiter
@@ -5213,7 +5299,7 @@ void AGCPadloadGenerator::AGCCorrectionVectors(std::string rope, double mjd_laun
 		RLS_BRCS = mul(J2000, RLS_ecl);
 
 		//AGC
-		MM = CalculateMoonTransformationMatrix(t_M, B_0, B_dot, Omega_I0, Omega_I_dot, F_0, F_dot, cosI, sinI);
+		MM = CalculateMoonTransformationMatrix(t_M, dataset.B_0, dataset.B_dot, dataset.Omega_I0, dataset.Omega_I_dot, dataset.F_0, dataset.F_dot, dataset.cosI, dataset.sinI);
 		RLS_BRCS2 = tmul(MM, RLS + crossp(lm, RLS));
 
 		err = acos2(dotp(unit(RLS_BRCS), unit(RLS_BRCS2)))*R_Moon;
