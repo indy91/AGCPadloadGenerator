@@ -5001,6 +5001,10 @@ AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetLGCVersion(std::string 
 	{
 		return AGCVersions::Zerlina56NBY72;
 	}
+	else if (name == "Luminary210")
+	{
+		return AGCVersions::Luminary210;
+	}
 
 	return AGCVersions::AGCVersionError;
 }
