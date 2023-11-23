@@ -594,6 +594,9 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		m_ToolTip.UpdateTipText(_T("None"), &MinImp2Box);
 		m_ToolTip.UpdateTipText(_T("None"), &MinImp3Box);
 		m_ToolTip.UpdateTipText(_T("SPS thrust used to estimate burn time when burn time is less than 6 sec"), &MinImp4Box);
+
+		MinImp1Box.SetWindowTextW(L"19840.1");
+		MinImp4Box.SetWindowTextW(L"20180.0");
 		break;
 	case CMC_COMANCE055:
 	case CMC_COMANCE067:
@@ -616,6 +619,11 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		m_ToolTip.UpdateTipText(_T("SPS minimum impulse constant used to estimate burn time when burn time is less than 1.0 sec"), &MinImp2Box);
 		m_ToolTip.UpdateTipText(_T("SPS minimum constant equal to the slope of the minimum impulse curve. Used to estimate burn time when burn time is less than 1.0 sec"), &MinImp3Box);
 		m_ToolTip.UpdateTipText(_T("SPS thrust used to estimate burn time when burn time is less than 6 sec"), &MinImp4Box);
+
+		MinImp1Box.SetWindowTextW(L"20143.2");
+		MinImp2Box.SetWindowTextW(L"4909.1");
+		MinImp3Box.SetWindowTextW(L"25454.5");
+		MinImp4Box.SetWindowTextW(L"20240.0");
 		break;
 	default:
 		EMDOTBox.SetReadOnly(false);
@@ -635,6 +643,10 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		m_ToolTip.UpdateTipText(_T("Slope of minimum impulse curve for SPS 0-1 second"), &MinImp2Box);
 		m_ToolTip.UpdateTipText(_T("Slope of minimum impulse curve for SPS 1-6 seconds"), &MinImp3Box);
 		m_ToolTip.UpdateTipText(_T("None"), &MinImp4Box);
+
+		MinImp1Box.SetWindowTextW(L"19538.26");
+		MinImp2Box.SetWindowTextW(L"24447.36");
+		MinImp3Box.SetWindowTextW(L"19989.0");
 		break;
 	}
 }
