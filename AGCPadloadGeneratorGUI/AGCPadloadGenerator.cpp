@@ -47,8 +47,33 @@ VECTOR3 rhtmul(const MATRIX3 &A, const VECTOR3 &b)
 		A.m12*b.x + A.m22*b.z + A.m32*b.y);
 }
 
+void mjddate(double mjd, int &year, int &month, int &day)
+{
+	//Convert MJD to Year, Month, Day
+
+	double ijd, c, e, h;
+	int a, b, f;
+
+	h = 24.0 * modf(mjd, &ijd);
+	if (ijd < -100840) {
+		c = ijd + 2401525.0;
+	}
+	else {
+		b = (int)((ijd + 532784.75) / 36524.25);
+		c = ijd + 2401526.0 + (b - b / 4);
+	}
+	a = (int)((c - 122.1) / 365.25);
+	e = 365.0 * a + a / 4;
+	f = (int)((c - e) / 30.6001);
+
+	day = (int)(c - e + 0.5) - (int)(30.6001*f);
+	month = f - 1 - 12 * (f / 14);
+	year = a - 4715 - ((7 + month) / 10);
+}
+
 double TJUDAT(int Y, int M, int D)
 {
+	//Year, Month, Day to Julian Date
 	int Y_apo = Y - 1900;
 	int TMM[] = { 0,31,59,90,120,151,181,212,243,273,304,334 };
 
@@ -599,15 +624,19 @@ void AGCPadloadGenerator::RunCMC()
 		break;
 	case Skylark048:
 	{
-		int Year = 1950;
+		int Year, Month, Day;
 
-		do
+		//Get Year and Month of prelaunch
+		mjddate(PrelaunchMJD, Year, Month, Day);
+
+		//Get Year of July 1st that preceeds the PrelaunchMJD
+		if (Month < 7)
 		{
-			Year++;
-			DataSet.t0 = JD2MJD(TJUDAT(Year - 1, 7, 1));
-		} while (DataSet.t0 < PrelaunchMJD);
+			Year--;
+		}
 
-		DataSet.t0 = JD2MJD(TJUDAT(Year - 2, 7, 1));
+		//Get MJD at midnight July 1st that preceeds PrelaunchMJD
+		DataSet.t0 = JD2MJD(TJUDAT(Year, 7, 1));
 
 		Skylark048Padload();
 		SkylarkSolarEphemeris(MJD2JD(LaunchMJD), MJD2JD(DataSet.t0));

@@ -163,8 +163,8 @@ void SkylarkPadloadGenerator::OnCbnSelchangeCombo1()
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Skylab 2
-		LaunchMJDInput.SetWindowTextW(L"41817.70805555555556"); //Planned
-		//LaunchMJDInput.SetWindowTextW(L"41827.54166667"); //Actual
+		//LaunchMJDInput.SetWindowTextW(L"41817.70805555555556"); //Planned
+		LaunchMJDInput.SetWindowTextW(L"41827.54166667"); //Actual
 		LaunchAzimuthBox.SetWindowText(L"47.035");
 		CSMMASSBox.SetWindowText(L"30442.5");
 		LEMMASSBox.SetWindowText(L"0.0");
