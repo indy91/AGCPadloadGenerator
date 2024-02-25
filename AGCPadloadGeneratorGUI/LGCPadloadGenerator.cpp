@@ -377,6 +377,22 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		KIGNYBox.SetWindowText(L"-0.755e-6");
 		KIGNVBox.SetWindowText(L"-410.0");
 		DELTTFAPBox.SetWindowText(L"-110.0");
+
+		/*agc.LGCDATA.IMUBiasCompensation.PBIASX = -0.12; // cm/sec^2
+		agc.LGCDATA.IMUBiasCompensation.PIPASCFX = -210.0; // ppm
+		agc.LGCDATA.IMUBiasCompensation.PBIASY = 0.17; // cm/sec^2
+		agc.LGCDATA.IMUBiasCompensation.PIPASCFY = -210; // ppm
+		agc.LGCDATA.IMUBiasCompensation.PBIASZ = 0.07; // cm/sec^2
+		agc.LGCDATA.IMUBiasCompensation.PIPASCFZ = -920.0; // ppm
+		agc.LGCDATA.IMUBiasCompensation.NBDX = 1.3; // meru
+		agc.LGCDATA.IMUBiasCompensation.NBDY = -1.5; // meru
+		agc.LGCDATA.IMUBiasCompensation.NBDZ = -1.9; // meru
+		agc.LGCDATA.IMUBiasCompensation.ADIAX = 57.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADIAY = -4.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADIAZ = 20.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADSRAX = 2.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADSRAY = 26.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADSRAZ = -11.0; // meru/g*/
 		break;
 	case 4: //Apollo 12
 		RopeNameBox.SetCurSel(LGC_LUMINARY116);
@@ -645,6 +661,22 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		THETCRITBox.SetWindowText(L"6.432346783");
 		RAMINBox.SetWindowText(L"5.872844816e6");
 		DELTTFAPBox.SetWindowText(L"-70.0");
+
+		/*agc.LGCDATA.IMUBiasCompensation.PBIASX = 1.64; // cm/sec^2
+		agc.LGCDATA.IMUBiasCompensation.PIPASCFX = -980.0; // ppm
+		agc.LGCDATA.IMUBiasCompensation.PBIASY = 1.73; // cm/sec^2
+		agc.LGCDATA.IMUBiasCompensation.PIPASCFY = -560.0; // ppm
+		agc.LGCDATA.IMUBiasCompensation.PBIASZ = 1.6; // cm/sec^2
+		agc.LGCDATA.IMUBiasCompensation.PIPASCFZ = -460.0; // ppm
+		agc.LGCDATA.IMUBiasCompensation.NBDX = 0.1; // meru
+		agc.LGCDATA.IMUBiasCompensation.NBDY = 0.4; // meru
+		agc.LGCDATA.IMUBiasCompensation.NBDZ = -1.1; // meru
+		agc.LGCDATA.IMUBiasCompensation.ADIAX = 12.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADIAY = -4.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADIAZ = 4.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADSRAX = 4.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADSRAY = 6.0; // meru/g
+		agc.LGCDATA.IMUBiasCompensation.ADSRAZ = -8.0; // meru/g*/
 		break;
 	}
 

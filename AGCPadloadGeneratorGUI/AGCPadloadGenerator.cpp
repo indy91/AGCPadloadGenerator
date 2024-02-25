@@ -310,6 +310,25 @@ bool SolveSeries(double *x, double *y, int ndata, double *out, int m)
 	return bRet;
 }
 
+IMUBiasCompensationData::IMUBiasCompensationData()
+{
+	PBIASX = 0.0;
+	PIPASCFX = 0.0;
+	PBIASY = 0.0;
+	PIPASCFY = 0.0;
+	PBIASZ = 0.0;
+	PIPASCFZ = 0.0;
+	NBDX = 0.0;
+	NBDY = 0.0;
+	NBDZ = 0.0;
+	ADIAX = 0.0;
+	ADIAY = 0.0;
+	ADIAZ = 0.0;
+	ADSRAX = 0.0;
+	ADSRAY = 0.0;
+	ADSRAZ = 0.0;
+}
+
 AGCPadloadGenerator::AGCPadloadGenerator()
 {
 	ELP82_init();
@@ -723,11 +742,11 @@ void AGCPadloadGenerator::SetPadData(Launchpad pad)
 	}
 }
 
-void AGCPadloadGenerator::LGCDefaults(bool mass)
+void AGCPadloadGenerator::LGCDefaults(bool EarlyPIPABias, bool mass)
 {
 	//Contains padloads that never change their address in all of Sundance and Luminary
 
-	IMUCompensation();
+	IMUCompensation(false, EarlyPIPABias);
 
 	//GCOMPSW
 	SaveEMEM(01477, 0);
@@ -803,7 +822,7 @@ void AGCPadloadGenerator::LGCDefaults(bool mass)
 
 void AGCPadloadGenerator::Sundance306Defaults()
 {
-	LGCDefaults();
+	LGCDefaults(true);
 
 	//DUMPCNT
 	SaveEMEM(0333, 010000);
@@ -875,7 +894,7 @@ void AGCPadloadGenerator::Sundance306Defaults()
 
 void AGCPadloadGenerator::Luminary069Padload(bool IsR2)
 {
-	LGCDefaults(true);
+	LGCDefaults(true, true);
 
 	//FLAGWRD3
 	SaveEMEM(077, 02000);
@@ -1200,7 +1219,7 @@ void AGCPadloadGenerator::Luminary069Padload(bool IsR2)
 
 void AGCPadloadGenerator::Luminary099Padload()
 {
-	LGCDefaults(true);
+	LGCDefaults(true, true);
 	Luminary099_116_Defaults();
 
 	//FLAGWRD3
@@ -1349,7 +1368,7 @@ void AGCPadloadGenerator::Luminary099Padload()
 
 void AGCPadloadGenerator::Luminary116Padload()
 {
-	LGCDefaults();
+	LGCDefaults(false);
 	Luminary099_116_Defaults();
 
 	//FLAGWRD3
@@ -1498,7 +1517,7 @@ void AGCPadloadGenerator::Luminary116Padload()
 
 void AGCPadloadGenerator::Luminary131Padload()
 {
-	LGCDefaults();
+	LGCDefaults(false);
 
 	//FLAGWRD3
 	SaveEMEM(077, 012000);
@@ -2144,7 +2163,7 @@ void AGCPadloadGenerator::DescentConstants11_13()
 
 void AGCPadloadGenerator::Luminary178Padload()
 {
-	LGCDefaults();
+	LGCDefaults(false);
 
 	//REFSMMAT
 	SaveEMEM(01731, 067061);
@@ -2201,7 +2220,7 @@ void AGCPadloadGenerator::Luminary178Padload()
 
 void AGCPadloadGenerator::Zerlina56Padload()
 {
-	LGCDefaults();
+	LGCDefaults(false);
 
 	//FLAGWRD3
 	SaveEMEM(077, 012000);
@@ -2686,7 +2705,7 @@ void AGCPadloadGenerator::Zerlina56Padload()
 
 void AGCPadloadGenerator::Luminary210Padload()
 {
-	LGCDefaults();
+	LGCDefaults(false);
 
 	//CHANBKUP
 	SaveEMEM(0374, 00011);
@@ -3182,41 +3201,106 @@ void AGCPadloadGenerator::DescentConstants14_17()
 	SaveEMEM(03432, 0);
 }
 
-void AGCPadloadGenerator::IMUCompensation()
+void AGCPadloadGenerator::IMUCompensation(bool cmc, bool earlymodel)
 {
+	IMUBiasCompensationData *data;
+	double pipapulse, MERUG;
+	int pipascal, imuscal;
+
+	const double RADTOPULSES = 2097152.0 / PI2;
+	const double EARTHRATE = 15.0 / 3600.0*RAD;// 7.29209817e-5;
+	const double GYROPULSE = RADTOPULSES* EARTHRATE*1e-5;// 0.00024272592; //gyro pulses/cs
+	const double CMPIPAPULSE = 5.85; //cm/sec
+	const double LMPIPAPULSE = 1.0; //cm/sec
+	const double PPM = 1e-6; //parts per million
+	const double GG = 9.7924; //m/sec^2
+
+	//Variable scaling
+	if (cmc)
+	{
+		data = &CMCDATA.IMUBiasCompensation;
+		pipapulse = CMPIPAPULSE * 100.0;
+		MERUG = GYROPULSE* CMPIPAPULSE / GG;
+		imuscal = -3;
+
+		if (earlymodel)
+		{
+			//Through Apollo 11
+			pipascal = -8;
+		}
+		else
+		{
+			//Apollo 12 and later
+			pipascal = -6;
+		}
+	}
+	else
+	{
+		data = &LGCDATA.IMUBiasCompensation;
+		pipapulse = LMPIPAPULSE * 100.0;
+		MERUG = GYROPULSE* LMPIPAPULSE / GG*2.0; //TBD: Where does the 2.0 come from?
+		imuscal = -5;
+
+		if (earlymodel)
+		{
+			//Through Apollo 11
+			pipascal = -5;
+		}
+		else
+		{
+			//Apollo 12 and later
+			pipascal = -3;
+		}
+	}
+
 	//PBIASX
-	SaveEMEM(01452, 0);
+	iTemp = SingleToBuffer(data->PBIASX / pipapulse, pipascal);
+	SaveEMEM(01452, iTemp);
 	//PIPASCFX
-	SaveEMEM(01453, 0);
+	iTemp = SingleToBuffer(data->PIPASCFX*PPM, -9);
+	SaveEMEM(01453, iTemp);
 	//PBIASY
-	SaveEMEM(01454, 0);
+	iTemp = SingleToBuffer(data->PBIASY / pipapulse, pipascal);
+	SaveEMEM(01454, iTemp);
 	//PIPASCFY
-	SaveEMEM(01455, 0);
+	iTemp = SingleToBuffer(data->PIPASCFY*PPM, -9);
+	SaveEMEM(01455, iTemp);
 	//PBIASZ
-	SaveEMEM(01456, 0);
+	iTemp = SingleToBuffer(data->PBIASZ / pipapulse, pipascal);
+	SaveEMEM(01456, iTemp);
 	//PIPASCFZ
-	SaveEMEM(01457, 0);
+	iTemp = SingleToBuffer(data->PIPASCFZ*PPM, -9);
+	SaveEMEM(01457, iTemp);
 	//NBDX
-	SaveEMEM(01460, 0);
+	iTemp = SingleToBuffer(data->NBDX*GYROPULSE, -5);
+	SaveEMEM(01460, iTemp);
 	//NBDY
-	SaveEMEM(01461, 0);
+	iTemp = SingleToBuffer(data->NBDY*GYROPULSE, -5);
+	SaveEMEM(01461, iTemp);
 	//NBDZ
-	SaveEMEM(01462, 0);
+	iTemp = SingleToBuffer(data->NBDZ*GYROPULSE, -5);
+	SaveEMEM(01462, iTemp);
 	//ADIAX
-	SaveEMEM(01463, 0);
+	iTemp = SingleToBuffer(data->ADIAX*MERUG, imuscal);
+	SaveEMEM(01463, iTemp);
 	//ADIAY
-	SaveEMEM(01464, 0);
+	iTemp = SingleToBuffer(data->ADIAY*MERUG, imuscal);
+	SaveEMEM(01464, iTemp);
 	//ADIAZ
-	SaveEMEM(01465, 0);
+	iTemp = SingleToBuffer(data->ADIAZ*MERUG, imuscal);
+	SaveEMEM(01465, iTemp);
 	//ADSRAX
-	SaveEMEM(01466, 0);
+	iTemp = SingleToBuffer(data->ADSRAX*MERUG, imuscal);
+	SaveEMEM(01466, iTemp);
 	//ADSRAY
-	SaveEMEM(01467, 0);
+	iTemp = SingleToBuffer(data->ADSRAY*MERUG, imuscal);
+	SaveEMEM(01467, iTemp);
 	//ADSRAZ
-	SaveEMEM(01470, 0);
+	iTemp = SingleToBuffer(data->ADSRAZ*MERUG, imuscal);
+	SaveEMEM(01470, iTemp);
 }
 
-void AGCPadloadGenerator::CMCDefaults(bool IsC108)
+void AGCPadloadGenerator::CMCDefaults(bool EarlyPIPABias, bool IsC108)
 {
 	//Contains padloads that never change their address in all of Colossus
 
@@ -3238,7 +3322,7 @@ void AGCPadloadGenerator::CMCDefaults(bool IsC108)
 		SaveEMEM(01341, iTemp);
 	}
 
-	IMUCompensation();
+	IMUCompensation(true, EarlyPIPABias);
 
 	//WRENDPOS
 	iTemp = SingleToBuffer(BLOCKII.WRENDPOS, 19);
@@ -3367,7 +3451,7 @@ void AGCPadloadGenerator::CMCDefaults(bool IsC108)
 
 void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 {
-	CMCDefaults();
+	CMCDefaults(true);
 
 	if (Is249)
 	{
@@ -3533,7 +3617,7 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 
 void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 {
-	CMCDefaults();
+	CMCDefaults(true);
 
 	//FLAGWRD1
 	SaveEMEM(075, 0);
@@ -3736,7 +3820,7 @@ void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 
 void AGCPadloadGenerator::Comanche55Padload()
 {
-	CMCDefaults();
+	CMCDefaults(true);
 
 	//FLAGWRD1
 	SaveEMEM(075, 0);
@@ -3928,7 +4012,7 @@ void AGCPadloadGenerator::Comanche55Padload()
 
 void AGCPadloadGenerator::Comanche67Padload()
 {
-	CMCDefaults();
+	CMCDefaults(false);
 
 	//FLAGWRD1
 	SaveEMEM(075, 0);
@@ -4175,7 +4259,7 @@ void AGCPadloadGenerator::Comanche67Padload()
 
 void AGCPadloadGenerator::Comanche72Padload()
 {
-	CMCDefaults();
+	CMCDefaults(false);
 
 	//FLAGWRD1
 	SaveEMEM(075, 0);
@@ -4412,7 +4496,7 @@ void AGCPadloadGenerator::Comanche72Padload()
 
 void AGCPadloadGenerator::Comanche108Padload()
 {
-	CMCDefaults(true);
+	CMCDefaults(false, true);
 
 	//FLAGWRD1
 	SaveEMEM(075, 0);
@@ -4603,7 +4687,7 @@ void AGCPadloadGenerator::Comanche108Padload()
 
 void AGCPadloadGenerator::Artemis72Padload()
 {
-	CMCDefaults();
+	CMCDefaults(false);
 
 	//FLAGWRD1
 	SaveEMEM(075, 0);
@@ -6121,7 +6205,7 @@ void AGCPadloadGenerator::Skylark048Padload()
 	iTemp = SingleToBuffer(CDUCHKWD * 100.0, 14);
 	SaveEMEM(01356, iTemp);
 
-	IMUCompensation();
+	IMUCompensation(true, false);
 
 	//EMDOT
 	dTemp = 64.89; //lbs/second

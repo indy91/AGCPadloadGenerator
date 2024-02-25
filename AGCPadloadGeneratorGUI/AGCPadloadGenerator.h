@@ -44,7 +44,43 @@ struct BlockIData
 	double POLYCOFF[7];
 };
 
-struct BlockCMCIIData
+struct IMUBiasCompensationData
+{
+	IMUBiasCompensationData();
+
+	//PIPA X bias correction, cm/s
+	double PBIASX;
+	//PIPA X scale factor correct, ppm
+	double PIPASCFX;
+	//PIPA Y bias correction, cm/s
+	double PBIASY;
+	//PIPA Y scale factor correct, ppm
+	double PIPASCFY;
+	//PIPA Z bias correction, cm/s
+	double PBIASZ;
+	//PIPA z scale factor correct, ppm
+	double PIPASCFZ;
+	//X Gyro bias correction, meru
+	double NBDX;
+	//Y Gyro bias correction, meru
+	double NBDY;
+	//Z Gyro bias correction, meru
+	double NBDZ;
+	//X Gyro input axis drift, meru/g
+	double ADIAX;
+	//Y Gyro input axis drift, meru/g
+	double ADIAY;
+	//Z Gyro input axis drift, meru/g
+	double ADIAZ;
+	//X Gyro spin axis drift, meru/g
+	double ADSRAX;
+	//Y Gyro spin axis drift, meru/g
+	double ADSRAY;
+	//Z Gyro spin axis drift, meru/g
+	double ADSRAZ;
+};
+
+struct BlockIICMCData
 {
 	//All CMC
 
@@ -85,11 +121,13 @@ struct BlockCMCIIData
 	int CH6FAIL = 0; //R3 of N87. Docked DAP channel 6 jet inhibit mask
 	double DKRATE = 0.0; //R1 of N89, Docked DAP maneuver rate, DEG/SEC
 	double TTPI = 0.0; //Time of TPI, seconds
+
+	IMUBiasCompensationData IMUBiasCompensation;
 };
 
-struct BlockLGCIIData
+struct LGCData
 {
-
+	IMUBiasCompensationData IMUBiasCompensation;
 };
 
 struct BlockIIData
@@ -291,7 +329,8 @@ public:
 
 	BlockIData BLOCKI;
 	BlockIIData BLOCKII;
-	BlockCMCIIData CMCDATA;
+	BlockIICMCData CMCDATA;
+	LGCData LGCDATA;
 
 protected:
 	void SaveEMEM(int address, int value);
@@ -329,9 +368,10 @@ protected:
 
 	void SetPadData(Launchpad pad);
 
+	void IMUCompensation(bool cmc, bool earlymodel);
+
 	//Same addresses for all CMCs
-	void IMUCompensation();
-	void CMCDefaults(bool IsC108 = false);
+	void CMCDefaults(bool EarlyPIPABias, bool IsC108 = false);
 
 	//Colossus
 	void Colossus237_249_Defaults(bool Is249);
@@ -346,7 +386,7 @@ protected:
 	void SavePOLYNUM(int address);
 
 	//Same addresses for all LGCs
-	void LGCDefaults(bool mass = false);
+	void LGCDefaults(bool EarlyPIPABias, bool mass = false);
 
 	void Sundance306Defaults();
 	void Luminary069Padload(bool IsR2);

@@ -739,6 +739,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
 	agc.BLOCKII.POLYNUM[6] = -0.4160838e-10;
 	agc.BLOCKII.RPSTART = 11.85;
 	agc.BLOCKII.POLYSTOP = 147.25;
+
+	/*agc.CMCDATA.IMUBiasCompensation.PBIASX = -0.26; // cm/sec^2
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFX = 40.0; // ppm
+	agc.CMCDATA.IMUBiasCompensation.PBIASY = -0.13; // cm/sec^2
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFY = -80.0; // ppm
+	agc.CMCDATA.IMUBiasCompensation.PBIASZ = 0.14; // cm/sec^2
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFZ = -30.0; // ppm
+	agc.CMCDATA.IMUBiasCompensation.NBDX = -1.8; // meru
+	agc.CMCDATA.IMUBiasCompensation.NBDY = -0.6; // meru
+	agc.CMCDATA.IMUBiasCompensation.NBDZ = -0.2; // meru
+	agc.CMCDATA.IMUBiasCompensation.ADIAX = 15.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADIAY = 5.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADIAZ = 1.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADSRAX = -6.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADSRAY = 3.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADSRAZ = 5.0; // meru/g*/
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
@@ -978,4 +994,20 @@ void CAGCPadloadGeneratorGUIDlg::Apollo17Padload()
 	agc.BLOCKII.POLYNUM[6] = 4.9817897e-11;
 	agc.BLOCKII.RPSTART = 12.25;
 	agc.BLOCKII.POLYSTOP = 147.75;
+
+	/*agc.CMCDATA.IMUBiasCompensation.PBIASX = -0.19; // cm/sec^2
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFX = -750.0; // ppm
+	agc.CMCDATA.IMUBiasCompensation.PBIASY = -0.07; // cm/sec^2
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFY = -210.0; // ppm
+	agc.CMCDATA.IMUBiasCompensation.PBIASZ = 0.71; // cm/sec^2
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFZ = -810.0; // ppm
+	agc.CMCDATA.IMUBiasCompensation.NBDX = 0.6; // meru
+	agc.CMCDATA.IMUBiasCompensation.NBDY = -0.1; // meru
+	agc.CMCDATA.IMUBiasCompensation.NBDZ = 1.2; // meru
+	agc.CMCDATA.IMUBiasCompensation.ADIAX = 7.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADIAY = 13.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADIAZ = -6.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADSRAX = -6.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADSRAY = 6.0; // meru/g
+	agc.CMCDATA.IMUBiasCompensation.ADSRAZ = -4.0; // meru/g*/
 }
