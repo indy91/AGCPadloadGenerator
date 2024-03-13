@@ -52,6 +52,7 @@ void SkylarkPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT62, JM2DCKDBox);
 	DDX_Control(pDX, IDC_EDIT63, CH6FAILBox);
 	DDX_Control(pDX, IDC_EDIT64, DKRATEBox);
+	DDX_Control(pDX, IDC_EDIT17, OutputBox);
 }
 
 
@@ -113,6 +114,7 @@ BOOL SkylarkPadloadGenerator::OnInitDialog()
 void SkylarkPadloadGenerator::OnBnClickedOk()
 {
 	agc.RopeName = "Skylark048";
+	agc.PIOSDataSetName = "B1950";
 	agc.Pad = "LC-39B";
 
 	//TBD
@@ -154,7 +156,27 @@ void SkylarkPadloadGenerator::OnBnClickedOk()
 	agc.CMCDATA.CH6FAIL = Utilities::Text2Octal(&CH6FAILBox);
 	agc.CMCDATA.DKRATE = Utilities::Text2Double(&DKRATEBox);
 
-	agc.RunCMC();
+	int message = agc.RunCMC();
+
+	//Write output
+	switch (message)
+	{
+	case 0:
+		OutputBox.SetWindowTextW(L"Padload generation successful!");
+		break;
+	case 1:
+		OutputBox.SetWindowTextW(L"Rope not found!");
+		break;
+	case 2:
+		OutputBox.SetWindowTextW(L"Rope not supported!");
+		break;
+	case 3:
+		OutputBox.SetWindowTextW(L"LaunchMJD not supported by rope!");
+		break;
+	case 4:
+		OutputBox.SetWindowTextW(L"PIOS data set not found!");
+		break;
+	}
 }
 
 

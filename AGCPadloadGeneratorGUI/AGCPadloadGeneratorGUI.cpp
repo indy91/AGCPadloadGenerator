@@ -113,6 +113,13 @@ namespace Utilities
 		return wcstod(string, NULL);
 	}
 
+	int Text2Int(CEdit *ed)
+	{
+		CString string;
+		ed->GetWindowText(string);
+		return wcstol(string, NULL, 10);
+	}
+
 	int Text2Octal(CEdit *ed)
 	{
 		CString string;

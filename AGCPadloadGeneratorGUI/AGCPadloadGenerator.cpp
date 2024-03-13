@@ -1,5 +1,6 @@
 #include "AGCPadloadGenerator.h"
 #include "Vsop87.h"
+#include <string>
 
 void ELP82_init();
 void ELP82_exit();
@@ -9,9 +10,6 @@ int  ELP82(double mjd, double *r);
 #define SPS_THRUST					91188.544		// CMC fixed constant
 #define SPS_ISP						 3080.0
 
-#define BODY_EARTH 0
-#define BODY_MOON 1
-
 const double R_Moon = 1.73809e6;			///< Radius of the moon
 const double R_Earth = 6373338.0;			///< Radius of the Earth at the launch pad
 const double LBS2KG = 0.45359237;			///< Pound mass to kilograms
@@ -20,32 +18,6 @@ const double FT2M = 0.3048;					///< Feet to meters
 const double w_Earth = 7.29211515e-05;
 const double a_Fisher = 6373338.0;		//Semi-major axis of Fisher ellipsoid, should be 6378166.0
 const double b_Fisher = 6373338.0;		//Semi-minor axis of Fisher ellipsoid, should be 6356784.0
-
-double MJD2JD(double MJD)
-{
-	return MJD + 2400000.5;
-}
-
-double JD2MJD(double JD)
-{
-	return JD - 2400000.5;
-}
-
-VECTOR3 rhmul(const MATRIX3 &A, const VECTOR3 &b)	//For the left handed Orbiter matrizes, A is left handed, b is right handed, result is right handed
-{
-	return _V(
-		A.m11*b.x + A.m12*b.z + A.m13*b.y,
-		A.m31*b.x + A.m32*b.z + A.m33*b.y,
-		A.m21*b.x + A.m22*b.z + A.m23*b.y);
-}
-
-VECTOR3 rhtmul(const MATRIX3 &A, const VECTOR3 &b)
-{
-	return _V(
-		A.m11*b.x + A.m21*b.z + A.m31*b.y,
-		A.m13*b.x + A.m23*b.z + A.m33*b.y,
-		A.m12*b.x + A.m22*b.z + A.m32*b.y);
-}
 
 void mjddate(double mjd, int &year, int &month, int &day)
 {
@@ -69,115 +41,6 @@ void mjddate(double mjd, int &year, int &month, int &day)
 	day = (int)(c - e + 0.5) - (int)(30.6001*f);
 	month = f - 1 - 12 * (f / 14);
 	year = a - 4715 - ((7 + month) / 10);
-}
-
-double TJUDAT(int Y, int M, int D)
-{
-	//Year, Month, Day to Julian Date
-	int Y_apo = Y - 1900;
-	int TMM[] = { 0,31,59,90,120,151,181,212,243,273,304,334 };
-
-	int Z = Y_apo / 4;
-	if (Y_apo % 4 == 0)
-	{
-		Z = Z - 1;
-		for (int i = 2;i < 12;i++)
-		{
-			TMM[i] += 1;
-		}
-	}
-	return 2415020.5 + (double)(365 * Y_apo + Z + TMM[M - 1] + D - 1);
-}
-
-double MJDOfNBYEpoch(int epoch)
-{
-	//Calculate MJD of Besselian epoch
-	double C, DE, MJD, JD, T;
-	int E, XN;
-	const double A = 0.0929;
-	const double B = 8640184.542;
-	const double W1 = 1.720217954160054e-2;
-
-	E = epoch;
-	XN = (E - 1901) / 4;
-	C = -86400.0*(double)(E - 1900) - 74.164;
-	T = 2.0 * C / (-B - sqrt(B*B - 4.0 * A*C));
-	DE = 36525.0*T - 365.0*(double)(E - 1900) + 0.5 - (double)XN;
-
-	JD = TJUDAT(epoch, 1, 0);
-	MJD = JD - 2400000.5 + DE;
-	return MJD;
-}
-
-MATRIX3 J2000EclToBRCSMJD(double mjd)
-{
-	double t1 = (mjd - 51544.5) / 36525.0;
-	double t2 = t1 * t1;
-	double t3 = t2 * t1;
-
-	t1 *= 4.848136811095359e-6;
-	t2 *= 4.848136811095359e-6;
-	t3 *= 4.848136811095359e-6;
-
-	double i = 2004.3109*t1 - 0.42665*t2 - 0.041833*t3;
-	double r = 2306.2181*t1 + 0.30188*t2 + 0.017998*t3;
-	double L = 2306.2181*t1 + 1.09468*t2 + 0.018203*t3;
-
-	double rot = -r - PI05;
-	double lan = PI05 - L;
-	double inc = i;
-	double obl = 0.4090928023;
-
-	return mul(mul(_MRz(rot), _MRx(inc)), mul(_MRz(lan), _MRx(-obl)));
-}
-
-MATRIX3 J2000EclToBRCS(int epoch)
-{
-	//Calculate the rotation matrix between J2000 and mean Besselian of epoch coordinate systems 
-	double MJD = MJDOfNBYEpoch(epoch);
-	return J2000EclToBRCSMJD(MJD);
-}
-
-MATRIX3 GetRotationMatrix(int plan, double t)
-{
-	double t0, T_p, L_0, e_rel, phi_0, T_s, e_ref, L_ref, L_rel, phi;
-	MATRIX3 Rot1, Rot2, R_ref, Rot3, Rot4, R_rel, R_rot, R, Rot;
-
-	if (plan == BODY_EARTH)
-	{
-		t0 = 51544.5;								//LAN_MJD, MJD of the LAN in the "beginning"
-		T_p = -9413040.4;							//Precession Period
-		L_0 = 0.00001553343;						//LAN in the "beginning"
-		e_rel = 0.4090928023;						//Obliquity / axial tilt of the earth in radians
-		phi_0 = 4.894942829;						//Sidereal Rotational Offset
-		T_s = 86164.098904 / 24.0 / 60.0 / 60.0;	//Sidereal Rotational Period
-		e_ref = 0;									//Precession Obliquity
-		L_ref = 0;									//Precession LAN
-	}
-	else
-	{
-		t0 = 51544.5;							//LAN_MJD, MJD of the LAN in the "beginning"
-		T_p = -6793.468728092782;				//Precession Period
-		L_0 = 1.71817749;						//LAN in the "beginning"
-		e_rel = 0.026699886264850;				//Obliquity / axial tilt of the earth in radians
-		phi_0 = 4.769465382;					//Sidereal Rotational Offset
-		T_s = 2360588.15 / 24.0 / 60.0 / 60.0;	//Sidereal Rotational Period
-		e_ref = 7.259562816e-005;				//Precession Obliquity
-		L_ref = 0.4643456618;					//Precession LAN
-	}
-
-	Rot1 = _M(cos(L_ref), 0, -sin(L_ref), 0, 1, 0, sin(L_ref), 0, cos(L_ref));
-	Rot2 = _M(1, 0, 0, 0, cos(e_ref), -sin(e_ref), 0, sin(e_ref), cos(e_ref));
-	R_ref = mul(Rot1, Rot2);
-	L_rel = L_0 + PI2 * (t - t0) / T_p;
-	Rot3 = _M(cos(L_rel), 0, -sin(L_rel), 0, 1, 0, sin(L_rel), 0, cos(L_rel));
-	Rot4 = _M(1, 0, 0, 0, cos(e_rel), -sin(e_rel), 0, sin(e_rel), cos(e_rel));
-	R_rel = mul(Rot3, Rot4);
-	phi = phi_0 + PI2 * (t - t0) / T_s + (L_0 - L_rel)*cos(e_rel);
-	R_rot = _M(cos(phi), 0, -sin(phi), 0, 1, 0, sin(phi), 0, cos(phi));
-	Rot = mul(R_rel, R_rot);
-	R = mul(R_ref, Rot);
-	return R;
 }
 
 int SingleToBuffer(double x, double SF, bool TwosComplement = false)
@@ -437,7 +300,7 @@ void AGCPadloadGenerator::WriteEMEM(int address, int value, bool cmc)
 	myfile << Buffer << std::endl;
 }
 
-void AGCPadloadGenerator::RunLGC()
+int AGCPadloadGenerator::RunLGC()
 {
 	//Clear erasable data
 	arr.clear();
@@ -451,10 +314,15 @@ void AGCPadloadGenerator::RunLGC()
 
 	//Get rope number
 	AGCVersions AGCVersion = GetLGCVersion(RopeName);
-	if (AGCVersion == AGCVersions::AGCVersionError) return;
+	if (AGCVersion == AGCVersions::AGCVersionError) return 1;
 
 	//Get PIOS data set
-	PIOSDataSet DataSet = GetPIOSDataSet(GetPIOSDataSetName(AGCVersion));
+
+	if (PIOSDataSetName == "") return 1;
+
+	PIOSDataSet DataSet;
+	int err = GetPIOSDataSet(PIOSDataSetName, DataSet);
+	if (err) return 4;
 
 	switch (AGCVersion)
 	{
@@ -474,7 +342,7 @@ void AGCPadloadGenerator::RunLGC()
 			Luminary116Padload();
 			break;
 		case Luminary131:
-			return; //Error
+			return 2; //Error
 		case Luminary131R1:
 			Luminary131Padload();
 			break;
@@ -485,11 +353,17 @@ void AGCPadloadGenerator::RunLGC()
 			Luminary210Padload();
 			break;
 		case Zerlina56:
-		case Zerlina56NBY72:
 			Zerlina56Padload();
 			break;
 		default: //Error
-			return;
+			return 2;
+	}
+
+	//Check on TEPHEM (possible TEPHEM limit or too early)
+	double limit = DataSet.ExtendedLimit ? 963.0 : 481.0;
+	if (LaunchMJD - DataSet.t0 > limit || LaunchMJD < DataSet.t0)
+	{
+		return 3;
 	}
 
 	//Calculate padload TEPHEM
@@ -515,6 +389,8 @@ void AGCPadloadGenerator::RunLGC()
 	}
 
 	myfile.close();
+
+	return 0;
 }
 
 void AGCPadloadGenerator::RunBlockI()
@@ -582,7 +458,7 @@ void AGCPadloadGenerator::RunBlockI()
 	myfile.close();
 }
 
-void AGCPadloadGenerator::RunCMC()
+int AGCPadloadGenerator::RunCMC()
 {
 	arr.clear();
 
@@ -603,10 +479,14 @@ void AGCPadloadGenerator::RunCMC()
 
 	//Get rope number
 	AGCVersions AGCVersion = GetCMCVersion(RopeName);
-	if (AGCVersion == AGCVersions::AGCVersionError) return;
+	if (AGCVersion == AGCVersions::AGCVersionError) return 1;
 
 	//Get PIOS data set
-	PIOSDataSet DataSet = GetPIOSDataSet(GetPIOSDataSetName(AGCVersion));
+	if (PIOSDataSetName == "") return 1;
+
+	PIOSDataSet DataSet;
+	int err = GetPIOSDataSet(PIOSDataSetName, DataSet);
+	if (err) return 4;
 
 	//Launch MJD rounded down to the next 12 hours
 	double AGCEphemStartTime = floor(LaunchMJD*2.0) / 2.0;
@@ -637,8 +517,6 @@ void AGCPadloadGenerator::RunCMC()
 		Comanche108Padload();
 		break;
 	case Artemis072:
-	case Artemis072NBY70:
-	case Artemis072NBY71:
 		Artemis72Padload();
 		break;
 	case Skylark048:
@@ -663,7 +541,14 @@ void AGCPadloadGenerator::RunCMC()
 	}
 	break;
 	default:
-		return; //Error
+		return 2; //Error
+	}
+
+	//Check on TEPHEM (possible TEPHEM limit or too early)
+	double limit = DataSet.ExtendedLimit ? 963.0 : 481.0;
+	if (LaunchMJD - DataSet.t0 > limit || LaunchMJD < DataSet.t0)
+	{
+		return 3;
 	}
 
 	//Calculate padload TEPHEM
@@ -696,6 +581,8 @@ void AGCPadloadGenerator::RunCMC()
 	}
 
 	myfile.close();
+
+	return 0;
 }
 
 void AGCPadloadGenerator::SetPadData(Launchpad pad)
@@ -5056,14 +4943,6 @@ AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetCMCVersion(std::string 
 	{
 		return AGCVersions::Artemis072;
 	}
-	else if (name == "Artemis072NBY70")
-	{
-		return AGCVersions::Artemis072NBY70;
-	}
-	else if (name == "Artemis072NBY71")
-	{
-		return AGCVersions::Artemis072NBY71;
-	}
 	else if (name == "Skylark048")
 	{
 		return AGCVersions::Skylark048;
@@ -5110,10 +4989,6 @@ AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetLGCVersion(std::string 
 	{
 		return AGCVersions::Zerlina56;
 	}
-	else if (name == "Zerlina56NBY72")
-	{
-		return AGCVersions::Zerlina56NBY72;
-	}
 	else if (name == "Luminary210")
 	{
 		return AGCVersions::Luminary210;
@@ -5122,140 +4997,43 @@ AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetLGCVersion(std::string 
 	return AGCVersions::AGCVersionError;
 }
 
-AGCPadloadGenerator::PIOSDataSet::PIOSDataSetNames AGCPadloadGenerator::GetPIOSDataSetName(AGCVersions rope)
+int AGCPadloadGenerator::GetPIOSDataSet(std::string name, PIOSDataSet &data)
 {
-	switch (rope)
+	std::ifstream file;
+	std::string line, linename;
+	char Buffer[256];
+	int inttemp[2];
+
+	file.open("PIOSDataSets.txt");
+
+	if (file.is_open() == false) return 1;
+
+	while (std::getline(file, line))
 	{
-		case AGCVersions::Skylark048:
-			return PIOSDataSet::B1950;
-		case AGCVersions::Colossus237:
-		case AGCVersions::Colossus249:
-		case AGCVersions::Comanche045:
-		case AGCVersions::Sundance306:
-		case AGCVersions::Luminary069:
-		case AGCVersions::Luminary069R2:
-			return PIOSDataSet::NBY69;
-		case AGCVersions::Comanche055:
-		case AGCVersions::Luminary099:
-			return PIOSDataSet::NBY70_V1;
-		case AGCVersions::Comanche067:
-		case AGCVersions::Luminary116:
-		case AGCVersions::Comanche072:
-		case AGCVersions::Luminary131:
-		case AGCVersions::Luminary131R1:
-			return PIOSDataSet::NBY70_V2;
-		case AGCVersions::Artemis072NBY70:
-			return PIOSDataSet::NBY70_V3;
-		case AGCVersions::Comanche108:
-		case AGCVersions::Luminary178:
-		case AGCVersions::Artemis072NBY71:
-		case AGCVersions::Zerlina56:
-			return PIOSDataSet::NBY71;
-		case AGCVersions::Artemis072:
-		case AGCVersions::Luminary210:
-		case AGCVersions::Zerlina56NBY72:
-			return PIOSDataSet::NBY72;
+		if (sscanf_s(line.c_str(), "%s", Buffer, 255) == 1)
+		{
+			linename.assign(Buffer);
+
+			if (name == linename)
+			{
+				//Load
+				if (sscanf_s(line.c_str(), "%s %d %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %d %lf %d", Buffer, 255, &data.epoch, &data.w_E, &data.B_0, &data.Omega_I0, &data.F_0, &data.B_dot, &data.Omega_I_dot,
+					&data.F_dot, &data.cosI, &data.sinI, &data.t0, &inttemp[0], &data.AZ0, &inttemp[1]) != 15)
+				{
+					return 1;
+				}
+
+				data.name.assign(Buffer);
+				data.AZ0Hardcoded = (inttemp[0] != 0);
+				data.ExtendedLimit = (inttemp[1] != 0);
+				break;
+			}
+		}
 	}
 
-	return PIOSDataSet::PIOSDataSetNames::PIOSDataError;
-}
+	file.close();
 
-AGCPadloadGenerator::PIOSDataSet AGCPadloadGenerator::GetPIOSDataSet(AGCPadloadGenerator::PIOSDataSet::PIOSDataSetNames name)
-{
-	AGCPadloadGenerator::PIOSDataSet set;
-
-	switch (name)
-	{
-	case PIOSDataSet::B1950:
-		set.epoch = 1950;
-		break;
-	case PIOSDataSet::NBY69:
-		set.epoch = 1969;
-		set.w_E = 7.29211515e-5;
-		set.B_0 = 0.409164173;
-		set.Omega_I0 = -6.03249419;
-		set.F_0 = 2.61379488;
-		set.B_dot = -7.19756666e-14;
-		set.Omega_I_dot = -1.07047016e-8;
-		set.F_dot = 2.67240019e-6;
-		set.cosI = 0.99964115;
-		set.sinI = 0.02678760;
-		set.t0 = 40038.0;
-		break;
-	case PIOSDataSet::NBY70_V1:
-		set.epoch = 1970;
-		set.w_E = 7.29211319606104e-5;
-		set.B_0 = 0.40916190299;
-		set.Omega_I0 = 6.1965366255107;
-		set.F_0 = 5.20932947411685;
-		set.B_dot = -7.19757301e-14;
-		set.Omega_I_dot = -1.07047011e-8;
-		set.F_dot = 2.67240410e-6;
-		set.cosI = 0.99964173;
-		set.sinI = 0.02676579;
-		set.t0 = 40403.0;
-		break;
-	case PIOSDataSet::NBY70_V2:
-		set.epoch = 1970;
-		set.w_E = 7.292115145489943e-05;
-		set.B_0 = 0.4091619030;
-		set.Omega_I0 = 6.196536640;
-		set.F_0 = 5.209327056;
-		set.B_dot = -7.197573418e-14;
-		set.Omega_I_dot = -1.070470170e-8;
-		set.F_dot = 2.672404256e-6;
-		set.cosI = 0.9996417320;
-		set.sinI = 0.02676579050;
-		set.t0 = 40403.0;
-		break;
-	case PIOSDataSet::NBY70_V3:
-		set.epoch = 1970;
-		set.w_E = 7.292115145489943e-05;
-		set.B_0 = 0.4091619030;
-		set.Omega_I0 = 6.196536640;
-		set.F_0 = 5.209327056;
-		set.B_dot = -7.197573418e-14;
-		set.Omega_I_dot = -1.070470170e-8;
-		set.F_dot = 2.672404256e-6;
-		set.cosI = 0.9996417320;
-		set.sinI = 0.02676579050;
-		set.t0 = 40403.0;
-		set.AZ0Hardcoded = true;
-		set.AZ0 = 4.867316151485891;
-		break;
-	case PIOSDataSet::NBY71:
-		set.epoch = 1971;
-		set.w_E = 7.292115147e-5;
-		set.B_0 = 0.40915963316;
-		set.Omega_I0 = 5.859196887;
-		set.F_0 = 1.5216749598;
-		set.B_dot = -7.1975797907e-14;
-		set.Omega_I_dot = -1.070470151e-8;
-		set.F_dot = 2.6724042552e-6;
-		set.cosI = 0.999641732;
-		set.sinI = 0.0267657905;
-		set.t0 = 40768.0;
-		set.AZ0Hardcoded = true;
-		set.AZ0 = 4.8631512705;
-		break;
-	default:
-		set.epoch = 1972;
-		set.w_E = 7.29211514667e-5;
-		set.B_0 = 0.409157363336;
-		set.Omega_I0 = 5.52185714700;
-		set.F_0 = 4.11720655556;
-		set.B_dot = -7.19758599677e-14;
-		set.Omega_I_dot = -1.07047013100e-8;
-		set.F_dot = 2.67240425480e-6;
-		set.cosI = 0.999641732;
-		set.sinI = 0.0267657905;
-		set.t0 = 41133.0;
-		set.AZ0Hardcoded = true;
-		set.AZ0 = 4.85898502016;
-		break;
-	}
-
-	return set;
+	return 0;
 }
 
 void AGCPadloadGenerator::AGCCorrectionVectors(PIOSDataSet dataset, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance)
@@ -6727,4 +6505,123 @@ void AGCPadloadGenerator::SkylarkCorrectionMatrix(double TC, double T0)
 	DoubleToBuffer(dTemp / PI2, 0, iTemp, iTemp2);
 	SaveEMEM(02036, iTemp);
 	SaveEMEM(02037, iTemp2);
+}
+
+MATRIX3 AGCPadloadGenerator::J2000EclToBRCSMJD(double mjd) const
+{
+	double t1 = (mjd - 51544.5) / 36525.0;
+	double t2 = t1 * t1;
+	double t3 = t2 * t1;
+
+	t1 *= 4.848136811095359e-6;
+	t2 *= 4.848136811095359e-6;
+	t3 *= 4.848136811095359e-6;
+
+	double i = 2004.3109*t1 - 0.42665*t2 - 0.041833*t3;
+	double r = 2306.2181*t1 + 0.30188*t2 + 0.017998*t3;
+	double L = 2306.2181*t1 + 1.09468*t2 + 0.018203*t3;
+
+	double rot = -r - PI05;
+	double lan = PI05 - L;
+	double inc = i;
+	double obl = 0.4090928023;
+
+	return mul(mul(_MRz(rot), _MRx(inc)), mul(_MRz(lan), _MRx(-obl)));
+}
+
+MATRIX3 AGCPadloadGenerator::J2000EclToBRCS(int epoch) const
+{
+	//Calculate the rotation matrix between J2000 and mean Besselian of epoch coordinate systems 
+	double MJD = MJDOfNBYEpoch(epoch);
+	return J2000EclToBRCSMJD(MJD);
+}
+
+double AGCPadloadGenerator::TJUDAT(int Y, int M, int D) const
+{
+	//Year, Month, Day to Julian Date
+	int Y_apo = Y - 1900;
+	int TMM[] = { 0,31,59,90,120,151,181,212,243,273,304,334 };
+
+	int Z = Y_apo / 4;
+	if (Y_apo % 4 == 0)
+	{
+		Z = Z - 1;
+		for (int i = 2; i < 12; i++)
+		{
+			TMM[i] += 1;
+		}
+	}
+	return 2415020.5 + (double)(365 * Y_apo + Z + TMM[M - 1] + D - 1);
+}
+
+MATRIX3 AGCPadloadGenerator::GetRotationMatrix(int plan, double t) const
+{
+	double t0, T_p, L_0, e_rel, phi_0, T_s, e_ref, L_ref, L_rel, phi;
+	MATRIX3 Rot1, Rot2, R_ref, Rot3, Rot4, R_rel, R_rot, R, Rot;
+
+	if (plan == BODY_EARTH)
+	{
+		t0 = 51544.5;								//LAN_MJD, MJD of the LAN in the "beginning"
+		T_p = -9413040.4;							//Precession Period
+		L_0 = 0.00001553343;						//LAN in the "beginning"
+		e_rel = 0.4090928023;						//Obliquity / axial tilt of the earth in radians
+		phi_0 = 4.894942829;						//Sidereal Rotational Offset
+		T_s = 86164.098904 / 24.0 / 60.0 / 60.0;	//Sidereal Rotational Period
+		e_ref = 0;									//Precession Obliquity
+		L_ref = 0;									//Precession LAN
+	}
+	else
+	{
+		t0 = 51544.5;							//LAN_MJD, MJD of the LAN in the "beginning"
+		T_p = -6793.468728092782;				//Precession Period
+		L_0 = 1.71817749;						//LAN in the "beginning"
+		e_rel = 0.026699886264850;				//Obliquity / axial tilt of the earth in radians
+		phi_0 = 4.769465382;					//Sidereal Rotational Offset
+		T_s = 2360588.15 / 24.0 / 60.0 / 60.0;	//Sidereal Rotational Period
+		e_ref = 7.259562816e-005;				//Precession Obliquity
+		L_ref = 0.4643456618;					//Precession LAN
+	}
+
+	Rot1 = _M(cos(L_ref), 0, -sin(L_ref), 0, 1, 0, sin(L_ref), 0, cos(L_ref));
+	Rot2 = _M(1, 0, 0, 0, cos(e_ref), -sin(e_ref), 0, sin(e_ref), cos(e_ref));
+	R_ref = mul(Rot1, Rot2);
+	L_rel = L_0 + PI2 * (t - t0) / T_p;
+	Rot3 = _M(cos(L_rel), 0, -sin(L_rel), 0, 1, 0, sin(L_rel), 0, cos(L_rel));
+	Rot4 = _M(1, 0, 0, 0, cos(e_rel), -sin(e_rel), 0, sin(e_rel), cos(e_rel));
+	R_rel = mul(Rot3, Rot4);
+	phi = phi_0 + PI2 * (t - t0) / T_s + (L_0 - L_rel)*cos(e_rel);
+	R_rot = _M(cos(phi), 0, -sin(phi), 0, 1, 0, sin(phi), 0, cos(phi));
+	Rot = mul(R_rel, R_rot);
+	R = mul(R_ref, Rot);
+	return R;
+}
+
+double AGCPadloadGenerator::MJDOfNBYEpoch(int epoch) const
+{
+	//Calculate MJD of Besselian epoch
+	double C, DE, MJD, JD, T;
+	int E, XN;
+	const double A = 0.0929;
+	const double B = 8640184.542;
+	const double W1 = 1.720217954160054e-2;
+
+	E = epoch;
+	XN = (E - 1901) / 4;
+	C = -86400.0*(double)(E - 1900) - 74.164;
+	T = 2.0 * C / (-B - sqrt(B*B - 4.0 * A*C));
+	DE = 36525.0*T - 365.0*(double)(E - 1900) + 0.5 - (double)XN;
+
+	JD = TJUDAT(epoch, 1, 0);
+	MJD = JD - 2400000.5 + DE;
+	return MJD;
+}
+
+double AGCPadloadGenerator::MJD2JD(double MJD) const
+{
+	return MJD + 2400000.5;
+}
+
+double AGCPadloadGenerator::JD2MJD(double JD) const
+{
+	return JD - 2400000.5;
 }

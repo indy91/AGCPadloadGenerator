@@ -4,6 +4,7 @@ class CAGCPadloadGeneratorGUIDlg;
 class LGCPadloadGenerator;
 class BlockIPadloadGenerator;
 class SkylarkPadloadGenerator;
+class RopeConstantsDialog;
 
 class MainMenuDialog : public CDialogEx
 {
@@ -25,6 +26,7 @@ protected:
 	LGCPadloadGenerator *lgc_form;
 	BlockIPadloadGenerator *blockI_form;
 	SkylarkPadloadGenerator *skylark_form;
+	RopeConstantsDialog *ropeconstants_form;
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -32,4 +34,5 @@ public:
 	afx_msg void OnBnClickedLGC();
 	afx_msg void OnBnClickedBlockI();
 	afx_msg void OnBnClickedSkylark();
+	afx_msg void OnBnClickedRopeConstants();
 };

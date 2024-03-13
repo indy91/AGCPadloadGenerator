@@ -199,6 +199,7 @@
     <ClInclude Include="MainMenuDialog.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RopeConstantsDialog.h" />
     <ClInclude Include="SkylarkPadloadGenerator.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VectorMath.h" />
@@ -211,8 +212,10 @@
     <ClCompile Include="BlockIPadloadGenerator.cpp" />
     <ClCompile Include="Earth.cpp" />
     <ClCompile Include="ELP82.cpp" />
+    <ClCompile Include="GenerateRopeConstants.cpp" />
     <ClCompile Include="LGCPadloadGenerator.cpp" />
     <ClCompile Include="MainMenuDialog.cpp" />
+    <ClCompile Include="RopeConstantsDialog.cpp" />
     <ClCompile Include="SkylarkPadloadGenerator.cpp" />
     <ClCompile Include="Vsop87.cpp" />
   </ItemGroup>

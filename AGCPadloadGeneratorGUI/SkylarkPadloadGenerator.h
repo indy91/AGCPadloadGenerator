@@ -55,4 +55,5 @@ public:
 	CEdit JM2DCKDBox;
 	CEdit CH6FAILBox;
 	CEdit DKRATEBox;
+	CEdit OutputBox;
 };

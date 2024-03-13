@@ -16,8 +16,6 @@
 #define CMC_COMANCE072 5
 #define CMC_COMANCE0108 6
 #define CMC_ARTEMIS072 7
-#define CMC_ARTEMIS072NBY70 8
-#define CMC_ARTEMIS072NBY71 9
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -85,6 +83,8 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT34, WMIDPOSBox);
 	DDX_Control(pDX, IDC_EDIT35, WMIDVELBox);
 	DDX_Control(pDX, IDC_EDIT36, RVARMINBox);
+	DDX_Control(pDX, IDC_EDIT37, OutputBox);
+	DDX_Control(pDX, IDC_EDIT38, PIOSDataSetBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -130,6 +130,8 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	{
 		// Add tool tips to the controls, either by hard coded string 
 		// or using the string table resource
+
+		m_ToolTip.AddTool(&PIOSDataSetBox, _T("Planetary Inertial Orientation Subroutine data from PIOSDataSets.txt"));
 
 		m_ToolTip.AddTool(&UNITWBox, _T("Time in days from liftoff at which Earth rotations are exactly accurate"));
 		m_ToolTip.AddTool(&TLANDBox, _T("Time in days from liftoff at which Moon rotations are exactly accurate"));
@@ -181,8 +183,6 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	RopeNameBox.AddString(L"Comanche072");
 	RopeNameBox.AddString(L"Comanche108");
 	RopeNameBox.AddString(L"Artemis072");
-	RopeNameBox.AddString(L"Artemis072NBY70");
-	RopeNameBox.AddString(L"Artemis072NBY71");
 	RopeNameBox.SetCurSel(CMC_COMANCE055);
 
 	UpdateRopeSpecificEditFields();
@@ -352,7 +352,31 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	ws = std::wstring(string.GetString());
 	agc.RopeName = std::string(ws.begin(), ws.end());
 
-	agc.RunCMC();
+	PIOSDataSetBox.GetWindowText(string);
+	ws = std::wstring(string.GetString());
+	agc.PIOSDataSetName = std::string(ws.begin(), ws.end());
+
+	int message = agc.RunCMC();
+
+	//Write output
+	switch (message)
+	{
+	case 0:
+		OutputBox.SetWindowTextW(L"Padload generation successful!");
+		break;
+	case 1:
+		OutputBox.SetWindowTextW(L"Rope not found!");
+		break;
+	case 2:
+		OutputBox.SetWindowTextW(L"Rope not supported!");
+		break;
+	case 3:
+		OutputBox.SetWindowTextW(L"LaunchMJD not supported by rope!");
+		break;
+	case 4:
+		OutputBox.SetWindowTextW(L"PIOS data set not found!");
+		break;
+	}
 }
 
 void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo1()
@@ -503,6 +527,14 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	}
 
 	UpdateRopeSpecificEditFields();
+
+	//Special cases for missions that currently use a rope created for a different launch year
+	switch (MissionBox.GetCurSel())
+	{
+	case 8: //Apollo 14
+		PIOSDataSetBox.SetWindowTextW(L"NBY71");
+		break;
+	}
 }
 
 void CAGCPadloadGeneratorGUIDlg::String2Text(std::string val, CEdit *ed)
@@ -647,6 +679,29 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		MinImp1Box.SetWindowTextW(L"19538.26");
 		MinImp2Box.SetWindowTextW(L"24447.36");
 		MinImp3Box.SetWindowTextW(L"19989.0");
+		break;
+	}
+
+	//PIOS Data Set
+	switch (RopeNameBox.GetCurSel())
+	{
+	case CMC_COLOSSUS237:
+	case CMC_COLOSSUS249:
+	case CMC_COMANCE045:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1969");
+		break;
+	case CMC_COMANCE055:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1970_V1");
+		break;
+	case CMC_COMANCE067:
+	case CMC_COMANCE072:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1970_V2");
+		break;
+	case CMC_COMANCE0108:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1971");
+		break;
+	default:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1972");
 		break;
 	}
 }
@@ -835,7 +890,7 @@ void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo14Padload()
 {
-	RopeNameBox.SetCurSel(CMC_ARTEMIS072NBY71);
+	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
 	Launchpad.SetCurSel(1); //LC-39A

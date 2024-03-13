@@ -231,19 +231,7 @@ class AGCPadloadGenerator
 
 	struct PIOSDataSet
 	{
-		enum PIOSDataSetNames
-		{
-			PIOSDataError,
-			B1950,
-			NBY68,
-			NBY69,
-			NBY70_V1, //"Bad" version flown on Apollo 11
-			NBY70_V2, //Correct version flown Apollo 12-13
-			NBY70_V3, //ArtemisNBY70
-			NBY71,
-			NBY72
-		};
-
+		std::string name;
 		int epoch = 0;
 		double w_E = 0.0;
 		double B_0 = 0.0;
@@ -255,8 +243,9 @@ class AGCPadloadGenerator
 		double cosI = 0.0;
 		double sinI = 0.0;
 		double t0 = 0.0;
-		bool AZ0Hardcoded = false;
+		bool AZ0Hardcoded = false; //Later AGC version have AZ0 hardcoded
 		double AZ0 = 0.0;
+		bool ExtendedLimit = false; //false = 481 days limit on ephemerides and PIOS, true = 963 days limit
 	};
 
 	enum AGCVersions
@@ -272,8 +261,6 @@ class AGCPadloadGenerator
 		Comanche072,
 		Comanche108,
 		Artemis072,
-		Artemis072NBY70,
-		Artemis072NBY71,
 		Sunburst120,
 		Sundance306,
 		Luminary069,
@@ -285,7 +272,6 @@ class AGCPadloadGenerator
 		Luminary178,
 		Luminary210,
 		Zerlina56,
-		Zerlina56NBY72,
 		Skylark048
 	};
 
@@ -294,12 +280,15 @@ public:
 	~AGCPadloadGenerator();
 
 	void RunBlockI();
-	void RunCMC();
-	void RunLGC();
+	int RunCMC();
+	int RunLGC();
+	void GenerateRopeConstants(int Year);
 
 	//Padloaded related variables
 	double LaunchMJD;
-	std::string Pad, RopeName;
+	std::string Pad;
+	std::string RopeName;
+	std::string PIOSDataSetName;
 	double T_504LM, T_UNITW, EphemerisSpan;
 	double LSLat, LSLng, LSAlt;
 
@@ -354,8 +343,7 @@ protected:
 	AGCVersions GetCMCVersion(std::string name);
 	AGCVersions GetLGCVersion(std::string name);
 
-	PIOSDataSet::PIOSDataSetNames GetPIOSDataSetName(AGCVersions rope);
-	PIOSDataSet GetPIOSDataSet(PIOSDataSet::PIOSDataSetNames name);
+	int GetPIOSDataSet(std::string name, PIOSDataSet &data);
 
 	std::vector<EMEM> arr;
 	std::ofstream myfile, debugfile;
@@ -409,6 +397,15 @@ protected:
 	void BlockIDefaults();
 	void CoronaDefaults();
 	void SolariumDefaults();
+
+	//Conversions
+	MATRIX3 J2000EclToBRCSMJD(double mjd) const;
+	MATRIX3 J2000EclToBRCS(int epoch) const;
+	double TJUDAT(int Y, int M, int D) const;
+	MATRIX3 GetRotationMatrix(int plan, double t) const;
+	double MJDOfNBYEpoch(int epoch) const;
+	double MJD2JD(double MJD) const;
+	double JD2MJD(double JD) const;
 
 	Earth earth;
 };

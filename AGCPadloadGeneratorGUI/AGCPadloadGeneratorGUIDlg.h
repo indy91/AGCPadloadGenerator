@@ -106,4 +106,6 @@ public:
 	CEdit WMIDPOSBox;
 	CEdit WMIDVELBox;
 	CEdit RVARMINBox;
+	CEdit OutputBox;
+	CEdit PIOSDataSetBox;
 };

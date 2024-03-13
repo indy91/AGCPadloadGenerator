@@ -96,4 +96,6 @@ public:
 	CEdit THETCRITBox;
 	CEdit RAMINBox;
 	CEdit DELTTFAPBox;
+	CEdit OutputBox;
+	CEdit PIOSDataSetBox;
 };

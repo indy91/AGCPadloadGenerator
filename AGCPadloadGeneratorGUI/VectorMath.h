@@ -14,6 +14,9 @@ const double C0 = 299792458.0;				///< speed of light in vacuum [m/s]
 const double TAUA = 499.004783806;			///< light time for 1 AU [s]
 const double AU = C0 * TAUA;				///< astronomical unit (mean geocentric distance of the sun) [m]
 
+#define BODY_EARTH 0
+#define BODY_MOON 1
+
 typedef union {
 	double data[3];               ///< array data interface
 	struct { double x, y, z; };   ///< named data interface
@@ -182,4 +185,20 @@ inline MATRIX3 _MRz(double a)
 inline MATRIX3 MatrixRH_LH(MATRIX3 A)
 {
 	return _M(A.m11, A.m13, A.m12, A.m31, A.m33, A.m32, A.m21, A.m23, A.m22);
+}
+
+inline VECTOR3 rhmul(const MATRIX3 &A, const VECTOR3 &b)	//For the left handed Orbiter matrizes, A is left handed, b is right handed, result is right handed
+{
+	return _V(
+		A.m11*b.x + A.m12*b.z + A.m13*b.y,
+		A.m31*b.x + A.m32*b.z + A.m33*b.y,
+		A.m21*b.x + A.m22*b.z + A.m23*b.y);
+}
+
+inline VECTOR3 rhtmul(const MATRIX3 &A, const VECTOR3 &b)
+{
+	return _V(
+		A.m11*b.x + A.m21*b.z + A.m31*b.y,
+		A.m13*b.x + A.m23*b.z + A.m33*b.y,
+		A.m12*b.x + A.m22*b.z + A.m32*b.y);
 }

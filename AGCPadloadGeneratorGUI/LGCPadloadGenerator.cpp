@@ -15,7 +15,6 @@
 #define LGC_LUMINARY178 6
 #define LGC_LUMINARY210 7
 #define LGC_ZERLINA056 8
-#define LGC_ZERLINA056NBY72 9
 
 // LGCPadloadGenerator-Dialog
 
@@ -87,6 +86,8 @@ void LGCPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT49, THETCRITBox);
 	DDX_Control(pDX, IDC_EDIT50, RAMINBox);
 	DDX_Control(pDX, IDC_EDIT51, DELTTFAPBox);
+	DDX_Control(pDX, IDC_EDIT52, OutputBox);
+	DDX_Control(pDX, IDC_EDIT56, PIOSDataSetBox);
 }
 
 
@@ -118,6 +119,8 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	}
 	else
 	{
+		m_ToolTip.AddTool(&PIOSDataSetBox, _T("Planetary Inertial Orientation Subroutine data from PIOSDataSets.txt"));
+
 		m_ToolTip.AddTool(&UNITWBox, _T("Time in days from liftoff at which Earth rotations are exactly accurate"));
 		m_ToolTip.AddTool(&T504LMBox, _T("Time in days from liftoff at which Moon rotations are exactly accurate"));
 
@@ -148,7 +151,6 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 	RopeNameBox.AddString(L"Luminary178");
 	RopeNameBox.AddString(L"Luminary210");
 	RopeNameBox.AddString(L"Zerlina56");
-	RopeNameBox.AddString(L"Zerlina56NBY72");
 	RopeNameBox.SetCurSel(LGC_LUMINARY116);
 
 	UpdateRopeSpecificEditFields();
@@ -275,7 +277,31 @@ void LGCPadloadGenerator::OnBnClickedOk()
 	std::wstring ws = std::wstring(string.GetString());
 	agc.RopeName = std::string(ws.begin(), ws.end());
 
-	agc.RunLGC();
+	PIOSDataSetBox.GetWindowText(string);
+	ws = std::wstring(string.GetString());
+	agc.PIOSDataSetName = std::string(ws.begin(), ws.end());
+
+	int message = agc.RunLGC();
+
+	//Write output
+	switch (message)
+	{
+	case 0:
+		OutputBox.SetWindowTextW(L"Padload generation successful!");
+		break;
+	case 1:
+		OutputBox.SetWindowTextW(L"Rope not found!");
+		break;
+	case 2:
+		OutputBox.SetWindowTextW(L"Rope not supported!");
+		break;
+	case 3:
+		OutputBox.SetWindowTextW(L"LaunchMJD not supported by rope!");
+		break;
+	case 4:
+		OutputBox.SetWindowTextW(L"PIOS data set not found!");
+		break;
+	}
 }
 
 
@@ -745,7 +771,7 @@ void LGCPadloadGenerator::UpdateRopeSpecificEditFields()
 		KIGNVBox.SetReadOnly(false);
 	}
 
-	if (RopeNameBox.GetCurSel() == LGC_LUMINARY178 || RopeNameBox.GetCurSel() == LGC_LUMINARY210 || RopeNameBox.GetCurSel() == LGC_ZERLINA056 || RopeNameBox.GetCurSel() == LGC_ZERLINA056NBY72)
+	if (RopeNameBox.GetCurSel() == LGC_LUMINARY178 || RopeNameBox.GetCurSel() == LGC_LUMINARY210 || RopeNameBox.GetCurSel() == LGC_ZERLINA056)
 	{
 		ABSC0Box.SetReadOnly(false); ABSC1Box.SetReadOnly(false); ABSC2Box.SetReadOnly(false); ABSC3Box.SetReadOnly(false); ABSC4Box.SetReadOnly(false);
 		SLOPE0Box.SetReadOnly(false); SLOPE1Box.SetReadOnly(false); SLOPE2Box.SetReadOnly(false); SLOPE3Box.SetReadOnly(false); SLOPE4Box.SetReadOnly(false);
@@ -773,5 +799,29 @@ void LGCPadloadGenerator::UpdateRopeSpecificEditFields()
 		K2PARMBox.SetReadOnly(false);
 		THETCRITBox.SetReadOnly(false);
 		RAMINBox.SetReadOnly(false);
+	}
+
+	//PIOS Data Set
+	switch (RopeNameBox.GetCurSel())
+	{
+	case LGC_SUNDANCE306:
+	case LGC_LUMINARY069:
+	case LGC_LUMINARY069R2:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1969");
+		break;
+	case LGC_LUMINARY099:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1970_V1");
+		break;
+	case LGC_LUMINARY116:
+	case LGC_LUMINARY131R1:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1970_V2");
+		break;
+	case LGC_LUMINARY178:
+	case LGC_ZERLINA056:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1971");
+		break;
+	default:
+		PIOSDataSetBox.SetWindowTextW(L"NBY1972");
+		break;
 	}
 }

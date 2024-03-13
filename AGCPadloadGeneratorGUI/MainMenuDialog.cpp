@@ -9,6 +9,7 @@
 #include "LGCPadloadGenerator.h"
 #include "BlockIPadloadGenerator.h"
 #include "SkylarkPadloadGenerator.h"
+#include "RopeConstantsDialog.h"
 
 // MainMenuDialog-Dialog
 
@@ -21,6 +22,7 @@ MainMenuDialog::MainMenuDialog(CWnd* pParent /*=nullptr*/)
 	lgc_form = NULL;
 	blockI_form = NULL;
 	skylark_form = NULL;
+	ropeconstants_form = NULL;
 }
 
 MainMenuDialog::~MainMenuDialog()
@@ -45,6 +47,11 @@ MainMenuDialog::~MainMenuDialog()
 		delete skylark_form;
 		skylark_form = NULL;
 	}
+	if (ropeconstants_form)
+	{
+		delete ropeconstants_form;
+		ropeconstants_form = NULL;
+	}
 }
 
 void MainMenuDialog::DoDataExchange(CDataExchange* pDX)
@@ -58,6 +65,7 @@ BEGIN_MESSAGE_MAP(MainMenuDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON2, &MainMenuDialog::OnBnClickedLGC)
 	ON_BN_CLICKED(IDC_BUTTON3, &MainMenuDialog::OnBnClickedBlockI)
 	ON_BN_CLICKED(IDC_BUTTON4, &MainMenuDialog::OnBnClickedSkylark)
+	ON_BN_CLICKED(IDC_BUTTON5, &MainMenuDialog::OnBnClickedRopeConstants)
 END_MESSAGE_MAP()
 
 
@@ -100,5 +108,15 @@ void MainMenuDialog::OnBnClickedSkylark()
 	{
 		skylark_form = new SkylarkPadloadGenerator(this);
 		skylark_form->DoModal();
+	}
+}
+
+
+void MainMenuDialog::OnBnClickedRopeConstants()
+{
+	if (ropeconstants_form == NULL)
+	{
+		ropeconstants_form = new RopeConstantsDialog(this);
+		ropeconstants_form->DoModal();
 	}
 }

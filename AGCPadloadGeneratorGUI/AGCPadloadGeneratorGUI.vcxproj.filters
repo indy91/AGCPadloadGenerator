@@ -57,6 +57,9 @@
     <ClInclude Include="SkylarkPadloadGenerator.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="RopeConstantsDialog.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AGCPadloadGeneratorGUI.cpp">
@@ -87,6 +90,12 @@
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SkylarkPadloadGenerator.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GenerateRopeConstants.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="RopeConstantsDialog.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
