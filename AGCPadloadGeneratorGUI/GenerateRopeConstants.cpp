@@ -42,8 +42,10 @@ VECTOR3 StarCatalogue[] =
 	_V(0.837327731, -0.410968743, -0.360537048)
 };
 
-void FormatAGCSTarUnitVector(char *Buffer, double val)
+void FormatStarAGCUnitVector(char *Buffer, double val)
 {
+	//Gets rid of the leading zero
+
 	char Buffer2[128];
 
 	sprintf_s(Buffer2, "%+.10lf", val);
@@ -55,6 +57,37 @@ void FormatAGCSTarUnitVector(char *Buffer, double val)
 	for (i = 0; i < 14; i++)
 	{
 		if (i != 1)
+		{
+			Buffer[j] = Buffer2[i];
+			j++;
+		}
+	}
+}
+
+void FormatAGCUnitVector(char *Buffer, double val)
+{
+	//Gets rid of the leading zero
+
+	char Buffer2[128];
+
+	sprintf_s(Buffer2, "%.9lf", val);
+
+	int i, j, num;
+
+	j = 0;
+
+	if (val >= 0.0)
+	{
+		num = 0;
+	}
+	else
+	{
+		num = 1;
+	}
+
+	for (i = 0; i < 14; i++)
+	{
+		if (i != num)
 		{
 			Buffer[j] = Buffer2[i];
 			j++;
@@ -85,19 +118,21 @@ double AngleBetweenMatrices(MATRIX3 Rot1, MATRIX3 Rot2)
 	return acos((Tr - 1.0) / 2.0);
 }
 
-void SolarEphemeris(double TC, double T0, double &K1, double &K3, double &LOSO, double &CARG, double &CMOD)
+void CalculateSolarEphemerisConstants(double TC, double T0, double &K1, double &K3, double &LOSO, double &LOSR, double &CARG, double &CMOD, double &OMEGAC)
 {
 	//From SGA Memo #8-71 and Addendum
 
-	//t_c: julian ephemeris date at midpoint of the time interval over which the solar position approximation is desired
+	//TC: julian ephemeris date at midpoint of the time interval over which the solar position approximation is desired
 	//T0: julian ephemeris date midnight July 1 before launch
 
-	double D, fact, n_EM, eps, e_EM, W_0EM, M_0EM;
+	double D, fact, n_EM, eps, e_EM, W_0EM, M_0EM, fact2;
 
 	//Time variables
 	D = (TC - 2415020.0) / 1e4;
 	fact = 1.0 + 2.852e-8; //Converts ephemeris time rate to universal time rate
 	n_EM = fact * 0.985600267; //VAL67 + 8 (1/365)
+
+	fact2 = 0.32328 / 36525.0; //Precession correction in degrees per ephemeris day
 
 	//Calculate mean obliquity
 	eps = 23.452294 - 3.5626e-3*D - 1.23e-7*D*D + 1.03e-8*D*D*D;
@@ -105,7 +140,7 @@ void SolarEphemeris(double TC, double T0, double &K1, double &K3, double &LOSO, 
 	//Calculate mean eccentricity
 	e_EM = 0.01675104 - 1.1444e-5*D - 9.4e-9*D*D;
 	//Calculate longitude of perihelion
-	W_0EM = 101.220833 + 0.470684*D - (0.32328 / 36525.0)*(TC - T0) + 3.39e-5*D*D + 7.0e-8*D*D*D;
+	W_0EM = 101.220833 + 0.470684*D - fact2*(TC - T0) + 3.39e-5*D*D + 7.0e-8*D*D*D;
 	W_0EM = fmod(W_0EM, 360.0);
 	W_0EM *= RAD;
 
@@ -116,16 +151,113 @@ void SolarEphemeris(double TC, double T0, double &K1, double &K3, double &LOSO, 
 
 	K1 = cos(eps); //KONMAT+4
 	K3 = sin(eps); //KONMAT+6
-	LOSO = W_0EM + M_0EM - PI; //LOSO
 
-	CARG = M_0EM; // PHASEC
-	CMOD = -(2.0 * e_EM - 0.25*pow(e_EM, 3)); //C
+	LOSO = W_0EM + M_0EM - PI; //LOSO
+	LOSR = (n_EM + fact2)*RAD;
+
+	CMOD = (2.0 * e_EM - 0.25*pow(e_EM, 3)); //C
+	OMEGAC = n_EM*RAD;
+	CARG = M_0EM - PI; // PHASEC
+}
+
+double MoonMeanLongitudeAscendingNode(double T0)
+{
+	//T0 = julian ephemeris date
+
+	double T, d, D;
+
+	T = (T0 - 2415020.0) / 36525.0;
+	D = 3.6525*T;
+	d = 10000.0*D;
+
+	double Omega;
+	Omega = 259.183275 - 0.0529539222*d + 0.0001557*pow(D, 2) + 0.00000005*(D, 3);
+
+	Omega = fmod(Omega, 360.0);
+	if (Omega < 0.0)
+	{
+		Omega += 360.0;
+	}
+
+	Omega *= RAD;
+
+	return Omega;
+}
+
+void CalculateLunarEphemerisConstants(double TC, double T0, double K1, double K3, double &K2, double &K4, double &LOMO, double &LOMR, double &A, double &B, double &OMEGAA, double &PHASEA, double &OMEGAB, double &PHASEB, double &LONO, double &LONR)
+{
+	//TC: julian ephemeris date at midpoint of the time interval over which the solar position approximation is desired
+	//T0: julian ephemeris date midnight July 1 before launch
+
+	double IM, LOMO_1972, PHASEA_1972, PHASEB_1972, JD_1972, DT;
+
+	IM = 5.145396374132591*RAD; //Constant in 1961 explanatory supplement to the Astronomical Ephemeris
+
+	K2 = -K3 * sin(IM);
+	K4 = K1 * sin(IM);
+
+	OMEGAA = 0.036291713*PI2;		// rad/day, sidereal period of the moon
+	OMEGAB = 0.03125*PI2;			// rad/day, second term in Brown's series for the position of the Moon
+
+	//TBD: Calculate lunar ephemeris constants (below the 1972 values)
+	LOMO_1972 = 0.534104635*PI2;	// rad
+	LOMR = 0.036600997*PI2;			// rad/day
+	A = 0.017519236*PI2;			// rad
+	PHASEA_1972 = 0.02452343*PI2;	// rad
+	B = 0.003473642*PI2;			// rad
+	PHASEB_1972 = 0.540564756*PI2;	// rad
+	JD_1972 = 2441133.5;
+
+	//Adjust for new epoch
+	DT = T0 - JD_1972;
+
+	LOMO = LOMO_1972 + LOMR * DT;
+	LOMO = fmod(LOMO, PI2);
+
+	LONO = MoonMeanLongitudeAscendingNode(T0);
+	LONR = (MoonMeanLongitudeAscendingNode(T0 + 370.0) - LONO) / 370.0;
+
+	PHASEA = PHASEA_1972 + OMEGAA * DT;
+	PHASEA = fmod(PHASEA, PI2);
+
+	PHASEB = PHASEB_1972 + OMEGAB * DT;
+	PHASEB = fmod(PHASEB, PI2);
+}
+
+VECTOR3 EvaluateSolarEphemeris(double t, double LOSO, double LOSR, double C, double OMEGAC, double PHASEC, double K1, double K3)
+{
+	VECTOR3 U_ES;
+	double LOS;
+
+	LOS = LOSO + LOSR * t - C * sin(OMEGAC*t + PHASEC);
+	U_ES = _V(cos(LOS), K1*sin(LOS), K3*sin(LOS));
+
+	return unit(U_ES);
+}
+
+VECTOR3 EvaluateLunarEphemeris(double t, double LOMO, double LOMR, double A, double OMEGAA, double PHASEA, double B, double OMEGAB, double PHASEB, double LONO, double LONR, double K1, double K2, double K3, double K4)
+{
+	VECTOR3 U_EM;
+	double LOM, LON;
+
+	LOM = LOMO + LOMR * t - (A*sin(OMEGAA*t + PHASEA) + B * sin(OMEGAB*t + PHASEB));
+	LON = LONO + LONR * t;
+
+	U_EM = _V(cos(LOM), K1*sin(LOM) + K2 * sin(LOM - LON), K3*sin(LOM) + K4 * sin(LOM - LON));
+
+	return unit(U_EM);
 }
 
 void AGCPadloadGenerator::GenerateRopeConstants(int Year)
 {
+	MATRIX3 Rot;
+	double MJD_C;
+	char Buffer[256], Buffer2[256];
+
+	//MJD at epoch
+	MJD_C = MJDOfNBYEpoch(Year);
 	//Rotation matrix from J2000 ecliptic to BRCS
-	MATRIX3 Rot = J2000EclToBRCS(Year);
+	Rot = J2000EclToBRCSMJD(MJD_C);
 
 	std::ofstream file;
 	VECTOR3 vTemp;
@@ -146,7 +278,7 @@ void AGCPadloadGenerator::GenerateRopeConstants(int Year)
 
 		for (j = 0; j < 3; j++)
 		{
-			FormatAGCSTarUnitVector(Buffer, vTemp.data[j]);
+			FormatStarAGCUnitVector(Buffer, vTemp.data[j]);
 			file << "2DEC " << Buffer << " B-1 #STAR " << i + 1 << " ";
 			if (j == 0)
 			{
@@ -169,7 +301,7 @@ void AGCPadloadGenerator::GenerateRopeConstants(int Year)
 	file << "Earth Planetary Inertial Orientation Subroutine Constants:" << std::endl;
 
 	MATRIX3 J2000, J2000_2, R, R3, R3_2;
-	double MJD_0, MJD_C, A_Z, A_Z0, w_E;
+	double MJD_0, A_Z, A_Z0, w_E;
 
 	//TBD: Make variable?
 	w_E = 7.29211514667e-5;
@@ -180,8 +312,6 @@ void AGCPadloadGenerator::GenerateRopeConstants(int Year)
 
 	//MJD at midnight July 1st before epoch
 	MJD_0 = JD2MJD(TJUDAT(Year - 1, 7, 1));
-	//MJD near epoch
-	MJD_C = JD2MJD(TJUDAT(Year, 1, 1));
 	//J2000 = matrix converting from J2000 to BRCS
 	J2000 = J2000EclToBRCS(Year);
 	//J2000 = matrix converting from J2000 to TC epoch
@@ -322,15 +452,154 @@ void AGCPadloadGenerator::GenerateRopeConstants(int Year)
 	file << Buffer << std::endl << std::endl;
 
 	//LGC EPHEMERIDES
-	file << "TBD: LGC Solar and Lunar Ephemerides" << std::endl;
+	file << "LGC Solar and Lunar Ephemerides" << std::endl;
 
-	double TC, T0, K1, K3, LOSO, CARG, CMOD;
+	double TC, T0;
+	double K1, K3, LOSO, LOSR, CARG, CMOD, OMEGAC;
+	double K2, K4, LOMO, LOMR, A, OMEGAA, PHASEA, B, OMEGAB, PHASEB, LONO, LONR;
 
 	//Convert from MJD to JD
 	TC = MJD_C + 2400000.5;
 	T0 = MJD_0 + 2400000.5;
 
-	SolarEphemeris(TC, T0, K1, K3, LOSO, CARG, CMOD);
+	//Calculate constants
+	CalculateSolarEphemerisConstants(TC, T0, K1, K3, LOSO, LOSR, CARG, CMOD, OMEGAC);
+	CalculateLunarEphemerisConstants(TC, T0, K1, K3, K2, K4, LOMO, LOMR, A, B, OMEGAA, PHASEA, OMEGAB, PHASEB, LONO, LONR);
+
+	sprintf_s(Buffer, 255, "KONMAT 2DEC  1.0         B-1  #        *************");
+	file << Buffer << std::endl;
+	sprintf_s(Buffer, 255, "       2DEC  0           B-28 #                    *");
+	file << Buffer << std::endl;
+	sprintf_s(Buffer, 255, "       2DEC  0           B-28 #                    *");
+	file << Buffer << std::endl;
+	sprintf_s(Buffer, 255, "       2DEC  0           B-28 #                    *");
+	file << Buffer << std::endl;
+	FormatAGCUnitVector(Buffer2, K1);
+	sprintf_s(Buffer, 255, "       2DEC* %s B-1* #  K1 = COS(OBL)", Buffer2);
+	file << Buffer << std::endl;
+	FormatAGCUnitVector(Buffer2, K2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B-1* #  K2 = SIN (OBL) SIN (IM) (-1)", Buffer2);
+	file << Buffer << std::endl;
+	sprintf_s(Buffer, 255, "       2DEC  0           B-28 #                    *");
+	file << Buffer << std::endl;
+	FormatAGCUnitVector(Buffer2, K3);
+	sprintf_s(Buffer, 255, "       2DEC* %s B-1* #  K3 = SIN(OBL)", Buffer2);
+	file << Buffer << std::endl;
+	FormatAGCUnitVector(Buffer2, K4);
+	sprintf_s(Buffer, 255, "       2DEC* %s B-1* #  K4 = COS (OBL) SIN (IM)", Buffer2);
+	file << Buffer << std::endl;
+	file << std::endl;
+
+	FormatAGCUnitVector(Buffer2, LOMR / PI2);
+	sprintf_s(Buffer, 255, "RATESP 2DEC* %s B+4* # LOMR", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, LOSR / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+4* # LOSR", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, LONR / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+4* # LONR", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, LOMO / PI2);
+	sprintf_s(Buffer, 255, "       2DEC  %s      # LOMO", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, LOSO / PI2);
+	sprintf_s(Buffer, 255, "       2DEC  %s      # LOSO", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, LONO / PI2);
+	sprintf_s(Buffer, 255, "       2DEC  %s      # LONO", Buffer2);
+	file << Buffer << std::endl << std::endl;
+
+	FormatAGCUnitVector(Buffer2, A / PI2);
+	sprintf_s(Buffer, 255, "VAL67  2DEC* %s B+1* # AMOD", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, PHASEA / PI2);
+	sprintf_s(Buffer, 255, "       2DEC  %s      # AARG", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, OMEGAA / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+1* # 1/27", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, B / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+1* # BMOD", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, PHASEB / PI2);
+	sprintf_s(Buffer, 255, "       2DEC  %s      # BARG", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, OMEGAB / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+1* # 1/32", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, CMOD / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+1* # CMOD", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, CARG / PI2);
+	sprintf_s(Buffer, 255, "       2DEC  %s      # CARG", Buffer2);
+	file << Buffer << std::endl;
+
+	FormatAGCUnitVector(Buffer2, OMEGAC / PI2);
+	sprintf_s(Buffer, 255, "       2DEC* %s B+1* # 1/365", Buffer2);
+	file << Buffer << std::endl;
+
+	file << std::endl << "Solar Ephemeris error over time:" << std::endl;
+
+	MJD = MJD_0;
+
+	VECTOR3 U_ES1, U_ES2, R_ES, V_ES;
+	double t;
+
+	while (MJD < MJD_0 + 370.0)
+	{
+		//Time since July 1st, midnight
+		t = MJD - MJD_0;
+		//Sun unit vector with LGC ephemeris
+		U_ES1 = EvaluateSolarEphemeris(t, LOSO, LOSR, CMOD, OMEGAC, CARG, K1, K3);
+		//Sun unit vector with Orbiter ephemeris
+		agcCelBody_RH(BODY_EARTH, MJD, EPHEM_TRUEPOS | EPHEM_TRUEVEL, &R_ES, &V_ES);
+		R_ES = mul(Rot, -R_ES);
+		U_ES2 = unit(R_ES);
+		//Angle between vectors
+		ang = acos(dotp(U_ES1, U_ES2));
+
+		sprintf_s(Buffer, 256, "%.3f = %.8lf (degrees)", MJD, ang*DEG);
+		file << Buffer << std::endl;
+
+		MJD += 10.0;
+	}
+
+	file << std::endl << "Lunar Ephemeris error over time:" << std::endl;
+
+	VECTOR3 U_EM1, U_EM2, R_EM;
+
+	MJD = MJD_0;
+
+	while (MJD < MJD_0 + 370.0)
+	{
+		//Time since July 1st, midnight
+		t = MJD - MJD_0;
+		//Sun unit vector with LGC ephemeris
+		U_EM1 = EvaluateLunarEphemeris(t, LOMO, LOMR, A, OMEGAA, PHASEA, B, OMEGAB, PHASEB, LONO, LONR, K1, K2, K3, K4);
+		//Moon unit vector with Orbiter ephemeris
+		agcCelBody_RH(BODY_MOON, MJD, EPHEM_TRUEPOS, &R_EM);
+		R_EM = mul(Rot, R_EM);
+		U_EM2 = unit(R_EM);
+		//Angle between vectors
+		ang = acos(dotp(U_EM1, U_EM2));
+
+		sprintf_s(Buffer, 256, "%.3f = %.8lf (degrees)", MJD, ang*DEG);
+		file << Buffer << std::endl;
+
+		MJD += 10.0;
+	}
 
 	file.close();
 }
