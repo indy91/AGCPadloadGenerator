@@ -393,7 +393,7 @@ void AGCPadloadGenerator::GenerateRopeConstants(int Year)
 	sprintf_s(Buffer, 255, "SINI 2DEC* %.9lf E%d B-1* # SIN (5521.5 SEC.)", valtemp, inttemp);
 	file << Buffer << std::endl;
 	FormatAGCConstants(dataset.Omega_I_dot / (100.0*PI2), valtemp, inttemp);
-	sprintf_s(Buffer, 255, "NODOT 2DEC* %.9lf E%d B28* # REV/CSEC", valtemp, inttemp);
+	sprintf_s(Buffer, 255, "NODDOT 2DEC* %.9lf E%d B28* # REV/CSEC", valtemp, inttemp);
 	file << Buffer << std::endl;
 	FormatAGCConstants(dataset.F_dot / (100.0*PI2), valtemp, inttemp);
 	sprintf_s(Buffer, 255, "FDOT 2DEC* %.9lf E%d B27* # REV/CSEC", valtemp, inttemp);
