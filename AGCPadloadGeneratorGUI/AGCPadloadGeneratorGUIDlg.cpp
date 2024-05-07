@@ -396,6 +396,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	MissionBox.GetLBText(MissionBox.GetCurSel(), MissionNameValue);
 	UpdateData(FALSE);
 
+	//Load some defaults
 	agc.RPVAR = 2000.0*2000.0;
 	agc.S22WSUBL = 10000.0;
 
@@ -412,10 +413,43 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	LATSPLBox.SetWindowText(L"26.48");
 	LNGSPLBox.SetWindowText(L"-17.05");
 
+	//Select new rope first
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Apollo 7
+	case 2: //Apollo 8
 		RopeNameBox.SetCurSel(CMC_COLOSSUS237);
+		break;
+	case 3: //Apollo 9
+		RopeNameBox.SetCurSel(CMC_COLOSSUS249);
+		break;
+	case 4: //Apollo 10
+		RopeNameBox.SetCurSel(CMC_COMANCE045);
+		break;
+	case 5: //Apollo 11
+		RopeNameBox.SetCurSel(CMC_COMANCE055);
+		break;
+	case 6: //Apollo 12
+		RopeNameBox.SetCurSel(CMC_COMANCE067);
+		break;
+	case 7: //Apollo 13
+		RopeNameBox.SetCurSel(CMC_COMANCE072);
+		break;
+	case 8: //Apollo 14
+	case 9: //Apollo 15
+	case 10: //Apollo 16
+	case 11: //Apollo 17
+		RopeNameBox.SetCurSel(CMC_COMANCE0108);
+		break;
+	}
+
+	//Update to new rope here, so mission specific numbers can be overwritten later
+	UpdateRopeSpecificEditFields();
+
+	//Now mission specific numbers
+	switch (MissionBox.GetCurSel())
+	{
+	case 1: //Apollo 7
 		EphemerisSpanBox.SetWindowTextW(L"14.5");
 		LaunchMJDInput.SetWindowTextW(L"40140.62690972");
 		Launchpad.SetCurSel(0); //LC-34
@@ -445,7 +479,6 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALFAPADBox.SetWindowTextW(L"-19.55");
 		break;
 	case 2: //Apollo 8
-		RopeNameBox.SetCurSel(CMC_COLOSSUS237);
 		EphemerisSpanBox.SetWindowTextW(L"10.5");
 		LaunchMJDInput.SetWindowTextW(L"40211.53541666666");
 		Launchpad.SetCurSel(1); //LC-39A
@@ -470,7 +503,6 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		ALFAPADBox.SetWindowTextW(L"-19.55");
 		break;
 	case 3: //Apollo 9
-		RopeNameBox.SetCurSel(CMC_COLOSSUS249);
 		LaunchMJDInput.SetWindowTextW(L"40283.666667");
 		Launchpad.SetCurSel(1); //LC-39A
 		RTEDBox.SetWindowTextW(L"1.69107");
@@ -525,8 +557,6 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	default:
 		break;
 	}
-
-	UpdateRopeSpecificEditFields();
 
 	//Special cases for missions that currently use a rope created for a different launch year
 	switch (MissionBox.GetCurSel())
@@ -708,7 +738,6 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo10Padload()
 {
-	RopeNameBox.SetCurSel(CMC_COMANCE045);
 	EphemerisSpanBox.SetWindowTextW(L"10.5");
 	LaunchMJDInput.SetWindowTextW(L"40359.7006944");
 	Launchpad.SetCurSel(2); //LC-39B
@@ -763,7 +792,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
 		LaunchAzimuthBox.SetWindowTextW(L"94.6775");
 	}
 
-	RopeNameBox.SetCurSel(CMC_COMANCE055);
 	EphemerisSpanBox.SetWindowTextW(L"10.5");
 
 	Launchpad.SetCurSel(1); //LC-39A
@@ -814,7 +842,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
 
 void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
 {
-	RopeNameBox.SetCurSel(CMC_COMANCE067);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowTextW(L"40539.6819444");
 	Launchpad.SetCurSel(1); //LC-39A
@@ -852,7 +879,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
 {
-	RopeNameBox.SetCurSel(CMC_COMANCE055);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowText(L"40687.8006944444444");
 	Launchpad.SetCurSel(1); //LC-39A
@@ -890,7 +916,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo14Padload()
 {
-	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
 	Launchpad.SetCurSel(1); //LC-39A
@@ -930,7 +955,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo14Padload()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo15Padload()
 {
-	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowTextW(L"41158.565277778");
 	Launchpad.SetCurSel(1); //LC-39A
@@ -971,7 +995,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo15Padload()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo16Padload()
 {
-	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowTextW(L"41423.7458333333");
 	Launchpad.SetCurSel(1); //LC-39A
@@ -1012,7 +1035,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo16Padload()
 
 void CAGCPadloadGeneratorGUIDlg::Apollo17Padload()
 {
-	RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 	EphemerisSpanBox.SetWindowTextW(L"14.5");
 	LaunchMJDInput.SetWindowTextW(L"41658.120138888");
 	Launchpad.SetCurSel(1); //LC-39A

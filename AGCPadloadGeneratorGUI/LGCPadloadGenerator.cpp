@@ -316,14 +316,46 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 	MissionBox.GetLBText(MissionBox.GetCurSel(), MissionNameValue);
 	UpdateData(FALSE);
 
+	//Load some defaults
 	DockedBox.SetCheck(BST_UNCHECKED);
 	ROLLTIMEBox.SetWindowText(L"6.0");
 	PITCHTIMEBox.SetWindowText(L"6.0");
 
+	//Select new rope first
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Apollo 9
 		RopeNameBox.SetCurSel(LGC_SUNDANCE306);
+		break;
+	case 2: //Apollo 10
+		RopeNameBox.SetCurSel(LGC_LUMINARY069R2);
+		break;
+	case 3: //Apollo 11
+		RopeNameBox.SetCurSel(LGC_LUMINARY099);
+		break;
+	case 4: //Apollo 12
+		RopeNameBox.SetCurSel(LGC_LUMINARY116);
+		break;
+	case 5: //Apollo 13
+		RopeNameBox.SetCurSel(LGC_LUMINARY131R1);
+		break;
+	case 6: //Apollo 14
+		RopeNameBox.SetCurSel(LGC_LUMINARY178);
+		break;
+	case 7: //Apollo 15
+	case 8: //Apollo 16
+	case 9: //Apollo 17
+		RopeNameBox.SetCurSel(LGC_LUMINARY210);
+		break;
+	}
+
+	//Update to new rope here, so mission specific numbers can be overwritten later
+	UpdateRopeSpecificEditFields();
+
+	//Now mission specific numbers
+	switch (MissionBox.GetCurSel())
+	{
+	case 1: //Apollo 9
 		LaunchMJDInput.SetWindowTextW(L"40283.6666667");
 		LMMassBox.SetWindowTextW(L"32401.2");
 		CSMMassBox.SetWindowTextW(L"30052.6");
@@ -342,7 +374,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		PITCHTIMEBox.SetWindowTextW(L"6.43");
 		break;
 	case 2: //Apollo 10
-		RopeNameBox.SetCurSel(LGC_LUMINARY069R2);
 		LaunchMJDInput.SetWindowTextW(L"40359.7006944");
 		LSAltitudeBox.SetWindowTextW(L"-3073.26");
 		LSLatitudeBox.SetWindowTextW(L"0.71388");
@@ -372,7 +403,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		KIGNVBox.SetWindowText(L"-410.0");
 		break;
 	case 3: //Apollo 11
-		RopeNameBox.SetCurSel(LGC_LUMINARY099);
 		LaunchMJDInput.SetWindowTextW(L"40418.5638889");
 		LSAltitudeBox.SetWindowTextW(L"-2671.9684");
 		LSLatitudeBox.SetWindowTextW(L"0.691395");
@@ -421,7 +451,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		agc.LGCDATA.IMUBiasCompensation.ADSRAZ = -11.0; // meru/g*/
 		break;
 	case 4: //Apollo 12
-		RopeNameBox.SetCurSel(LGC_LUMINARY116);
 		LaunchMJDInput.SetWindowTextW(L"40539.6819444");
 		LSAltitudeBox.SetWindowTextW(L"-2371.27");
 		LSLatitudeBox.SetWindowTextW(L"-2.9822165");
@@ -459,7 +488,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 5: //Apollo 13
-		RopeNameBox.SetCurSel(LGC_LUMINARY131R1);
 		LaunchMJDInput.SetWindowText(L"40687.8006944444444");
 		LSLatitudeBox.SetWindowText(L"-3.6686");
 		LSLongitudeBox.SetWindowText(L"-17.4842");
@@ -497,7 +525,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 6: //Apollo 14
-		RopeNameBox.SetCurSel(LGC_LUMINARY178);
 		LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
 		LSAltitudeBox.SetWindowTextW(L"-1405.2");
 		LSLatitudeBox.SetWindowTextW(L"-3.67329493");
@@ -545,7 +572,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 7: //Apollo 15
-		RopeNameBox.SetCurSel(LGC_LUMINARY210);
 		LaunchMJDInput.SetWindowTextW(L"41158.565277778");
 		LSAltitudeBox.SetWindowTextW(L"-3550.0");
 		LSLatitudeBox.SetWindowTextW(L"26.073889");
@@ -593,7 +619,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		DELTTFAPBox.SetWindowText(L"-90.0");
 		break;
 	case 8: //Apollo 16
-		RopeNameBox.SetCurSel(LGC_LUMINARY210);
 		LaunchMJDInput.SetWindowTextW(L"41423.7458333333");
 		LSAltitudeBox.SetWindowTextW(L"-260.0");
 		LSLatitudeBox.SetWindowTextW(L"-9.00028");
@@ -641,7 +666,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		DELTTFAPBox.SetWindowText(L"-70.0");
 		break;
 	case 9: //Apollo 17
-		RopeNameBox.SetCurSel(LGC_LUMINARY210);
 		LaunchMJDInput.SetWindowTextW(L"41658.120138888");
 		LSAltitudeBox.SetWindowTextW(L"-3606.0");
 		LSLatitudeBox.SetWindowTextW(L"20.164029");
@@ -707,7 +731,6 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 	}
 
 	UpdateTotalMass();
-	UpdateRopeSpecificEditFields();
 }
 
 
