@@ -147,6 +147,9 @@ struct BlockIIData
 	//P-20, ft/s
 	double RVARMIN;
 
+	//If true then use R2 gravity model (only supported by Open Orbiter)
+	bool R2Model = false;
+
 	//CMC Only
 
 	//Entry target data for boost aborts, latitude, degrees
@@ -357,6 +360,7 @@ protected:
 	void SetPadData(Launchpad pad);
 
 	void IMUCompensation(bool cmc, bool earlymodel);
+	void R2Model(int address);
 
 	//Same addresses for all CMCs
 	void CMCDefaults(bool EarlyPIPABias, bool IsC108 = false);

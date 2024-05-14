@@ -88,6 +88,22 @@ void LGCPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT51, DELTTFAPBox);
 	DDX_Control(pDX, IDC_EDIT52, OutputBox);
 	DDX_Control(pDX, IDC_EDIT56, PIOSDataSetBox);
+	DDX_Control(pDX, IDC_CHECK2, R2ModelBox);
+	DDX_Control(pDX, IDC_EDIT65, PBIASXBox);
+	DDX_Control(pDX, IDC_EDIT66, PIPASCFXBox);
+	DDX_Control(pDX, IDC_EDIT67, PBIASYBox);
+	DDX_Control(pDX, IDC_EDIT68, PIPASCFYBox);
+	DDX_Control(pDX, IDC_EDIT69, PBIASZBox);
+	DDX_Control(pDX, IDC_EDIT70, PIPASCFZBox);
+	DDX_Control(pDX, IDC_EDIT71, NBDXBox);
+	DDX_Control(pDX, IDC_EDIT72, NBDYBox);
+	DDX_Control(pDX, IDC_EDIT73, NBDZBox);
+	DDX_Control(pDX, IDC_EDIT74, ADIAXBox);
+	DDX_Control(pDX, IDC_EDIT75, ADIAYBox);
+	DDX_Control(pDX, IDC_EDIT76, ADIAZBox);
+	DDX_Control(pDX, IDC_EDIT77, ADSRAXBox);
+	DDX_Control(pDX, IDC_EDIT78, ADSRAYBox);
+	DDX_Control(pDX, IDC_EDIT79, ADSRAZBox);
 }
 
 
@@ -128,6 +144,8 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 		m_ToolTip.AddTool(&WRENDVELBox, _T("W matrix velocity initialization for rendezvous"));
 		m_ToolTip.AddTool(&RMAXBox, _T("Maximum automatic rendezvous position update"));
 		m_ToolTip.AddTool(&VMAXBox, _T("Maximum automatic rendezvous velocity update"));
+
+		m_ToolTip.AddTool(&R2ModelBox, _T("R2 gravity model only supported by Open Orbiter"));
 	}
 
 	MissionBox.AddString(L"Manual");
@@ -215,6 +233,22 @@ BOOL LGCPadloadGenerator::OnInitDialog()
 
 	DELTTFAPBox.SetWindowText(L"-90.0");
 
+	PBIASXBox.SetWindowText(L"0.0");
+	PIPASCFXBox.SetWindowText(L"0.0");
+	PBIASYBox.SetWindowText(L"0.0");
+	PIPASCFYBox.SetWindowText(L"0.0");
+	PBIASZBox.SetWindowText(L"0.0");
+	PIPASCFZBox.SetWindowText(L"0.0");
+	NBDXBox.SetWindowText(L"0.0");
+	NBDYBox.SetWindowText(L"0.0");
+	NBDZBox.SetWindowText(L"0.0");
+	ADIAXBox.SetWindowText(L"0.0");
+	ADIAYBox.SetWindowText(L"0.0");
+	ADIAZBox.SetWindowText(L"0.0");
+	ADSRAXBox.SetWindowText(L"0.0");
+	ADSRAYBox.SetWindowText(L"0.0");
+	ADSRAZBox.SetWindowText(L"0.0");
+
 	return TRUE;
 }
 
@@ -280,6 +314,24 @@ void LGCPadloadGenerator::OnBnClickedOk()
 	PIOSDataSetBox.GetWindowText(string);
 	ws = std::wstring(string.GetString());
 	agc.PIOSDataSetName = std::string(ws.begin(), ws.end());
+
+	agc.BLOCKII.R2Model = (R2ModelBox.GetCheck() != 0);
+
+	agc.LGCDATA.IMUBiasCompensation.PBIASX = Utilities::Text2Double(&PBIASXBox);
+	agc.LGCDATA.IMUBiasCompensation.PIPASCFX = Utilities::Text2Double(&PIPASCFXBox);
+	agc.LGCDATA.IMUBiasCompensation.PBIASY = Utilities::Text2Double(&PBIASYBox);
+	agc.LGCDATA.IMUBiasCompensation.PIPASCFY = Utilities::Text2Double(&PIPASCFYBox);
+	agc.LGCDATA.IMUBiasCompensation.PBIASZ = Utilities::Text2Double(&PBIASZBox);
+	agc.LGCDATA.IMUBiasCompensation.PIPASCFZ = Utilities::Text2Double(&PIPASCFZBox);
+	agc.LGCDATA.IMUBiasCompensation.NBDX = Utilities::Text2Double(&NBDXBox);
+	agc.LGCDATA.IMUBiasCompensation.NBDY = Utilities::Text2Double(&NBDYBox);
+	agc.LGCDATA.IMUBiasCompensation.NBDZ = Utilities::Text2Double(&NBDZBox);
+	agc.LGCDATA.IMUBiasCompensation.ADIAX = Utilities::Text2Double(&ADIAXBox);
+	agc.LGCDATA.IMUBiasCompensation.ADIAY = Utilities::Text2Double(&ADIAYBox);
+	agc.LGCDATA.IMUBiasCompensation.ADIAZ = Utilities::Text2Double(&ADIAZBox);
+	agc.LGCDATA.IMUBiasCompensation.ADSRAX = Utilities::Text2Double(&ADSRAXBox);
+	agc.LGCDATA.IMUBiasCompensation.ADSRAY = Utilities::Text2Double(&ADSRAYBox);
+	agc.LGCDATA.IMUBiasCompensation.ADSRAZ = Utilities::Text2Double(&ADSRAZBox);
 
 	int message = agc.RunLGC();
 
@@ -434,21 +486,23 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		KIGNVBox.SetWindowText(L"-410.0");
 		DELTTFAPBox.SetWindowText(L"-110.0");
 
-		/*agc.LGCDATA.IMUBiasCompensation.PBIASX = -0.12; // cm/sec^2
-		agc.LGCDATA.IMUBiasCompensation.PIPASCFX = -210.0; // ppm
-		agc.LGCDATA.IMUBiasCompensation.PBIASY = 0.17; // cm/sec^2
-		agc.LGCDATA.IMUBiasCompensation.PIPASCFY = -210; // ppm
-		agc.LGCDATA.IMUBiasCompensation.PBIASZ = 0.07; // cm/sec^2
-		agc.LGCDATA.IMUBiasCompensation.PIPASCFZ = -920.0; // ppm
-		agc.LGCDATA.IMUBiasCompensation.NBDX = 1.3; // meru
-		agc.LGCDATA.IMUBiasCompensation.NBDY = -1.5; // meru
-		agc.LGCDATA.IMUBiasCompensation.NBDZ = -1.9; // meru
-		agc.LGCDATA.IMUBiasCompensation.ADIAX = 57.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADIAY = -4.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADIAZ = 20.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADSRAX = 2.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADSRAY = 26.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADSRAZ = -11.0; // meru/g*/
+		/*
+		PBIASXBox.SetWindowText(L"-0.12");		// cm/sec^2
+		PIPASCFXBox.SetWindowText(L"-210.0");	// ppm
+		PBIASYBox.SetWindowText(L"0.17");		// cm/sec^2
+		PIPASCFYBox.SetWindowText(L"-210.0");	// ppm
+		PBIASZBox.SetWindowText(L"0.07");		// cm/sec^2
+		PIPASCFZBox.SetWindowText(L"-920.0");	// ppm
+		NBDXBox.SetWindowText(L"1.3");			// meru
+		NBDYBox.SetWindowText(L"-1.5");			// meru
+		NBDZBox.SetWindowText(L"-1.9");			// meru
+		ADIAXBox.SetWindowText(L"57.0");		// meru/g
+		ADIAYBox.SetWindowText(L"-4.0");		// meru/g
+		ADIAZBox.SetWindowText(L"20.0");		// meru/g
+		ADSRAXBox.SetWindowText(L"2.0");		// meru/g
+		ADSRAYBox.SetWindowText(L"26.0");		// meru/g
+		ADSRAZBox.SetWindowText(L"-11.0");		// meru/g
+		*/
 		break;
 	case 4: //Apollo 12
 		LaunchMJDInput.SetWindowTextW(L"40539.6819444");
@@ -712,21 +766,23 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		RAMINBox.SetWindowText(L"5.872844816e6");
 		DELTTFAPBox.SetWindowText(L"-70.0");
 
-		/*agc.LGCDATA.IMUBiasCompensation.PBIASX = 1.64; // cm/sec^2
-		agc.LGCDATA.IMUBiasCompensation.PIPASCFX = -980.0; // ppm
-		agc.LGCDATA.IMUBiasCompensation.PBIASY = 1.73; // cm/sec^2
-		agc.LGCDATA.IMUBiasCompensation.PIPASCFY = -560.0; // ppm
-		agc.LGCDATA.IMUBiasCompensation.PBIASZ = 1.6; // cm/sec^2
-		agc.LGCDATA.IMUBiasCompensation.PIPASCFZ = -460.0; // ppm
-		agc.LGCDATA.IMUBiasCompensation.NBDX = 0.1; // meru
-		agc.LGCDATA.IMUBiasCompensation.NBDY = 0.4; // meru
-		agc.LGCDATA.IMUBiasCompensation.NBDZ = -1.1; // meru
-		agc.LGCDATA.IMUBiasCompensation.ADIAX = 12.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADIAY = -4.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADIAZ = 4.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADSRAX = 4.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADSRAY = 6.0; // meru/g
-		agc.LGCDATA.IMUBiasCompensation.ADSRAZ = -8.0; // meru/g*/
+		/*
+		PBIASXBox.SetWindowText(L"1.64");		// cm/sec^2
+		PIPASCFXBox.SetWindowText(L"-980.0");	// ppm
+		PBIASYBox.SetWindowText(L"1.73");		// cm/sec^2
+		PIPASCFYBox.SetWindowText(L"-560.0");	// ppm
+		PBIASZBox.SetWindowText(L"1.6");		// cm/sec^2
+		PIPASCFZBox.SetWindowText(L"-460.0");	// ppm
+		NBDXBox.SetWindowText(L"0.1");			// meru
+		NBDYBox.SetWindowText(L"0.4");			// meru
+		NBDZBox.SetWindowText(L"-1.1");			// meru
+		ADIAXBox.SetWindowText(L"12.0");		// meru/g
+		ADIAYBox.SetWindowText(L"-4.0");		// meru/g
+		ADIAZBox.SetWindowText(L"4.0");			// meru/g
+		ADSRAXBox.SetWindowText(L"4.0");		// meru/g
+		ADSRAYBox.SetWindowText(L"6.0");		// meru/g
+		ADSRAZBox.SetWindowText(L"-8.0");		// meru/g
+		*/
 		break;
 	}
 

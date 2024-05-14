@@ -85,6 +85,22 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT36, RVARMINBox);
 	DDX_Control(pDX, IDC_EDIT37, OutputBox);
 	DDX_Control(pDX, IDC_EDIT38, PIOSDataSetBox);
+	DDX_Control(pDX, IDC_CHECK2, R2ModelBox);
+	DDX_Control(pDX, IDC_EDIT39, PBIASXBox);
+	DDX_Control(pDX, IDC_EDIT40, PIPASCFXBox);
+	DDX_Control(pDX, IDC_EDIT41, PBIASYBox);
+	DDX_Control(pDX, IDC_EDIT42, PIPASCFYBox);
+	DDX_Control(pDX, IDC_EDIT43, PBIASZBox);
+	DDX_Control(pDX, IDC_EDIT44, PIPASCFZBox);
+	DDX_Control(pDX, IDC_EDIT45, NBDXBox);
+	DDX_Control(pDX, IDC_EDIT46, NBDYBox);
+	DDX_Control(pDX, IDC_EDIT47, NBDZBox);
+	DDX_Control(pDX, IDC_EDIT48, ADIAXBox);
+	DDX_Control(pDX, IDC_EDIT49, ADIAYBox);
+	DDX_Control(pDX, IDC_EDIT50, ADIAZBox);
+	DDX_Control(pDX, IDC_EDIT51, ADSRAXBox);
+	DDX_Control(pDX, IDC_EDIT65, ADSRAYBox);
+	DDX_Control(pDX, IDC_EDIT66, ADSRAZBox);
 }
 
 BEGIN_MESSAGE_MAP(CAGCPadloadGeneratorGUIDlg, CDialogEx)
@@ -167,6 +183,8 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 		m_ToolTip.AddTool(&TRUNSFBox, _T("Scale factor for rate command to optics trunnion in P24"));
 		m_ToolTip.AddTool(&SHAFTSFBox, _T("Scale factor for rate command to optics shaft in P24"));
 
+		m_ToolTip.AddTool(&R2ModelBox, _T("R2 gravity model only supported by Open Orbiter"));
+
 		m_ToolTip.Activate(TRUE);
 	}
 
@@ -241,6 +259,22 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	MinImp2Box.SetWindowText(L"0.0");
 	MinImp3Box.SetWindowText(L"0.0");
 	MinImp4Box.SetWindowText(L"0.0");
+
+	PBIASXBox.SetWindowText(L"0.0");
+	PIPASCFXBox.SetWindowText(L"0.0");
+	PBIASYBox.SetWindowText(L"0.0");
+	PIPASCFYBox.SetWindowText(L"0.0");
+	PBIASZBox.SetWindowText(L"0.0");
+	PIPASCFZBox.SetWindowText(L"0.0");
+	NBDXBox.SetWindowText(L"0.0");
+	NBDYBox.SetWindowText(L"0.0");
+	NBDZBox.SetWindowText(L"0.0");
+	ADIAXBox.SetWindowText(L"0.0");
+	ADIAYBox.SetWindowText(L"0.0");
+	ADIAZBox.SetWindowText(L"0.0");
+	ADSRAXBox.SetWindowText(L"0.0");
+	ADSRAYBox.SetWindowText(L"0.0");
+	ADSRAZBox.SetWindowText(L"0.0");
 
 	return TRUE;
 }
@@ -355,6 +389,24 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	PIOSDataSetBox.GetWindowText(string);
 	ws = std::wstring(string.GetString());
 	agc.PIOSDataSetName = std::string(ws.begin(), ws.end());
+
+	agc.BLOCKII.R2Model = (R2ModelBox.GetCheck() != 0);
+
+	agc.CMCDATA.IMUBiasCompensation.PBIASX = Utilities::Text2Double(&PBIASXBox);
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFX = Utilities::Text2Double(&PIPASCFXBox);
+	agc.CMCDATA.IMUBiasCompensation.PBIASY = Utilities::Text2Double(&PBIASYBox);
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFY = Utilities::Text2Double(&PIPASCFYBox);
+	agc.CMCDATA.IMUBiasCompensation.PBIASZ = Utilities::Text2Double(&PBIASZBox);
+	agc.CMCDATA.IMUBiasCompensation.PIPASCFZ = Utilities::Text2Double(&PIPASCFZBox);
+	agc.CMCDATA.IMUBiasCompensation.NBDX = Utilities::Text2Double(&NBDXBox);
+	agc.CMCDATA.IMUBiasCompensation.NBDY = Utilities::Text2Double(&NBDYBox);
+	agc.CMCDATA.IMUBiasCompensation.NBDZ = Utilities::Text2Double(&NBDZBox);
+	agc.CMCDATA.IMUBiasCompensation.ADIAX = Utilities::Text2Double(&ADIAXBox);
+	agc.CMCDATA.IMUBiasCompensation.ADIAY = Utilities::Text2Double(&ADIAYBox);
+	agc.CMCDATA.IMUBiasCompensation.ADIAZ = Utilities::Text2Double(&ADIAZBox);
+	agc.CMCDATA.IMUBiasCompensation.ADSRAX = Utilities::Text2Double(&ADSRAXBox);
+	agc.CMCDATA.IMUBiasCompensation.ADSRAY = Utilities::Text2Double(&ADSRAYBox);
+	agc.CMCDATA.IMUBiasCompensation.ADSRAZ = Utilities::Text2Double(&ADSRAZBox);
 
 	int message = agc.RunCMC();
 
@@ -601,6 +653,8 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		SHAFTSFBox.SetReadOnly(false);
 	}
 
+	//TBD: Disable R2ModelBox somehow for Colossus 249 and earlier
+
 	//SPS Performance
 
 	//Colossus 237: None
@@ -823,21 +877,24 @@ void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
 	agc.BLOCKII.RPSTART = 11.85;
 	agc.BLOCKII.POLYSTOP = 147.25;
 
-	/*agc.CMCDATA.IMUBiasCompensation.PBIASX = -0.26; // cm/sec^2
-	agc.CMCDATA.IMUBiasCompensation.PIPASCFX = 40.0; // ppm
-	agc.CMCDATA.IMUBiasCompensation.PBIASY = -0.13; // cm/sec^2
-	agc.CMCDATA.IMUBiasCompensation.PIPASCFY = -80.0; // ppm
-	agc.CMCDATA.IMUBiasCompensation.PBIASZ = 0.14; // cm/sec^2
-	agc.CMCDATA.IMUBiasCompensation.PIPASCFZ = -30.0; // ppm
-	agc.CMCDATA.IMUBiasCompensation.NBDX = -1.8; // meru
-	agc.CMCDATA.IMUBiasCompensation.NBDY = -0.6; // meru
-	agc.CMCDATA.IMUBiasCompensation.NBDZ = -0.2; // meru
-	agc.CMCDATA.IMUBiasCompensation.ADIAX = 15.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADIAY = 5.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADIAZ = 1.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADSRAX = -6.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADSRAY = 3.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADSRAZ = 5.0; // meru/g*/
+	
+	/*
+	PBIASXBox.SetWindowText(L"-0.26");		// cm/sec^2
+	PIPASCFXBox.SetWindowText(L"40.0");		// ppm
+	PBIASYBox.SetWindowText(L"-0.13");		// cm/sec^2
+	PIPASCFYBox.SetWindowText(L"-80.0");	// ppm
+	PBIASZBox.SetWindowText(L"0.14");		// cm/sec^2
+	PIPASCFZBox.SetWindowText(L"-30.0");	// ppm
+	NBDXBox.SetWindowText(L"-1.8");			// meru
+	NBDYBox.SetWindowText(L"-0.6");			// meru
+	NBDZBox.SetWindowText(L"-0.2");			// meru
+	ADIAXBox.SetWindowText(L"15.0");		// meru/g
+	ADIAYBox.SetWindowText(L"5.0");			// meru/g
+	ADIAZBox.SetWindowText(L"1.0");			// meru/g
+	ADSRAXBox.SetWindowText(L"-6.0");		// meru/g
+	ADSRAYBox.SetWindowText(L"3.0");		// meru/g
+	ADSRAZBox.SetWindowText(L"5.0");		// meru/g
+	*/
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()

@@ -1127,10 +1127,7 @@ void AGCPadloadGenerator::Luminary099Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01332, iTemp);
 
-	//E3J22R3M
-	SaveEMEM(01352, 0); //TBD: Not supported by Orbiter gravity model
-	//E32C3IRM
-	SaveEMEM(01353, 0); //TBD: Not supported by Orbiter gravity model
+	R2Model(01352);
 
 	//RADSKAL
 	SaveEMEM(01354, 0);
@@ -1273,10 +1270,7 @@ void AGCPadloadGenerator::Luminary116Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01327, iTemp);
 
-	//E3J22R3M
-	SaveEMEM(01347, 0); //TBD: Not support by Orbiter gravity model
-	//E32C3IRM
-	SaveEMEM(01350, 0); //TBD: Not support by Orbiter gravity model
+	R2Model(01347);
 
 	//RADSKAL
 	SaveEMEM(01351, 0);
@@ -1425,10 +1419,7 @@ void AGCPadloadGenerator::Luminary131Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01327, iTemp);
 
-	//E3J22R3M
-	SaveEMEM(01347, 0); //TBD: Not support by Orbiter gravity model
-	//E32C3IRM
-	SaveEMEM(01350, 0); //TBD: Not support by Orbiter gravity model
+	R2Model(01347);
 
 	//RADSKAL
 	SaveEMEM(01351, 0);
@@ -2132,10 +2123,7 @@ void AGCPadloadGenerator::Zerlina56Padload()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01327, iTemp);
 
-	//E3J22R3M
-	SaveEMEM(01347, 0); //TBD: Not support by Orbiter gravity model
-	//E32C3IRM
-	SaveEMEM(01350, 0); //TBD: Not support by Orbiter gravity model
+	R2Model(01347);
 
 	//ELBIAS
 	SaveEMEM(01353, 0);
@@ -2679,10 +2667,7 @@ void AGCPadloadGenerator::DescentConstants14_17()
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01327, iTemp);
 
-	//E3J22R3M
-	SaveEMEM(01347, 0); //TBD: Not support by Orbiter gravity model
-	//E32C3IRM
-	SaveEMEM(01350, 0); //TBD: Not support by Orbiter gravity model
+	R2Model(01347);
 
 	//ELBIAS
 	SaveEMEM(01353, 0);
@@ -3187,6 +3172,24 @@ void AGCPadloadGenerator::IMUCompensation(bool cmc, bool earlymodel)
 	SaveEMEM(01470, iTemp);
 }
 
+void AGCPadloadGenerator::R2Model(int address)
+{
+	if (BLOCKII.R2Model)
+	{
+		//E3J22R3M
+		SaveEMEM(address, 012160);
+		//E32C3IRM
+		SaveEMEM(address + 1, 03363);
+	}
+	else
+	{
+		//E3J22R3M
+		SaveEMEM(address, 0);
+		//E32C3IRM
+		SaveEMEM(address + 1, 0);
+	}
+}
+
 void AGCPadloadGenerator::CMCDefaults(bool EarlyPIPABias, bool IsC108)
 {
 	//Contains padloads that never change their address in all of Colossus
@@ -3565,10 +3568,7 @@ void AGCPadloadGenerator::Comanche45Padload(bool IsR2)
 
 	if (IsR2)
 	{
-		//E3J22R3M
-		SaveEMEM(01773, 0);
-		//E32C3IRM
-		SaveEMEM(01774, 0);
+		R2Model(01773);
 	}
 
 	//LAUNCHAZ
@@ -3772,10 +3772,8 @@ void AGCPadloadGenerator::Comanche55Padload()
 	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
 	SaveEMEM(01774, iTemp);
 	SaveEMEM(01775, iTemp2);
-	//E3J22R3M
-	SaveEMEM(01776, 0);
-	//E32C3IRM
-	SaveEMEM(01777, 0);
+
+	R2Model(01776);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -3963,10 +3961,8 @@ void AGCPadloadGenerator::Comanche67Padload()
 	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
 	SaveEMEM(01774, iTemp);
 	SaveEMEM(01775, iTemp2);
-	//E3J22R3M
-	SaveEMEM(01776, 0);
-	//E32C3IRM
-	SaveEMEM(01777, 0);
+
+	R2Model(01776);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -4203,10 +4199,8 @@ void AGCPadloadGenerator::Comanche72Padload()
 	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
 	SaveEMEM(01774, iTemp);
 	SaveEMEM(01775, iTemp2);
-	//E3J22R3M
-	SaveEMEM(01776, 0);
-	//E32C3IRM
-	SaveEMEM(01777, 0);
+
+	R2Model(01776);
 
 	//LAUNCHAZ
 	dTemp = LaunchAzimuth / 360.0;
@@ -4445,10 +4439,9 @@ void AGCPadloadGenerator::Comanche108Padload()
 	DoubleToBuffer(CMCDATA.FANG*LBF2N / pow(100.0, 2), 7, iTemp, iTemp2);
 	SaveEMEM(01772, iTemp);
 	SaveEMEM(01773, iTemp2);
-	//E3J22R3M
-	SaveEMEM(01774, 0);
-	//E32C3IRM
-	SaveEMEM(01775, 0);
+
+	R2Model(01774);
+
 	//TRUNSF
 	iTemp = SingleToBuffer(CMCDATA.TRUNSF, 27);
 	SaveEMEM(01776, iTemp);
@@ -4643,10 +4636,9 @@ void AGCPadloadGenerator::Artemis72Padload()
 	dTemp = CMCDATA.EFIMP16*LBF2N / 100.0;
 	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(01765, iTemp);
-	//E3J22R3M
-	SaveEMEM(01766, 0);
-	//E32C3IRM
-	SaveEMEM(01767, 0);
+
+	R2Model(01766);
+
 	//TRUNSF
 	iTemp = SingleToBuffer(CMCDATA.TRUNSF, 27);
 	SaveEMEM(01770, iTemp);
