@@ -83,17 +83,33 @@
 #define IDC_EDIT50                      1053
 #define IDC_EDIT51                      1054
 #define IDC_BUTTON4                     1055
+#define IDC_EDIT65                      1055
+#define IDC_EDIT66                      1056
 #define IDC_DATETIMEPICKER1             1057
+#define IDC_EDIT67                      1057
 #define IDC_STATIC20                    1058
+#define IDC_EDIT68                      1058
 #define IDC_MINIMP_1                    1059
+#define IDC_EDIT69                      1059
 #define IDC_MINIMP_2                    1060
+#define IDC_EDIT70                      1060
 #define IDC_MINIMP_3                    1061
+#define IDC_EDIT71                      1061
 #define IDC_MINIMP_4                    1062
+#define IDC_EDIT72                      1062
 #define IDC_MINIMP_1U                   1063
+#define IDC_EDIT73                      1063
 #define IDC_MINIMP_2U                   1064
+#define IDC_EDIT74                      1064
 #define IDC_MINIMP_3U                   1065
+#define IDC_EDIT75                      1065
 #define IDC_MINIMP_4U                   1066
+#define IDC_EDIT76                      1066
 #define IDC_BUTTON5                     1067
+#define IDC_EDIT77                      1067
+#define IDC_CHECK2                      1068
+#define IDC_EDIT78                      1069
+#define IDC_EDIT79                      1070
 
 // Next default values for new objects
 // 
@@ -101,7 +117,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        151
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1068
+#define _APS_NEXT_CONTROL_VALUE         1069
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

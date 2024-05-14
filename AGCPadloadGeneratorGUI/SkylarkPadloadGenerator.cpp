@@ -53,6 +53,21 @@ void SkylarkPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT63, CH6FAILBox);
 	DDX_Control(pDX, IDC_EDIT64, DKRATEBox);
 	DDX_Control(pDX, IDC_EDIT17, OutputBox);
+	DDX_Control(pDX, IDC_EDIT65, PBIASXBox);
+	DDX_Control(pDX, IDC_EDIT66, PIPASCFXBox);
+	DDX_Control(pDX, IDC_EDIT67, PBIASYBox);
+	DDX_Control(pDX, IDC_EDIT68, PIPASCFYBox);
+	DDX_Control(pDX, IDC_EDIT69, PBIASZBox);
+	DDX_Control(pDX, IDC_EDIT70, PIPASCFZBox);
+	DDX_Control(pDX, IDC_EDIT71, NBDXBox);
+	DDX_Control(pDX, IDC_EDIT72, NBDYBox);
+	DDX_Control(pDX, IDC_EDIT73, NBDZBox);
+	DDX_Control(pDX, IDC_EDIT74, ADIAXBox);
+	DDX_Control(pDX, IDC_EDIT75, ADIAYBox);
+	DDX_Control(pDX, IDC_EDIT76, ADIAZBox);
+	DDX_Control(pDX, IDC_EDIT77, ADSRAXBox);
+	DDX_Control(pDX, IDC_EDIT78, ADSRAYBox);
+	DDX_Control(pDX, IDC_EDIT79, ADSRAZBox);
 }
 
 
@@ -105,6 +120,22 @@ BOOL SkylarkPadloadGenerator::OnInitDialog()
 	JM2DCKDBox.SetWindowText(L"112.8488");
 	CH6FAILBox.SetWindowText(L"030");
 	DKRATEBox.SetWindowText(L"0.2");
+
+	PBIASXBox.SetWindowText(L"0.0");
+	PIPASCFXBox.SetWindowText(L"0.0");
+	PBIASYBox.SetWindowText(L"0.0");
+	PIPASCFYBox.SetWindowText(L"0.0");
+	PBIASZBox.SetWindowText(L"0.0");
+	PIPASCFZBox.SetWindowText(L"0.0");
+	NBDXBox.SetWindowText(L"0.0");
+	NBDYBox.SetWindowText(L"0.0");
+	NBDZBox.SetWindowText(L"0.0");
+	ADIAXBox.SetWindowText(L"0.0");
+	ADIAYBox.SetWindowText(L"0.0");
+	ADIAZBox.SetWindowText(L"0.0");
+	ADSRAXBox.SetWindowText(L"0.0");
+	ADSRAYBox.SetWindowText(L"0.0");
+	ADSRAZBox.SetWindowText(L"0.0");
 
 	return TRUE;
 }
