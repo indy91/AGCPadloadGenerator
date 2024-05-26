@@ -805,6 +805,11 @@ void AGCPadloadGenerator::Luminary069Padload(bool IsR2)
 	iTemp = SingleToBuffer(BLOCKII.CSMMass*LBS2KG, 16);
 	SaveEMEM(01332, iTemp);
 
+	if (IsR2)
+	{
+		R2Model(01351);
+	}
+
 	//TETCSM
 	SaveEMEM(01570, 037777);
 	//TETLEM
