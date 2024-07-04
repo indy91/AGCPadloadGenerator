@@ -502,79 +502,13 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Apollo 7
-		EphemerisSpanBox.SetWindowTextW(L"14.5");
-		LaunchMJDInput.SetWindowTextW(L"40140.62690972");
-		Launchpad.SetCurSel(0); //LC-34
-		RTEDBox.SetWindowTextW(L"1.69107");
-		LSAltitudeBox.SetWindowTextW(L"0.0");
-		LSLatitudeBox.SetWindowTextW(L"0.0");
-		LSLongitudeBox.SetWindowTextW(L"0.0");
-		EMSAltBox.SetWindowTextW(L"284643");
-		LaunchAzimuthBox.SetWindowTextW(L"72.0");
-		agc.S22WSUBL = 10000.0*0.3048;
-		agc.RPVAR = pow(1500.0*0.3048, 2);
-		CDUCHKWDBox.SetWindowTextW(L"0");
-		HORIZALTBox.SetWindowTextW(L"18000");
-		ALTVARBox.SetWindowText(L"1e-6");
-		WRENDPOSBox.SetWindowText(L"1000");
-		WRENDVELBox.SetWindowText(L"1");
-		RMAXBox.SetWindowText(L"-1");
-		VMAXBox.SetWindowText(L"-1");
-		CSMMASSBox.SetWindowTextW(L"32816.3");
-		LEMMASSBox.SetWindowTextW(L"0.0");
-
-		//TBD
-		PACTOFFBox.SetWindowTextW(L"-1.541");
-		YACTOFFBox.SetWindowTextW(L"1.321");
-		LADPADBox.SetWindowTextW(L"0.27");
-		LODPADBox.SetWindowTextW(L"0.207");
-		ALFAPADBox.SetWindowTextW(L"-19.55");
+		Apollo7Padload();
 		break;
 	case 2: //Apollo 8
-		EphemerisSpanBox.SetWindowTextW(L"10.5");
-		LaunchMJDInput.SetWindowTextW(L"40211.53541666666");
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.6602637");
-		LSAltitudeBox.SetWindowTextW(L"-1518.64");
-		LSLatitudeBox.SetWindowTextW(L"2.6317");
-		LSLongitudeBox.SetWindowTextW(L"34.0253");
-		EMSAltBox.SetWindowTextW(L"297431");
-		LaunchAzimuthBox.SetWindowTextW(L"72.124");
-		HORIZALTBox.SetWindowTextW(L"18000");
-		ALTVARBox.SetWindowText(L"1e-6");
-		WRENDPOSBox.SetWindowText(L"1000");
-		WRENDVELBox.SetWindowText(L"1");
-		CSMMASSBox.SetWindowTextW(L"64001.0");
-		LEMMASSBox.SetWindowTextW(L"0.0");
-
-		//TBD
-		PACTOFFBox.SetWindowTextW(L"-1.541");
-		YACTOFFBox.SetWindowTextW(L"1.321");
-		LADPADBox.SetWindowTextW(L"0.27");
-		LODPADBox.SetWindowTextW(L"0.207");
-		ALFAPADBox.SetWindowTextW(L"-19.55");
+		Apollo8Padload();
 		break;
 	case 3: //Apollo 9
-		LaunchMJDInput.SetWindowTextW(L"40283.666667");
-		Launchpad.SetCurSel(1); //LC-39A
-		RTEDBox.SetWindowTextW(L"1.69107");
-		EMSAltBox.SetWindowTextW(L"284643");
-		LaunchAzimuthBox.SetWindowTextW(L"72.0");
-		CDUCHKWDBox.SetWindowTextW(L"0");
-		HORIZALTBox.SetWindowTextW(L"18000");
-		ALTVARBox.SetWindowText(L"1e-6");
-		WRENDPOSBox.SetWindowText(L"1000");
-		WRENDVELBox.SetWindowText(L"1");
-		CSMMASSBox.SetWindowTextW(L"59183.0");
-		LEMMASSBox.SetWindowTextW(L"32000.0");
-
-		//TBD
-		PACTOFFBox.SetWindowTextW(L"-1.541");
-		YACTOFFBox.SetWindowTextW(L"1.321");
-		LADPADBox.SetWindowTextW(L"0.27");
-		LODPADBox.SetWindowTextW(L"0.207");
-		ALFAPADBox.SetWindowTextW(L"-19.55");
-		EMDOTBox.SetWindowTextW(L"65.272");
+		Apollo9Padload();
 		break;
 	case 4: //Apollo 10
 		Apollo10Padload();
@@ -790,6 +724,135 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 	}
 }
 
+void CAGCPadloadGeneratorGUIDlg::Apollo7Padload()
+{
+	EphemerisSpanBox.SetWindowTextW(L"14.5");
+	LaunchMJDInput.SetWindowTextW(L"40140.62690972");
+	Launchpad.SetCurSel(0); //LC-34
+	RTEDBox.SetWindowTextW(L"1.69107");
+	LSAltitudeBox.SetWindowTextW(L"0.0");
+	LSLatitudeBox.SetWindowTextW(L"0.0");
+	LSLongitudeBox.SetWindowTextW(L"0.0");
+	EMSAltBox.SetWindowTextW(L"284643");
+	LaunchAzimuthBox.SetWindowTextW(L"72.0");
+	agc.S22WSUBL = 10000.0*0.3048;
+	agc.RPVAR = pow(1500.0*0.3048, 2);
+	CDUCHKWDBox.SetWindowTextW(L"0");
+	HORIZALTBox.SetWindowTextW(L"18000");
+	ALTVARBox.SetWindowText(L"1e-6");
+	WRENDPOSBox.SetWindowText(L"1000");
+	WRENDVELBox.SetWindowText(L"1");
+	RMAXBox.SetWindowText(L"-1");
+	VMAXBox.SetWindowText(L"-1");
+	CSMMASSBox.SetWindowTextW(L"32816.3");
+	LEMMASSBox.SetWindowTextW(L"0.0");
+
+	//TBD
+	PACTOFFBox.SetWindowTextW(L"-1.541");
+	YACTOFFBox.SetWindowTextW(L"1.321");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-19.55");
+
+	PBIASXBox.SetWindowText(L"0.24");		// cm/sec^2
+	PIPASCFXBox.SetWindowText(L"-300.0");	// ppm
+	PBIASYBox.SetWindowText(L"0.24");		// cm/sec^2
+	PIPASCFYBox.SetWindowText(L"-190.0");	// ppm
+	PBIASZBox.SetWindowText(L"0.14");		// cm/sec^2
+	PIPASCFZBox.SetWindowText(L"-340.0");	// ppm
+	NBDXBox.SetWindowText(L"-0.5");			// meru
+	NBDYBox.SetWindowText(L"0.0");			// meru
+	NBDZBox.SetWindowText(L"-0.6");			// meru
+	ADIAXBox.SetWindowText(L"8.2");			// meru/g
+	ADIAYBox.SetWindowText(L"11.6");		// meru/g
+	ADIAZBox.SetWindowText(L"20.8");		// meru/g
+	ADSRAXBox.SetWindowText(L"3.9");		// meru/g
+	ADSRAYBox.SetWindowText(L"-0.4");		// meru/g
+	ADSRAZBox.SetWindowText(L"-8.8");		// meru/g
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo8Padload()
+{
+	EphemerisSpanBox.SetWindowTextW(L"10.5");
+	LaunchMJDInput.SetWindowTextW(L"40211.53541666666");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.6602637");
+	LSAltitudeBox.SetWindowTextW(L"-1518.64");
+	LSLatitudeBox.SetWindowTextW(L"2.6317");
+	LSLongitudeBox.SetWindowTextW(L"34.0253");
+	EMSAltBox.SetWindowTextW(L"297431");
+	LaunchAzimuthBox.SetWindowTextW(L"72.124");
+	HORIZALTBox.SetWindowTextW(L"18000");
+	ALTVARBox.SetWindowText(L"1e-6");
+	WRENDPOSBox.SetWindowText(L"1000");
+	WRENDVELBox.SetWindowText(L"1");
+	CSMMASSBox.SetWindowTextW(L"64001.0");
+	LEMMASSBox.SetWindowTextW(L"0.0");
+
+	//TBD
+	PACTOFFBox.SetWindowTextW(L"-1.541");
+	YACTOFFBox.SetWindowTextW(L"1.321");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-19.55");
+
+	PBIASXBox.SetWindowText(L"-0.0013");	// cm/sec^2
+	PIPASCFXBox.SetWindowText(L"-76.57");	// ppm
+	PBIASYBox.SetWindowText(L"0.803");		// cm/sec^2
+	PIPASCFYBox.SetWindowText(L"-329.14");	// ppm
+	PBIASZBox.SetWindowText(L"0.631");		// cm/sec^2
+	PIPASCFZBox.SetWindowText(L"-200.71");	// ppm
+	NBDXBox.SetWindowText(L"2.18");			// meru
+	NBDYBox.SetWindowText(L"2.62");			// meru
+	NBDZBox.SetWindowText(L"3.22");			// meru
+	ADIAXBox.SetWindowText(L"17.88");		// meru/g
+	ADIAYBox.SetWindowText(L"-3.22");		// meru/g
+	ADIAZBox.SetWindowText(L"28.23");		// meru/g
+	ADSRAXBox.SetWindowText(L"-2.24");		// meru/g
+	ADSRAYBox.SetWindowText(L"1.66");		// meru/g
+	ADSRAZBox.SetWindowText(L"-3.22");		// meru/g
+}
+
+void CAGCPadloadGeneratorGUIDlg::Apollo9Padload()
+{
+	LaunchMJDInput.SetWindowTextW(L"40283.666667");
+	Launchpad.SetCurSel(1); //LC-39A
+	RTEDBox.SetWindowTextW(L"1.69107");
+	EMSAltBox.SetWindowTextW(L"284643");
+	LaunchAzimuthBox.SetWindowTextW(L"72.0");
+	CDUCHKWDBox.SetWindowTextW(L"0");
+	HORIZALTBox.SetWindowTextW(L"18000");
+	ALTVARBox.SetWindowText(L"1e-6");
+	WRENDPOSBox.SetWindowText(L"1000");
+	WRENDVELBox.SetWindowText(L"1");
+	CSMMASSBox.SetWindowTextW(L"59183.0");
+	LEMMASSBox.SetWindowTextW(L"32000.0");
+
+	//TBD
+	PACTOFFBox.SetWindowTextW(L"-1.541");
+	YACTOFFBox.SetWindowTextW(L"1.321");
+	LADPADBox.SetWindowTextW(L"0.27");
+	LODPADBox.SetWindowTextW(L"0.207");
+	ALFAPADBox.SetWindowTextW(L"-19.55");
+	EMDOTBox.SetWindowTextW(L"65.272");
+
+	PBIASXBox.SetWindowText(L"0.64");		// cm/sec^2
+	PIPASCFXBox.SetWindowText(L"-140.0");	// ppm
+	PBIASYBox.SetWindowText(L"-0.1");		// cm/sec^2
+	PIPASCFYBox.SetWindowText(L"-330.0");	// ppm
+	PBIASZBox.SetWindowText(L"0.44");		// cm/sec^2
+	PIPASCFZBox.SetWindowText(L"-280.0");	// ppm
+	NBDXBox.SetWindowText(L"2.4");			// meru
+	NBDYBox.SetWindowText(L"0.0");			// meru
+	NBDZBox.SetWindowText(L"2.4");			// meru
+	ADIAXBox.SetWindowText(L"5.0");			// meru/g
+	ADIAYBox.SetWindowText(L"8.0");			// meru/g
+	ADIAZBox.SetWindowText(L"-18.0");		// meru/g
+	ADSRAXBox.SetWindowText(L"7.0");		// meru/g
+	ADSRAYBox.SetWindowText(L"9.0");		// meru/g
+	ADSRAZBox.SetWindowText(L"-4.0");		// meru/g
+}
+
 void CAGCPadloadGeneratorGUIDlg::Apollo10Padload()
 {
 	EphemerisSpanBox.SetWindowTextW(L"10.5");
@@ -817,6 +880,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo10Padload()
 	RVARMINBox.SetWindowText(L"900");
 	WMIDPOSBox.SetWindowText(L"5700");
 	WMIDVELBox.SetWindowText(L"5.73"); //TBD: Gives the right octal, but improve this
+
+	PBIASXBox.SetWindowText(L"-0.27");		// cm/sec^2
+	PIPASCFXBox.SetWindowText(L"-100.0");	// ppm
+	PBIASYBox.SetWindowText(L"-0.07");		// cm/sec^2
+	PIPASCFYBox.SetWindowText(L"-230.0");	// ppm
+	PBIASZBox.SetWindowText(L"-0.05");		// cm/sec^2
+	PIPASCFZBox.SetWindowText(L"-80.0");	// ppm
+	NBDXBox.SetWindowText(L"0.4");			// meru
+	NBDYBox.SetWindowText(L"-1.3");			// meru
+	NBDZBox.SetWindowText(L"1.2");			// meru
+	ADIAXBox.SetWindowText(L"1.0");			// meru/g
+	ADIAYBox.SetWindowText(L"13.0");		// meru/g
+	ADIAZBox.SetWindowText(L"11.0");		// meru/g
+	ADSRAXBox.SetWindowText(L"10.0");		// meru/g
+	ADSRAYBox.SetWindowText(L"3.0");		// meru/g
+	ADSRAZBox.SetWindowText(L"7.0");		// meru/g
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
@@ -867,18 +946,6 @@ void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
 	MinImp3Box.SetWindowTextW(L"25454.5");
 	MinImp4Box.SetWindowTextW(L"20240.0");
 
-	agc.BLOCKII.POLYNUM[0] = 2.667379e-1;
-	agc.BLOCKII.POLYNUM[1] = 0.3714781e-1;
-	agc.BLOCKII.POLYNUM[2] = 0.917483e-2;
-	agc.BLOCKII.POLYNUM[3] = 0.7781624e-4;
-	agc.BLOCKII.POLYNUM[4] = -0.2593124e-5;
-	agc.BLOCKII.POLYNUM[5] = 0.1818239e-7;
-	agc.BLOCKII.POLYNUM[6] = -0.4160838e-10;
-	agc.BLOCKII.RPSTART = 11.85;
-	agc.BLOCKII.POLYSTOP = 147.25;
-
-	
-	/*
 	PBIASXBox.SetWindowText(L"-0.26");		// cm/sec^2
 	PIPASCFXBox.SetWindowText(L"40.0");		// ppm
 	PBIASYBox.SetWindowText(L"-0.13");		// cm/sec^2
@@ -894,7 +961,16 @@ void CAGCPadloadGeneratorGUIDlg::Apollo11Padload(int LaunchDay)
 	ADSRAXBox.SetWindowText(L"-6.0");		// meru/g
 	ADSRAYBox.SetWindowText(L"3.0");		// meru/g
 	ADSRAZBox.SetWindowText(L"5.0");		// meru/g
-	*/
+
+	agc.BLOCKII.POLYNUM[0] = 2.667379e-1;
+	agc.BLOCKII.POLYNUM[1] = 0.3714781e-1;
+	agc.BLOCKII.POLYNUM[2] = 0.917483e-2;
+	agc.BLOCKII.POLYNUM[3] = 0.7781624e-4;
+	agc.BLOCKII.POLYNUM[4] = -0.2593124e-5;
+	agc.BLOCKII.POLYNUM[5] = 0.1818239e-7;
+	agc.BLOCKII.POLYNUM[6] = -0.4160838e-10;
+	agc.BLOCKII.RPSTART = 11.85;
+	agc.BLOCKII.POLYSTOP = 147.25;
 }
 
 void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
@@ -922,6 +998,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo12Padload()
 	MinImp2Box.SetWindowTextW(L"4909.1");
 	MinImp3Box.SetWindowTextW(L"25454.5");
 	MinImp4Box.SetWindowTextW(L"20260.0");
+
+	PBIASXBox.SetWindowText(L"-0.09");		// cm/sec^2
+	PIPASCFXBox.SetWindowText(L"-220.0");	// ppm
+	PBIASYBox.SetWindowText(L"-0.09");		// cm/sec^2
+	PIPASCFYBox.SetWindowText(L"-350.0");	// ppm
+	PBIASZBox.SetWindowText(L"-0.16");		// cm/sec^2
+	PIPASCFZBox.SetWindowText(L"-370.0");	// ppm
+	NBDXBox.SetWindowText(L"-0.1");			// meru
+	NBDYBox.SetWindowText(L"-0.1");			// meru
+	NBDZBox.SetWindowText(L"0.1");			// meru
+	ADIAXBox.SetWindowText(L"13.0");		// meru/g
+	ADIAYBox.SetWindowText(L"0.0");			// meru/g
+	ADIAZBox.SetWindowText(L"-1.0");		// meru/g
+	ADSRAXBox.SetWindowText(L"-4.0");		// meru/g
+	ADSRAYBox.SetWindowText(L"-4.0");		// meru/g
+	ADSRAZBox.SetWindowText(L"-6.0");		// meru/g
 
 	agc.BLOCKII.POLYNUM[0] = 1.1940272e-1;
 	agc.BLOCKII.POLYNUM[1] = 8.0761057e-2;

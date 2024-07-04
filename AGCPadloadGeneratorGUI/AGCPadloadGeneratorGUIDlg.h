@@ -40,6 +40,9 @@ protected:
 
 	void UpdateRopeSpecificEditFields();
 
+	void Apollo7Padload();
+	void Apollo8Padload();
+	void Apollo9Padload();
 	void Apollo10Padload();
 	void Apollo11Padload(int LaunchDay);
 	void Apollo12Padload();

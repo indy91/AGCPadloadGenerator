@@ -31,6 +31,11 @@ protected:
 	CToolTipCtrl m_ToolTip;
 public:
 
+	void Apollo9Padload();
+	void Apollo10Padload();
+	void Apollo11Padload();
+	void Apollo12Padload();
+
 	AGCPadloadGenerator agc;
 
 	CString MissionNameValue;
