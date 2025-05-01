@@ -26,7 +26,6 @@
 
 CAGCPadloadGeneratorGUIDlg::CAGCPadloadGeneratorGUIDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_AGCPADLOADGENERATORGUI_DIALOG, pParent)
-	, LaunchPadValue(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -36,7 +35,6 @@ void CAGCPadloadGeneratorGUIDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, LaunchMJDInput);
 	DDX_Control(pDX, IDC_COMBO1, Launchpad);
-	DDX_CBString(pDX, IDC_COMBO1, LaunchPadValue);
 	DDX_Control(pDX, IDC_EDIT2, TLANDBox);
 	DDX_Control(pDX, IDC_EDIT3, LSLatitudeBox);
 	DDX_Control(pDX, IDC_EDIT4, LSLongitudeBox);
@@ -433,7 +431,6 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 
 void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo1()
 {
-	Launchpad.GetLBText(Launchpad.GetCurSel(), LaunchPadValue);
 	//UpdateData(FALSE);
 }
 
@@ -488,10 +485,12 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		RopeNameBox.SetCurSel(CMC_COMANCE072);
 		break;
 	case 8: //Apollo 14
+		RopeNameBox.SetCurSel(CMC_ARTEMIS072); //TBD: Comanche 108
+		break;
 	case 9: //Apollo 15
 	case 10: //Apollo 16
 	case 11: //Apollo 17
-		RopeNameBox.SetCurSel(CMC_COMANCE0108);
+		RopeNameBox.SetCurSel(CMC_ARTEMIS072);
 		break;
 	}
 

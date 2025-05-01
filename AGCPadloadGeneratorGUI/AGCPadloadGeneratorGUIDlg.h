@@ -61,7 +61,6 @@ public:
 	AGCPadloadGenerator agc;
 
 	CComboBox Launchpad;
-	CString LaunchPadValue;
 	CEdit TLANDBox;
 	CEdit LSLatitudeBox;
 	CEdit LSLongitudeBox;

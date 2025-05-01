@@ -68,6 +68,7 @@ void SkylarkPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT77, ADSRAXBox);
 	DDX_Control(pDX, IDC_EDIT78, ADSRAYBox);
 	DDX_Control(pDX, IDC_EDIT79, ADSRAZBox);
+	DDX_Control(pDX, IDC_COMBO4, Launchpad);
 }
 
 
@@ -81,6 +82,11 @@ BOOL SkylarkPadloadGenerator::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	LaunchMJDInput.SetWindowText(L"0.0");
+
+	Launchpad.AddString(L"LC-34");
+	Launchpad.AddString(L"LC-39A");
+	Launchpad.AddString(L"LC-39B");
+	Launchpad.SetCurSel(2);
 
 	MissionBox.AddString(L"Manual");
 	MissionBox.AddString(L"Skylab 2");
@@ -146,7 +152,6 @@ void SkylarkPadloadGenerator::OnBnClickedOk()
 {
 	agc.RopeName = "Skylark048";
 	agc.PIOSDataSetName = "B1950";
-	agc.Pad = "LC-39B";
 
 	//TBD
 	agc.BLOCKII.POLYNUM[0] = 5.463972e-2;
@@ -187,6 +192,11 @@ void SkylarkPadloadGenerator::OnBnClickedOk()
 	agc.CMCDATA.CH6FAIL = Utilities::Text2Octal(&CH6FAILBox);
 	agc.CMCDATA.DKRATE = Utilities::Text2Double(&DKRATEBox);
 
+	CString string;
+	Launchpad.GetWindowText(string);
+	std::wstring ws = std::wstring(string.GetString());
+	agc.Pad = std::string(ws.begin(), ws.end());
+
 	int message = agc.RunCMC();
 
 	//Write output
@@ -213,6 +223,8 @@ void SkylarkPadloadGenerator::OnBnClickedOk()
 
 void SkylarkPadloadGenerator::OnCbnSelchangeCombo1()
 {
+	Launchpad.SetCurSel(2); //LC-39B
+
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Skylab 2

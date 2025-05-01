@@ -71,4 +71,5 @@ public:
 	CEdit ADSRAXBox;
 	CEdit ADSRAYBox;
 	CEdit ADSRAZBox;
+	CComboBox Launchpad;
 };
