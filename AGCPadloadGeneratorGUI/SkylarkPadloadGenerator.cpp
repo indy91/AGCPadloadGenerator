@@ -69,6 +69,10 @@ void SkylarkPadloadGenerator::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT78, ADSRAYBox);
 	DDX_Control(pDX, IDC_EDIT79, ADSRAZBox);
 	DDX_Control(pDX, IDC_COMBO4, Launchpad);
+	DDX_Control(pDX, IDC_EDIT28, MinImp1Box);
+	DDX_Control(pDX, IDC_EDIT27, EMDOTBox);
+	DDX_Control(pDX, IDC_EDIT29, MinImp2Box);
+	DDX_Control(pDX, IDC_EDIT30, MinImp3Box);
 }
 
 
@@ -143,6 +147,11 @@ BOOL SkylarkPadloadGenerator::OnInitDialog()
 	ADSRAYBox.SetWindowText(L"0.0");
 	ADSRAZBox.SetWindowText(L"0.0");
 
+	EMDOTBox.SetWindowText(L"64.89");
+	MinImp1Box.SetWindowText(L"19036.0");
+	MinImp2Box.SetWindowText(L"24028.0");
+	MinImp3Box.SetWindowText(L"20324.0");
+
 	return TRUE;
 }
 // SkylarkPadloadGenerator message handlers
@@ -191,6 +200,11 @@ void SkylarkPadloadGenerator::OnBnClickedOk()
 	agc.CMCDATA.JM2DCKD = Utilities::Text2Double(&JM2DCKDBox);
 	agc.CMCDATA.CH6FAIL = Utilities::Text2Octal(&CH6FAILBox);
 	agc.CMCDATA.DKRATE = Utilities::Text2Double(&DKRATEBox);
+
+	agc.CMCDATA.EMDOT = Utilities::Text2Double(&EMDOTBox);
+	agc.CMCDATA.EIMP1SEC = Utilities::Text2Double(&MinImp1Box);
+	agc.CMCDATA.EFIMP01 = Utilities::Text2Double(&MinImp2Box);
+	agc.CMCDATA.EFIMP16 = Utilities::Text2Double(&MinImp3Box);
 
 	CString string;
 	Launchpad.GetWindowText(string);
@@ -255,6 +269,11 @@ void SkylarkPadloadGenerator::OnCbnSelchangeCombo1()
 		JM2DCKDBox.SetWindowText(L"112.8488");
 		CH6FAILBox.SetWindowText(L"030");
 		DKRATEBox.SetWindowText(L"0.2");
+
+		EMDOTBox.SetWindowText(L"66.27");
+		MinImp1Box.SetWindowText(L"20700.0");
+		MinImp2Box.SetWindowText(L"25692.3");
+		MinImp3Box.SetWindowText(L"20432.0");
 		break;
 	case 2: //Skylab 3
 		break;
@@ -287,6 +306,11 @@ void SkylarkPadloadGenerator::OnCbnSelchangeCombo1()
 		JM2DCKDBox.SetWindowText(L"11.0592");
 		CH6FAILBox.SetWindowText(L"030");
 		DKRATEBox.SetWindowText(L"0.5");
+
+		EMDOTBox.SetWindowText(L"64.89");
+		MinImp1Box.SetWindowText(L"19036.0");
+		MinImp2Box.SetWindowText(L"24028.0");
+		MinImp3Box.SetWindowText(L"20324.0");
 		break;
 	}
 }

@@ -10,11 +10,11 @@
 
 #define CMC_COLOSSUS237 0
 #define CMC_COLOSSUS249 1
-#define CMC_COMANCE045 2
-#define CMC_COMANCE055 3
-#define CMC_COMANCE067 4
-#define CMC_COMANCE072 5
-#define CMC_COMANCE0108 6
+#define CMC_COMANCHE045 2
+#define CMC_COMANCHE055 3
+#define CMC_COMANCHE067 4
+#define CMC_COMANCHE072 5
+#define CMC_COMANCHE108 6
 #define CMC_ARTEMIS072 7
 
 #ifdef _DEBUG
@@ -199,7 +199,7 @@ BOOL CAGCPadloadGeneratorGUIDlg::OnInitDialog()
 	RopeNameBox.AddString(L"Comanche072");
 	RopeNameBox.AddString(L"Comanche108");
 	RopeNameBox.AddString(L"Artemis072");
-	RopeNameBox.SetCurSel(CMC_COMANCE055);
+	RopeNameBox.SetCurSel(CMC_COMANCHE055);
 
 	UpdateRopeSpecificEditFields();
 
@@ -362,7 +362,7 @@ void CAGCPadloadGeneratorGUIDlg::OnBnClickedOk()
 	agc.CMCDATA.TRUNSF = Utilities::Text2Double(&TRUNSFBox);
 	agc.CMCDATA.SHAFTSF = Utilities::Text2Double(&SHAFTSFBox);
 
-	if (RopeNameBox.GetCurSel() <= CMC_COMANCE0108)
+	if (RopeNameBox.GetCurSel() <= CMC_COMANCHE108)
 	{
 		agc.CMCDATA.EK1VAL = Utilities::Text2Double(&MinImp1Box);
 		agc.CMCDATA.EK2VAL = Utilities::Text2Double(&MinImp2Box);
@@ -473,16 +473,16 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 		RopeNameBox.SetCurSel(CMC_COLOSSUS249);
 		break;
 	case 4: //Apollo 10
-		RopeNameBox.SetCurSel(CMC_COMANCE045);
+		RopeNameBox.SetCurSel(CMC_COMANCHE045);
 		break;
 	case 5: //Apollo 11
-		RopeNameBox.SetCurSel(CMC_COMANCE055);
+		RopeNameBox.SetCurSel(CMC_COMANCHE055);
 		break;
 	case 6: //Apollo 12
-		RopeNameBox.SetCurSel(CMC_COMANCE067);
+		RopeNameBox.SetCurSel(CMC_COMANCHE067);
 		break;
 	case 7: //Apollo 13
-		RopeNameBox.SetCurSel(CMC_COMANCE072);
+		RopeNameBox.SetCurSel(CMC_COMANCHE072);
 		break;
 	case 8: //Apollo 14
 		RopeNameBox.SetCurSel(CMC_ARTEMIS072); //TBD: Comanche 108
@@ -575,7 +575,7 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		P37RANGEBox.SetReadOnly(false);
 	}
 
-	if (RopeNameBox.GetCurSel() <= CMC_COMANCE072)
+	if (RopeNameBox.GetCurSel() <= CMC_COMANCHE072)
 	{
 		TRUNSFBox.SetReadOnly(true);
 		SHAFTSFBox.SetReadOnly(true);
@@ -625,7 +625,7 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		m_ToolTip.UpdateTipText(_T("None"), &MinImp3Box);
 		m_ToolTip.UpdateTipText(_T("None"), &MinImp4Box);
 		break;
-	case CMC_COMANCE045:
+	case CMC_COMANCHE045:
 		EMDOTBox.SetReadOnly(false);
 		MinImp1Box.SetReadOnly(false);
 		MinImp2Box.SetReadOnly(true);
@@ -647,10 +647,10 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 		MinImp1Box.SetWindowTextW(L"19840.1");
 		MinImp4Box.SetWindowTextW(L"20180.0");
 		break;
-	case CMC_COMANCE055:
-	case CMC_COMANCE067:
-	case CMC_COMANCE072:
-	case CMC_COMANCE0108:
+	case CMC_COMANCHE055:
+	case CMC_COMANCHE067:
+	case CMC_COMANCHE072:
+	case CMC_COMANCHE108:
 		EMDOTBox.SetReadOnly(false);
 		MinImp1Box.SetReadOnly(false);
 		MinImp2Box.SetReadOnly(false);
@@ -704,17 +704,17 @@ void CAGCPadloadGeneratorGUIDlg::UpdateRopeSpecificEditFields()
 	{
 	case CMC_COLOSSUS237:
 	case CMC_COLOSSUS249:
-	case CMC_COMANCE045:
+	case CMC_COMANCHE045:
 		PIOSDataSetBox.SetWindowTextW(L"NBY1969");
 		break;
-	case CMC_COMANCE055:
+	case CMC_COMANCHE055:
 		PIOSDataSetBox.SetWindowTextW(L"NBY1970_V1");
 		break;
-	case CMC_COMANCE067:
-	case CMC_COMANCE072:
+	case CMC_COMANCHE067:
+	case CMC_COMANCHE072:
 		PIOSDataSetBox.SetWindowTextW(L"NBY1970_V2");
 		break;
-	case CMC_COMANCE0108:
+	case CMC_COMANCHE108:
 		PIOSDataSetBox.SetWindowTextW(L"NBY1971");
 		break;
 	default:

@@ -5983,8 +5983,8 @@ void AGCPadloadGenerator::Skylark048Padload()
 	IMUCompensation(true, false);
 
 	//EMDOT
-	dTemp = 64.89; //lbs/second
-	iTemp = SingleToBuffer(dTemp*LBS2KG / 100.0, 3);
+	dTemp = CMCDATA.EMDOT*LBS2KG;
+	iTemp = SingleToBuffer(dTemp / 100.0, 3);
 	SaveEMEM(01741, iTemp);
 
 	//RVAR
@@ -6001,18 +6001,18 @@ void AGCPadloadGenerator::Skylark048Padload()
 	SaveEMEM(01746, iTemp3);
 
 	//EIMP1SEC
-	dTemp = 19036.0; // lbf
-	iTemp = SingleToBuffer(dTemp*LBF2N / 100.0, 14);
+	dTemp = CMCDATA.EIMP1SEC*LBF2N / 100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(01747, iTemp);
 
 	//EFIMP01
-	dTemp = 24028.0; // lbf
-	iTemp = SingleToBuffer(dTemp*LBF2N / 100.0, 14);
+	dTemp = CMCDATA.EFIMP01*LBF2N / 100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(01750, iTemp);
 
 	//EFIMP16
-	dTemp = 20324.0; // lbf
-	iTemp = SingleToBuffer(dTemp*LBF2N / 100.0, 14);
+	dTemp = CMCDATA.EFIMP16*LBF2N / 100.0;
+	iTemp = SingleToBuffer(dTemp, 14);
 	SaveEMEM(01751, iTemp);
 
 	//LADPAD

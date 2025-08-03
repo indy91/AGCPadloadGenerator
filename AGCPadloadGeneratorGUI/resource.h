@@ -108,9 +108,16 @@
 #define IDC_BUTTON5                     1067
 #define IDC_EDIT77                      1067
 #define IDC_CHECK2                      1068
+#define IDC_MINIMP_5                    1068
 #define IDC_EDIT78                      1069
 #define IDC_EDIT79                      1070
 #define IDC_COMBO4                      1071
+#define IDC_MINIMP_6                    1072
+#define IDC_MINIMP_7                    1073
+#define IDC_MINIMP_8                    1074
+#define IDC_MINIMP_1U2                  1075
+#define IDC_MINIMP_2U2                  1076
+#define IDC_MINIMP_3U2                  1077
 
 // Next default values for new objects
 // 

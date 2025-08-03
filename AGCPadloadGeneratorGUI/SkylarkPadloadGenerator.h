@@ -72,4 +72,8 @@ public:
 	CEdit ADSRAYBox;
 	CEdit ADSRAZBox;
 	CComboBox Launchpad;
+	CEdit MinImp1Box;
+	CEdit EMDOTBox;
+	CEdit MinImp2Box;
+	CEdit MinImp3Box;
 };
