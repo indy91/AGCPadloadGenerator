@@ -3356,6 +3356,9 @@ void AGCPadloadGenerator::Colossus237_249_Defaults(bool Is249)
 		SaveEMEM(0110, iTemp);
 	}
 
+	//DUMPCNT
+	SaveEMEM(0333, 010000);
+
 	//PIPTIME
 	double PIPTIME = (LaunchMJD - PrelaunchMJD)*8.64e6;
 	DoubleToBuffer(PIPTIME, 28, iTemp, iTemp2);

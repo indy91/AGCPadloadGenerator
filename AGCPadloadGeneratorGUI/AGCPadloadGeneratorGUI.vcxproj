@@ -23,7 +23,7 @@
     <ProjectGuid>{E00F3775-FC2C-41E2-B27B-728A89B0C4C3}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>AGCPadloadGeneratorGUI</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
