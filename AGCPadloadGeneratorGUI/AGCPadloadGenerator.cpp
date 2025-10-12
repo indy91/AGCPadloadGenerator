@@ -379,10 +379,6 @@ int AGCPadloadGenerator::RunLGC()
 	//End
 	std::sort(arr.begin(), arr.end());
 
-	//Count
-	sprintf_s(Buffer, "  LMPADCNT %d", arr.size());
-	myfile << Buffer << std::endl;
-
 	for (unsigned i = 0;i < arr.size();i++)
 	{
 		WriteEMEM(arr[i].address, arr[i].value, false);
