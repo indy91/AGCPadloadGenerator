@@ -35,6 +35,11 @@ public:
 	void Apollo10Padload();
 	void Apollo11Padload();
 	void Apollo12Padload();
+	void Apollo13Padload();
+	void Apollo14Padload();
+	void Apollo15Padload();
+	void Apollo16Padload();
+	void Apollo17Padload();
 
 	AGCPadloadGenerator agc;
 

@@ -3080,13 +3080,16 @@ void AGCPadloadGenerator::IMUCompensation(bool cmc, bool earlymodel)
 	double pipapulse, MERUG;
 	int pipascal, imuscal;
 
-	const double RADTOPULSES = 2097152.0 / PI2;
-	const double EARTHRATE = 15.0 / 3600.0*RAD;// 7.29209817e-5;
+	const double RADTOPULSES = 2097152.0 / PI2;	// 2^21 gyro pulse per revolution
+	// const double EARTHRATE = 15.0 / 3600.0 * RAD; // rad/sec. This definition was used in generating the conversion tables, used through Apollo 13
+	const double EARTHRATE = 7.29211586E-5; // rad/sec. This definition was used on Apollo 14 and later
+
 	const double GYROPULSE = RADTOPULSES* EARTHRATE*1e-5;// 0.00024272592; //gyro pulses/cs
 	const double CMPIPAPULSE = 5.85; //cm/sec
 	const double LMPIPAPULSE = 1.0; //cm/sec
 	const double PPM = 1e-6; //parts per million
-	const double GG = 9.7924; //m/sec^2
+	// const double GG = 9.7924; //m/sec^2. This definition was used in generating the conversion tables, used through Apollo 13
+	const double GG = 9.80665; //m/sec^2. This definition was used on Apollo 14 and later
 
 	//Variable scaling
 	if (cmc)
