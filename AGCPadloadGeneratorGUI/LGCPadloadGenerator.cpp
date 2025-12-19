@@ -420,247 +420,19 @@ void LGCPadloadGenerator::OnCbnSelchangeCombo2()
 		Apollo12Padload();
 		break;
 	case 5: //Apollo 13
-		LaunchMJDInput.SetWindowText(L"40687.8006944444444");
-		LSLatitudeBox.SetWindowText(L"-3.6686");
-		LSLongitudeBox.SetWindowText(L"-17.4842");
-		LSAltitudeBox.SetWindowText(L"-1405.0");
-		LMMassBox.SetWindowTextW(L"33872.3");
-		CSMMassBox.SetWindowTextW(L"37580.3");
-		DockedBox.SetCheck(BST_UNCHECKED);
-		HIASCENTBox.SetWindowText(L"10900.0");
-		WRENDPOSBox.SetWindowTextW(L"10000.0");
-		WRENDVELBox.SetWindowTextW(L"10.0");
-		WSHAFTBox.SetWindowTextW(L"15.0");
-		WTRUNBox.SetWindowTextW(L"15.0");
-		RMAXBox.SetWindowTextW(L"2000.0");
-		VMAXBox.SetWindowTextW(L"2.0");
-		WSURFPOSBox.SetWindowText(L"0");
-		WSURFVELBox.SetWindowText(L"0");
-		SHAFTVARBox.SetWindowTextW(L"1.0");
-		TRUNVARBox.SetWindowTextW(L"1.0");
-		AGSKBox.SetWindowText(L"100.0");
-		TLANDBox.SetWindowText(L"103.7433811");
-		IGNAOSQBox.SetWindowText(L"7.63");
-		IGNAOSRBox.SetWindowText(L"0.57");
-		VIGNBox.SetWindowText(L"5545.3644");
-		RIGNXBox.SetWindowText(L"-133371.54");
-		RIGNZBox.SetWindowText(L"-1445069.5");
-		KIGNXBox.SetWindowText(L"-0.331");
-		KIGNYBox.SetWindowText(L"-5.8694e-7");
-		KIGNVBox.SetWindowText(L"-438.0");
-		J1PARMBox.SetWindowText(L"6042735.9");
-		K1PARMBox.SetWindowText(L"-3.1743891e5");
-		J2PARMBox.SetWindowText(L"6046910.4");
-		K2PARMBox.SetWindowText(L"-6.2459985e5");
-		THETCRITBox.SetWindowText(L"-17.183277");
-		RAMINBox.SetWindowText(L"5.88048494e6");
-		DELTTFAPBox.SetWindowText(L"-90.0");
+		Apollo13Padload();
 		break;
 	case 6: //Apollo 14
-		LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
-		LSAltitudeBox.SetWindowTextW(L"-1405.2");
-		LSLatitudeBox.SetWindowTextW(L"-3.67329493");
-		LSLongitudeBox.SetWindowTextW(L"-17.46428902");
-		LMMassBox.SetWindowTextW(L"34150.2");
-		CSMMassBox.SetWindowTextW(L"36524.5");
-		DockedBox.SetCheck(BST_UNCHECKED);
-		HIASCENTBox.SetWindowText(L"10900.0");
-		WRENDPOSBox.SetWindowTextW(L"10000.0");
-		WRENDVELBox.SetWindowTextW(L"10.0");
-		WSHAFTBox.SetWindowTextW(L"15.0");
-		WTRUNBox.SetWindowTextW(L"15.0");
-		RMAXBox.SetWindowTextW(L"2000.0");
-		VMAXBox.SetWindowTextW(L"2.0");
-		WSURFPOSBox.SetWindowText(L"0");
-		WSURFVELBox.SetWindowText(L"0");
-		SHAFTVARBox.SetWindowTextW(L"1.0");
-		TRUNVARBox.SetWindowTextW(L"1.0");
-		AGSKBox.SetWindowText(L"100.0");
-		TLANDBox.SetWindowText(L"108.9202417");
-		ABSC0Box.SetWindowText(L"-238000.0");
-		ABSC1Box.SetWindowText(L"-57000.0");
-		ABSC2Box.SetWindowText(L"-49000.0");
-		ABSC3Box.SetWindowText(L"-11200.0");
-		ABSC4Box.SetWindowText(L"-5000.0");
-		SLOPE0Box.SetWindowText(L"-1.105e-2");
-		SLOPE1Box.SetWindowText(L"-1.088e-1");
-		SLOPE2Box.SetWindowText(L"3.704e-2");
-		SLOPE3Box.SetWindowText(L"-7.903e-2");
-		SLOPE4Box.SetWindowText(L"-1.2e-2");
-		IGNAOSQBox.SetWindowText(L"6.027");
-		IGNAOSRBox.SetWindowText(L"-0.016");
-		VIGNBox.SetWindowText(L"5546.447179");
-		RIGNXBox.SetWindowText(L"-140345.7283");
-		RIGNZBox.SetWindowText(L"-1464979.987");
-		KIGNXBox.SetWindowText(L"-0.419");
-		KIGNYBox.SetWindowText(L"-9.05e-7");
-		KIGNVBox.SetWindowText(L"-470.0");
-		J1PARMBox.SetWindowText(L"6.0469527e6");
-		K1PARMBox.SetWindowText(L"-3.1502779e5");
-		J2PARMBox.SetWindowText(L"6.0486099e6");
-		K2PARMBox.SetWindowText(L"-6.2763026e5");
-		THETCRITBox.SetWindowText(L"-17.41421853");
-		RAMINBox.SetWindowText(L"5.88006825e6");
-		DELTTFAPBox.SetWindowText(L"-90.0");
+		Apollo14Padload();
 		break;
 	case 7: //Apollo 15
-		LaunchMJDInput.SetWindowTextW(L"41158.565277778");
-		LSAltitudeBox.SetWindowTextW(L"-3550.0");
-		LSLatitudeBox.SetWindowTextW(L"26.073889");
-		LSLongitudeBox.SetWindowTextW(L"3.6538889");
-		LMMassBox.SetWindowTextW(L"36697.6");
-		CSMMassBox.SetWindowTextW(L"37921.9");
-		DockedBox.SetCheck(BST_UNCHECKED);
-		HIASCENTBox.SetWindowText(L"10900.0");
-		WRENDPOSBox.SetWindowTextW(L"10000.0");
-		WRENDVELBox.SetWindowTextW(L"10.0");
-		WSHAFTBox.SetWindowTextW(L"15.0");
-		WTRUNBox.SetWindowTextW(L"15.0");
-		RMAXBox.SetWindowTextW(L"2000.0");
-		VMAXBox.SetWindowTextW(L"2.0");
-		WSURFPOSBox.SetWindowText(L"0");
-		WSURFVELBox.SetWindowText(L"0");
-		SHAFTVARBox.SetWindowTextW(L"1.0");
-		TRUNVARBox.SetWindowTextW(L"1.0");
-		AGSKBox.SetWindowText(L"100.0");
-		TLANDBox.SetWindowText(L"104.6824861");
-		ABSC0Box.SetWindowText(L"-593000.0");
-		ABSC1Box.SetWindowText(L"-196000.0");
-		ABSC2Box.SetWindowText(L"-106000.0");
-		ABSC3Box.SetWindowText(L"-89400.0");
-		ABSC4Box.SetWindowText(L"-29200.0");
-		SLOPE0Box.SetWindowText(L"2.0968e-2");
-		SLOPE1Box.SetWindowText(L"0.0");
-		SLOPE2Box.SetWindowText(L"1.86747e-1");
-		SLOPE3Box.SetWindowText(L"-2.14784e-1");
-		SLOPE4Box.SetWindowText(L"1.13014e-2");
-		IGNAOSQBox.SetWindowText(L"5.961");
-		IGNAOSRBox.SetWindowText(L"0.163");
-		VIGNBox.SetWindowText(L"5548.14101");
-		RIGNXBox.SetWindowText(L"-162539.6686");
-		RIGNZBox.SetWindowText(L"-1547120.997");
-		KIGNXBox.SetWindowText(L"-0.334");
-		KIGNYBox.SetWindowText(L"-2.207e-7");
-		KIGNVBox.SetWindowText(L"-498.0");
-		J1PARMBox.SetWindowText(L"6.0410278e6");
-		K1PARMBox.SetWindowText(L"-3.1137525e5");
-		J2PARMBox.SetWindowText(L"6.0422821e6");
-		K2PARMBox.SetWindowText(L"-6.2221362e5");
-		THETCRITBox.SetWindowText(L"-17.510696");
-		RAMINBox.SetWindowText(L"5.87303149e6");
-		DELTTFAPBox.SetWindowText(L"-90.0");
+		Apollo15Padload();
 		break;
 	case 8: //Apollo 16
-		LaunchMJDInput.SetWindowTextW(L"41423.7458333333");
-		LSAltitudeBox.SetWindowTextW(L"-260.0");
-		LSLatitudeBox.SetWindowTextW(L"-9.00028");
-		LSLongitudeBox.SetWindowTextW(L"15.516389");
-		LMMassBox.SetWindowTextW(L"36685.2");
-		CSMMassBox.SetWindowTextW(L"39354.1");
-		DockedBox.SetCheck(BST_UNCHECKED);
-		HIASCENTBox.SetWindowText(L"10900.0");
-		WRENDPOSBox.SetWindowTextW(L"10000.0");
-		WRENDVELBox.SetWindowTextW(L"10.0");
-		WSHAFTBox.SetWindowTextW(L"15.0");
-		WTRUNBox.SetWindowTextW(L"15.0");
-		RMAXBox.SetWindowTextW(L"2000.0");
-		VMAXBox.SetWindowTextW(L"2.0");
-		WSURFPOSBox.SetWindowText(L"0");
-		WSURFVELBox.SetWindowText(L"0");
-		SHAFTVARBox.SetWindowTextW(L"1.0");
-		TRUNVARBox.SetWindowTextW(L"1.0");
-		AGSKBox.SetWindowText(L"90.0");
-		TLANDBox.SetWindowText(L"98.7784");
-		ABSC0Box.SetWindowText(L"-692000.0");
-		ABSC1Box.SetWindowText(L"-524000.0");
-		ABSC2Box.SetWindowText(L"-234000.0");
-		ABSC3Box.SetWindowText(L"-164000.0");
-		ABSC4Box.SetWindowText(L"-100000.0");
-		SLOPE0Box.SetWindowText(L"9.821428e-2");
-		SLOPE1Box.SetWindowText(L"-5.17241e-3");
-		SLOPE2Box.SetWindowText(L"-6.428571e-2");
-		SLOPE3Box.SetWindowText(L"1.5625e-2");
-		SLOPE4Box.SetWindowText(L"0.0");
-		IGNAOSQBox.SetWindowText(L"5.442");
-		IGNAOSRBox.SetWindowText(L"0.094");
-		VIGNBox.SetWindowText(L"5543.4605");
-		RIGNXBox.SetWindowText(L"-159548.72");
-		RIGNZBox.SetWindowText(L"-1547623.3");
-		KIGNXBox.SetWindowText(L"-0.334");
-		KIGNYBox.SetWindowText(L"-2.207e-7");
-		KIGNVBox.SetWindowText(L"-498.0");
-		J1PARMBox.SetWindowText(L"6.051373e6");
-		K1PARMBox.SetWindowText(L"-6.055552e5");
-		J2PARMBox.SetWindowText(L"6.0383801e6");
-		K2PARMBox.SetWindowText(L"-3.1696236e5");
-		THETCRITBox.SetWindowText(L"5.63040073");
-		RAMINBox.SetWindowText(L"5.883824672e6");
-		DELTTFAPBox.SetWindowText(L"-70.0");
+		Apollo16Padload();
 		break;
 	case 9: //Apollo 17
-		LaunchMJDInput.SetWindowTextW(L"41658.120138888");
-		LSAltitudeBox.SetWindowTextW(L"-3606.0");
-		LSLatitudeBox.SetWindowTextW(L"20.164029");
-		LSLongitudeBox.SetWindowTextW(L"30.749532");
-		LMMassBox.SetWindowTextW(L"36759.3");
-		CSMMassBox.SetWindowTextW(L"38115.5");
-		DockedBox.SetCheck(BST_UNCHECKED);
-		HIASCENTBox.SetWindowText(L"10900.0");
-		WRENDPOSBox.SetWindowTextW(L"10000.0");
-		WRENDVELBox.SetWindowTextW(L"10.0");
-		WSHAFTBox.SetWindowTextW(L"15.0");
-		WTRUNBox.SetWindowTextW(L"15.0");
-		RMAXBox.SetWindowTextW(L"2000.0");
-		VMAXBox.SetWindowTextW(L"2.0");
-		WSURFPOSBox.SetWindowText(L"0");
-		WSURFVELBox.SetWindowText(L"0");
-		SHAFTVARBox.SetWindowTextW(L"1.0");
-		TRUNVARBox.SetWindowTextW(L"1.0");
-		AGSKBox.SetWindowText(L"110.0");
-		TLANDBox.SetWindowText(L"113.0272472");
-		ABSC0Box.SetWindowText(L"-205500.0");
-		ABSC1Box.SetWindowText(L"-57500.0");
-		ABSC2Box.SetWindowText(L"-44000.0");
-		ABSC3Box.SetWindowText(L"-29000.0");
-		ABSC4Box.SetWindowText(L"-16300.0");
-		SLOPE0Box.SetWindowText(L"3.37837e-3");
-		SLOPE1Box.SetWindowText(L"-3.40741e-1");
-		SLOPE2Box.SetWindowText(L"1.333333e-1");
-		SLOPE3Box.SetWindowText(L"-2.07086e-1");
-		SLOPE4Box.SetWindowText(L"1.411e-2");
-		IGNAOSQBox.SetWindowText(L"5.335");
-		IGNAOSRBox.SetWindowText(L"0.003");
-		VIGNBox.SetWindowText(L"5542.8976");
-		RIGNXBox.SetWindowText(L"-156145.03");
-		RIGNZBox.SetWindowText(L"-1541941.8");
-		KIGNXBox.SetWindowText(L"-0.334");
-		KIGNYBox.SetWindowText(L"-2.207e-7");
-		KIGNVBox.SetWindowText(L"-498.0");
-		J1PARMBox.SetWindowText(L"6.0457376e6");
-		K1PARMBox.SetWindowText(L"-6.0598187e5");
-		J2PARMBox.SetWindowText(L"6.036605e6");
-		K2PARMBox.SetWindowText(L"-3.180295e5");
-		THETCRITBox.SetWindowText(L"6.432346783");
-		RAMINBox.SetWindowText(L"5.872844816e6");
-		DELTTFAPBox.SetWindowText(L"-70.0");
-
-		/*
-		PBIASXBox.SetWindowText(L"1.64");		// cm/sec^2
-		PIPASCFXBox.SetWindowText(L"-980.0");	// ppm
-		PBIASYBox.SetWindowText(L"1.73");		// cm/sec^2
-		PIPASCFYBox.SetWindowText(L"-560.0");	// ppm
-		PBIASZBox.SetWindowText(L"1.6");		// cm/sec^2
-		PIPASCFZBox.SetWindowText(L"-460.0");	// ppm
-		NBDXBox.SetWindowText(L"0.1");			// meru
-		NBDYBox.SetWindowText(L"0.4");			// meru
-		NBDZBox.SetWindowText(L"-1.1");			// meru
-		ADIAXBox.SetWindowText(L"12.0");		// meru/g
-		ADIAYBox.SetWindowText(L"-4.0");		// meru/g
-		ADIAZBox.SetWindowText(L"4.0");			// meru/g
-		ADSRAXBox.SetWindowText(L"4.0");		// meru/g
-		ADSRAYBox.SetWindowText(L"6.0");		// meru/g
-		ADSRAZBox.SetWindowText(L"-8.0");		// meru/g
-		*/
+		Apollo17Padload();
 		break;
 	}
 
@@ -969,4 +741,320 @@ void LGCPadloadGenerator::Apollo12Padload()
 	ADSRAXBox.SetWindowText(L"-2.0");		// meru/g
 	ADSRAYBox.SetWindowText(L"4.0");		// meru/g
 	ADSRAZBox.SetWindowText(L"-2.0");		// meru/g
+}
+
+void LGCPadloadGenerator::Apollo13Padload()
+{
+	LaunchMJDInput.SetWindowText(L"40687.8006944444444");
+	LSLatitudeBox.SetWindowText(L"-3.6686");
+	LSLongitudeBox.SetWindowText(L"-17.4842");
+	LSAltitudeBox.SetWindowText(L"-1405.0");
+	LMMassBox.SetWindowTextW(L"33872.3");
+	CSMMassBox.SetWindowTextW(L"37580.3");
+	DockedBox.SetCheck(BST_UNCHECKED);
+	HIASCENTBox.SetWindowText(L"10900.0");
+	WRENDPOSBox.SetWindowTextW(L"10000.0");
+	WRENDVELBox.SetWindowTextW(L"10.0");
+	WSHAFTBox.SetWindowTextW(L"15.0");
+	WTRUNBox.SetWindowTextW(L"15.0");
+	RMAXBox.SetWindowTextW(L"2000.0");
+	VMAXBox.SetWindowTextW(L"2.0");
+	WSURFPOSBox.SetWindowText(L"0");
+	WSURFVELBox.SetWindowText(L"0");
+	SHAFTVARBox.SetWindowTextW(L"1.0");
+	TRUNVARBox.SetWindowTextW(L"1.0");
+	AGSKBox.SetWindowText(L"100.0");
+	TLANDBox.SetWindowText(L"103.7433811");
+	IGNAOSQBox.SetWindowText(L"7.63");
+	IGNAOSRBox.SetWindowText(L"0.57");
+	VIGNBox.SetWindowText(L"5545.3644");
+	RIGNXBox.SetWindowText(L"-133371.54");
+	RIGNZBox.SetWindowText(L"-1445069.5");
+	KIGNXBox.SetWindowText(L"-0.331");
+	KIGNYBox.SetWindowText(L"-5.8694e-7");
+	KIGNVBox.SetWindowText(L"-438.0");
+	J1PARMBox.SetWindowText(L"6042735.9");
+	K1PARMBox.SetWindowText(L"-3.1743891e5");
+	J2PARMBox.SetWindowText(L"6046910.4");
+	K2PARMBox.SetWindowText(L"-6.2459985e5");
+	THETCRITBox.SetWindowText(L"-17.183277");
+	RAMINBox.SetWindowText(L"5.88048494e6");
+	DELTTFAPBox.SetWindowText(L"-90.0");
+
+	PBIASXBox.SetWindowText(L"1.49");
+	PIPASCFXBox.SetWindowText(L"-700");
+	PBIASYBox.SetWindowText(L"-1.42");
+	PIPASCFYBox.SetWindowText(L"-1190");
+	PBIASZBox.SetWindowText(L"4.685");
+	PIPASCFZBox.SetWindowText(L"-310");
+	NBDXBox.SetWindowText(L"0.4");
+	NBDYBox.SetWindowText(L"0.1");
+	NBDZBox.SetWindowText(L"-0.1");
+	ADIAXBox.SetWindowText(L"-4");
+	ADIAYBox.SetWindowText(L"5");
+	ADIAZBox.SetWindowText(L"-2");
+	ADSRAXBox.SetWindowText(L"-1");
+	ADSRAYBox.SetWindowText(L"7");
+	ADSRAZBox.SetWindowText(L"0");
+}
+
+void LGCPadloadGenerator::Apollo14Padload()
+{
+	LaunchMJDInput.SetWindowTextW(L"40982.84930555555");
+	LSAltitudeBox.SetWindowTextW(L"-1405.2");
+	LSLatitudeBox.SetWindowTextW(L"-3.67329493");
+	LSLongitudeBox.SetWindowTextW(L"-17.46428902");
+	LMMassBox.SetWindowTextW(L"34150.2");
+	CSMMassBox.SetWindowTextW(L"36524.5");
+	DockedBox.SetCheck(BST_UNCHECKED);
+	HIASCENTBox.SetWindowText(L"10900.0");
+	WRENDPOSBox.SetWindowTextW(L"10000.0");
+	WRENDVELBox.SetWindowTextW(L"10.0");
+	WSHAFTBox.SetWindowTextW(L"15.0");
+	WTRUNBox.SetWindowTextW(L"15.0");
+	RMAXBox.SetWindowTextW(L"2000.0");
+	VMAXBox.SetWindowTextW(L"2.0");
+	WSURFPOSBox.SetWindowText(L"0");
+	WSURFVELBox.SetWindowText(L"0");
+	SHAFTVARBox.SetWindowTextW(L"1.0");
+	TRUNVARBox.SetWindowTextW(L"1.0");
+	AGSKBox.SetWindowText(L"100.0");
+	TLANDBox.SetWindowText(L"108.9202417");
+	ABSC0Box.SetWindowText(L"-238000.0");
+	ABSC1Box.SetWindowText(L"-57000.0");
+	ABSC2Box.SetWindowText(L"-49000.0");
+	ABSC3Box.SetWindowText(L"-11200.0");
+	ABSC4Box.SetWindowText(L"-5000.0");
+	SLOPE0Box.SetWindowText(L"-1.105e-2");
+	SLOPE1Box.SetWindowText(L"-1.088e-1");
+	SLOPE2Box.SetWindowText(L"3.704e-2");
+	SLOPE3Box.SetWindowText(L"-7.903e-2");
+	SLOPE4Box.SetWindowText(L"-1.2e-2");
+	IGNAOSQBox.SetWindowText(L"6.027");
+	IGNAOSRBox.SetWindowText(L"-0.016");
+	VIGNBox.SetWindowText(L"5546.447179");
+	RIGNXBox.SetWindowText(L"-140345.7283");
+	RIGNZBox.SetWindowText(L"-1464979.987");
+	KIGNXBox.SetWindowText(L"-0.419");
+	KIGNYBox.SetWindowText(L"-9.05e-7");
+	KIGNVBox.SetWindowText(L"-470.0");
+	J1PARMBox.SetWindowText(L"6.0469527e6");
+	K1PARMBox.SetWindowText(L"-3.1502779e5");
+	J2PARMBox.SetWindowText(L"6.0486099e6");
+	K2PARMBox.SetWindowText(L"-6.2763026e5");
+	THETCRITBox.SetWindowText(L"-17.41421853");
+	RAMINBox.SetWindowText(L"5.88006825e6");
+	DELTTFAPBox.SetWindowText(L"-90.0");
+
+	PBIASXBox.SetWindowText(L"1.3");
+	PIPASCFXBox.SetWindowText(L"-950");
+	PBIASYBox.SetWindowText(L"1.65");
+	PIPASCFYBox.SetWindowText(L"-1860");
+	PBIASZBox.SetWindowText(L"1.39");
+	PIPASCFZBox.SetWindowText(L"-670");
+	NBDXBox.SetWindowText(L"0.9");
+	NBDYBox.SetWindowText(L"-2.7");
+	NBDZBox.SetWindowText(L"-0.3");
+	ADIAXBox.SetWindowText(L"3");
+	ADIAYBox.SetWindowText(L"-12");
+	ADIAZBox.SetWindowText(L"6");
+	ADSRAXBox.SetWindowText(L"0");
+	ADSRAYBox.SetWindowText(L"3");
+	ADSRAZBox.SetWindowText(L"5");
+}
+
+void LGCPadloadGenerator::Apollo15Padload()
+{
+	LaunchMJDInput.SetWindowTextW(L"41158.565277778");
+	LSAltitudeBox.SetWindowTextW(L"-3550.0");
+	LSLatitudeBox.SetWindowTextW(L"26.073889");
+	LSLongitudeBox.SetWindowTextW(L"3.6538889");
+	LMMassBox.SetWindowTextW(L"36697.6");
+	CSMMassBox.SetWindowTextW(L"37921.9");
+	DockedBox.SetCheck(BST_UNCHECKED);
+	HIASCENTBox.SetWindowText(L"10900.0");
+	WRENDPOSBox.SetWindowTextW(L"10000.0");
+	WRENDVELBox.SetWindowTextW(L"10.0");
+	WSHAFTBox.SetWindowTextW(L"15.0");
+	WTRUNBox.SetWindowTextW(L"15.0");
+	RMAXBox.SetWindowTextW(L"2000.0");
+	VMAXBox.SetWindowTextW(L"2.0");
+	WSURFPOSBox.SetWindowText(L"0");
+	WSURFVELBox.SetWindowText(L"0");
+	SHAFTVARBox.SetWindowTextW(L"1.0");
+	TRUNVARBox.SetWindowTextW(L"1.0");
+	AGSKBox.SetWindowText(L"100.0");
+	TLANDBox.SetWindowText(L"104.6824861");
+	ABSC0Box.SetWindowText(L"-593000.0");
+	ABSC1Box.SetWindowText(L"-196000.0");
+	ABSC2Box.SetWindowText(L"-106000.0");
+	ABSC3Box.SetWindowText(L"-89400.0");
+	ABSC4Box.SetWindowText(L"-29200.0");
+	SLOPE0Box.SetWindowText(L"2.0968e-2");
+	SLOPE1Box.SetWindowText(L"0.0");
+	SLOPE2Box.SetWindowText(L"1.86747e-1");
+	SLOPE3Box.SetWindowText(L"-2.14784e-1");
+	SLOPE4Box.SetWindowText(L"1.13014e-2");
+	IGNAOSQBox.SetWindowText(L"5.961");
+	IGNAOSRBox.SetWindowText(L"0.163");
+	VIGNBox.SetWindowText(L"5548.14101");
+	RIGNXBox.SetWindowText(L"-162539.6686");
+	RIGNZBox.SetWindowText(L"-1547120.997");
+	KIGNXBox.SetWindowText(L"-0.334");
+	KIGNYBox.SetWindowText(L"-2.207e-7");
+	KIGNVBox.SetWindowText(L"-498.0");
+	J1PARMBox.SetWindowText(L"6.0410278e6");
+	K1PARMBox.SetWindowText(L"-3.1137525e5");
+	J2PARMBox.SetWindowText(L"6.0422821e6");
+	K2PARMBox.SetWindowText(L"-6.2221362e5");
+	THETCRITBox.SetWindowText(L"-17.510696");
+	RAMINBox.SetWindowText(L"5.87303149e6");
+	DELTTFAPBox.SetWindowText(L"-90.0");
+
+	PBIASXBox.SetWindowText(L"1.7");
+	PIPASCFXBox.SetWindowText(L"-980");
+	PBIASYBox.SetWindowText(L"1.41");
+	PIPASCFYBox.SetWindowText(L"-990");
+	PBIASZBox.SetWindowText(L"1.42");
+	PIPASCFZBox.SetWindowText(L"-1430");
+	NBDXBox.SetWindowText(L"3.2");
+	NBDYBox.SetWindowText(L"-0.7");
+	NBDZBox.SetWindowText(L"1.4");
+	ADIAXBox.SetWindowText(L"5");
+	ADIAYBox.SetWindowText(L"-2");
+	ADIAZBox.SetWindowText(L"7");
+	ADSRAXBox.SetWindowText(L"-6");
+	ADSRAYBox.SetWindowText(L"4");
+	ADSRAZBox.SetWindowText(L"-4");
+}
+
+void LGCPadloadGenerator::Apollo16Padload()
+{
+	LaunchMJDInput.SetWindowTextW(L"41423.7458333333");
+	LSAltitudeBox.SetWindowTextW(L"-260.0");
+	LSLatitudeBox.SetWindowTextW(L"-9.00028");
+	LSLongitudeBox.SetWindowTextW(L"15.516389");
+	LMMassBox.SetWindowTextW(L"36685.2");
+	CSMMassBox.SetWindowTextW(L"39354.1");
+	DockedBox.SetCheck(BST_UNCHECKED);
+	HIASCENTBox.SetWindowText(L"10900.0");
+	WRENDPOSBox.SetWindowTextW(L"10000.0");
+	WRENDVELBox.SetWindowTextW(L"10.0");
+	WSHAFTBox.SetWindowTextW(L"15.0");
+	WTRUNBox.SetWindowTextW(L"15.0");
+	RMAXBox.SetWindowTextW(L"2000.0");
+	VMAXBox.SetWindowTextW(L"2.0");
+	WSURFPOSBox.SetWindowText(L"0");
+	WSURFVELBox.SetWindowText(L"0");
+	SHAFTVARBox.SetWindowTextW(L"1.0");
+	TRUNVARBox.SetWindowTextW(L"1.0");
+	AGSKBox.SetWindowText(L"90.0");
+	TLANDBox.SetWindowText(L"98.7784");
+	ABSC0Box.SetWindowText(L"-692000.0");
+	ABSC1Box.SetWindowText(L"-524000.0");
+	ABSC2Box.SetWindowText(L"-234000.0");
+	ABSC3Box.SetWindowText(L"-164000.0");
+	ABSC4Box.SetWindowText(L"-100000.0");
+	SLOPE0Box.SetWindowText(L"9.821428e-2");
+	SLOPE1Box.SetWindowText(L"-5.17241e-3");
+	SLOPE2Box.SetWindowText(L"-6.428571e-2");
+	SLOPE3Box.SetWindowText(L"1.5625e-2");
+	SLOPE4Box.SetWindowText(L"0.0");
+	IGNAOSQBox.SetWindowText(L"5.442");
+	IGNAOSRBox.SetWindowText(L"0.094");
+	VIGNBox.SetWindowText(L"5543.4605");
+	RIGNXBox.SetWindowText(L"-159548.72");
+	RIGNZBox.SetWindowText(L"-1547623.3");
+	KIGNXBox.SetWindowText(L"-0.334");
+	KIGNYBox.SetWindowText(L"-2.207e-7");
+	KIGNVBox.SetWindowText(L"-498.0");
+	J1PARMBox.SetWindowText(L"6.051373e6");
+	K1PARMBox.SetWindowText(L"-6.055552e5");
+	J2PARMBox.SetWindowText(L"6.0383801e6");
+	K2PARMBox.SetWindowText(L"-3.1696236e5");
+	THETCRITBox.SetWindowText(L"5.63040073");
+	RAMINBox.SetWindowText(L"5.883824672e6");
+	DELTTFAPBox.SetWindowText(L"-70.0");
+
+	PBIASXBox.SetWindowText(L"1.84");
+	PIPASCFXBox.SetWindowText(L"-890");
+	PBIASYBox.SetWindowText(L"1.6");
+	PIPASCFYBox.SetWindowText(L"-400");
+	PBIASZBox.SetWindowText(L"1.16");
+	PIPASCFZBox.SetWindowText(L"-470");
+	NBDXBox.SetWindowText(L"-0.3");
+	NBDYBox.SetWindowText(L"0.6");
+	NBDZBox.SetWindowText(L"-2.6");
+	ADIAXBox.SetWindowText(L"13");
+	ADIAYBox.SetWindowText(L"-3");
+	ADIAZBox.SetWindowText(L"14");
+	ADSRAXBox.SetWindowText(L"-1");
+	ADSRAYBox.SetWindowText(L"-4");
+	ADSRAZBox.SetWindowText(L"3");
+}
+
+void LGCPadloadGenerator::Apollo17Padload()
+{
+
+	LaunchMJDInput.SetWindowTextW(L"41658.120138888");
+	LSAltitudeBox.SetWindowTextW(L"-3606.0");
+	LSLatitudeBox.SetWindowTextW(L"20.164029");
+	LSLongitudeBox.SetWindowTextW(L"30.749532");
+	LMMassBox.SetWindowTextW(L"36759.3");
+	CSMMassBox.SetWindowTextW(L"38115.5");
+	DockedBox.SetCheck(BST_UNCHECKED);
+	HIASCENTBox.SetWindowText(L"10900.0");
+	WRENDPOSBox.SetWindowTextW(L"10000.0");
+	WRENDVELBox.SetWindowTextW(L"10.0");
+	WSHAFTBox.SetWindowTextW(L"15.0");
+	WTRUNBox.SetWindowTextW(L"15.0");
+	RMAXBox.SetWindowTextW(L"2000.0");
+	VMAXBox.SetWindowTextW(L"2.0");
+	WSURFPOSBox.SetWindowText(L"0");
+	WSURFVELBox.SetWindowText(L"0");
+	SHAFTVARBox.SetWindowTextW(L"1.0");
+	TRUNVARBox.SetWindowTextW(L"1.0");
+	AGSKBox.SetWindowText(L"110.0");
+	TLANDBox.SetWindowText(L"113.0272472");
+	ABSC0Box.SetWindowText(L"-205500.0");
+	ABSC1Box.SetWindowText(L"-57500.0");
+	ABSC2Box.SetWindowText(L"-44000.0");
+	ABSC3Box.SetWindowText(L"-29000.0");
+	ABSC4Box.SetWindowText(L"-16300.0");
+	SLOPE0Box.SetWindowText(L"3.37837e-3");
+	SLOPE1Box.SetWindowText(L"-3.40741e-1");
+	SLOPE2Box.SetWindowText(L"1.333333e-1");
+	SLOPE3Box.SetWindowText(L"-2.07086e-1");
+	SLOPE4Box.SetWindowText(L"1.411e-2");
+	IGNAOSQBox.SetWindowText(L"5.335");
+	IGNAOSRBox.SetWindowText(L"0.003");
+	VIGNBox.SetWindowText(L"5542.8976");
+	RIGNXBox.SetWindowText(L"-156145.03");
+	RIGNZBox.SetWindowText(L"-1541941.8");
+	KIGNXBox.SetWindowText(L"-0.334");
+	KIGNYBox.SetWindowText(L"-2.207e-7");
+	KIGNVBox.SetWindowText(L"-498.0");
+	J1PARMBox.SetWindowText(L"6.0457376e6");
+	K1PARMBox.SetWindowText(L"-6.0598187e5");
+	J2PARMBox.SetWindowText(L"6.036605e6");
+	K2PARMBox.SetWindowText(L"-3.180295e5");
+	THETCRITBox.SetWindowText(L"6.432346783");
+	RAMINBox.SetWindowText(L"5.872844816e6");
+	DELTTFAPBox.SetWindowText(L"-70.0");
+
+	PBIASXBox.SetWindowText(L"1.64");
+	PIPASCFXBox.SetWindowText(L"-980");
+	PBIASYBox.SetWindowText(L"1.73");
+	PIPASCFYBox.SetWindowText(L"-560");
+	PBIASZBox.SetWindowText(L"1.6");
+	PIPASCFZBox.SetWindowText(L"-460");
+	NBDXBox.SetWindowText(L"0.1");
+	NBDYBox.SetWindowText(L"0.4");
+	NBDZBox.SetWindowText(L"-1.1");
+	ADIAXBox.SetWindowText(L"12");
+	ADIAYBox.SetWindowText(L"-4");
+	ADIAZBox.SetWindowText(L"4");
+	ADSRAXBox.SetWindowText(L"4");
+	ADSRAYBox.SetWindowText(L"6");
+	ADSRAZBox.SetWindowText(L"-8");
 }

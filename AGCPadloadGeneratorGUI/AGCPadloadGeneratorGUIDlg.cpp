@@ -547,7 +547,7 @@ void CAGCPadloadGeneratorGUIDlg::OnCbnSelchangeCombo3()
 	switch (MissionBox.GetCurSel())
 	{
 	case 8: //Apollo 14
-		PIOSDataSetBox.SetWindowTextW(L"NBY71");
+		PIOSDataSetBox.SetWindowTextW(L"NBY1971");
 		break;
 	}
 }
@@ -1051,6 +1051,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo13Padload()
 	MinImp3Box.SetWindowTextW(L"25454.5");
 	MinImp4Box.SetWindowTextW(L"20385.0");
 
+	PBIASXBox.SetWindowText(L"-0.17");
+	PIPASCFXBox.SetWindowText(L"-200");
+	PBIASYBox.SetWindowText(L"-0.23");
+	PIPASCFYBox.SetWindowText(L"-190");
+	PBIASZBox.SetWindowText(L"-0.04");
+	PIPASCFZBox.SetWindowText(L"-410");
+	NBDXBox.SetWindowText(L"-0.7");
+	NBDYBox.SetWindowText(L"-2.3");
+	NBDZBox.SetWindowText(L"-4.9");
+	ADIAXBox.SetWindowText(L"24");
+	ADIAYBox.SetWindowText(L"1");
+	ADIAZBox.SetWindowText(L"23");
+	ADSRAXBox.SetWindowText(L"-2");
+	ADSRAYBox.SetWindowText(L"0");
+	ADSRAZBox.SetWindowText(L"-6");
+
 	agc.BLOCKII.POLYNUM[0] = -7.646894e-2;
 	agc.BLOCKII.POLYNUM[1] = 1.79988e-1;
 	agc.BLOCKII.POLYNUM[2] = 9.298907e-3;
@@ -1089,6 +1105,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo14Padload()
 	MinImp4Box.SetWindowTextW(L"20390.0");
 	TRUNSFBox.SetWindowTextW(L"1269760.0");
 	SHAFTSFBox.SetWindowTextW(L"659456.0");
+
+	PBIASXBox.SetWindowText(L"-0.23");
+	PIPASCFXBox.SetWindowText(L"-370");
+	PBIASYBox.SetWindowText(L"0.04");
+	PIPASCFYBox.SetWindowText(L"-500");
+	PBIASZBox.SetWindowText(L"-0.3");
+	PIPASCFZBox.SetWindowText(L"-310");
+	NBDXBox.SetWindowText(L"2.5");
+	NBDYBox.SetWindowText(L"-3.4");
+	NBDZBox.SetWindowText(L"1.6");
+	ADIAXBox.SetWindowText(L"0");
+	ADIAYBox.SetWindowText(L"-5");
+	ADIAZBox.SetWindowText(L"40");
+	ADSRAXBox.SetWindowText(L"1");
+	ADSRAYBox.SetWindowText(L"3");
+	ADSRAZBox.SetWindowText(L"-3");
 
 	agc.BLOCKII.POLYNUM[0] = 1.405176e-1;
 	agc.BLOCKII.POLYNUM[1] = 2.2886283e-1;
@@ -1130,6 +1162,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo15Padload()
 	TRUNSFBox.SetWindowTextW(L"1269760.0");
 	SHAFTSFBox.SetWindowTextW(L"647168.0");
 
+	PBIASXBox.SetWindowText(L"0.86");
+	PIPASCFXBox.SetWindowText(L"-430");
+	PBIASYBox.SetWindowText(L"-0.09");
+	PIPASCFYBox.SetWindowText(L"-200");
+	PBIASZBox.SetWindowText(L"-0.24");
+	PIPASCFZBox.SetWindowText(L"-180");
+	NBDXBox.SetWindowText(L"-2.3");
+	NBDYBox.SetWindowText(L"-2.8");
+	NBDZBox.SetWindowText(L"-4.6");
+	ADIAXBox.SetWindowText(L"-12");
+	ADIAYBox.SetWindowText(L"-5");
+	ADIAZBox.SetWindowText(L"0");
+	ADSRAXBox.SetWindowText(L"-7");
+	ADSRAYBox.SetWindowText(L"15");
+	ADSRAZBox.SetWindowText(L"-2");
+
 	agc.BLOCKII.POLYNUM[0] = 1.7813387e-1;
 	agc.BLOCKII.POLYNUM[1] = 1.8310605e-2;
 	agc.BLOCKII.POLYNUM[2] = 1.1728888e-2;
@@ -1169,6 +1217,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo16Padload()
 	MinImp3Box.SetWindowTextW(L"20779.0");
 	TRUNSFBox.SetWindowTextW(L"1269760.0");
 	SHAFTSFBox.SetWindowTextW(L"651264.0");
+
+	PBIASXBox.SetWindowText(L"-0.04");
+	PIPASCFXBox.SetWindowText(L"-310");
+	PBIASYBox.SetWindowText(L"1.14");
+	PIPASCFYBox.SetWindowText(L"-1330");
+	PBIASZBox.SetWindowText(L"-0.13");
+	PIPASCFZBox.SetWindowText(L"-310");
+	NBDXBox.SetWindowText(L"1.1");
+	NBDYBox.SetWindowText(L"-0.4");
+	NBDZBox.SetWindowText(L"-1.7");
+	ADIAXBox.SetWindowText(L"8");
+	ADIAYBox.SetWindowText(L"-7");
+	ADIAZBox.SetWindowText(L"14");
+	ADSRAXBox.SetWindowText(L"-11");
+	ADSRAYBox.SetWindowText(L"-14");
+	ADSRAZBox.SetWindowText(L"-5");
 
 	agc.BLOCKII.POLYNUM[0] = -9.5207497e-2;
 	agc.BLOCKII.POLYNUM[1] = 1.9666296e-1;
@@ -1210,6 +1274,22 @@ void CAGCPadloadGeneratorGUIDlg::Apollo17Padload()
 	TRUNSFBox.SetWindowTextW(L"1286144.0");
 	SHAFTSFBox.SetWindowTextW(L"659456.0");
 
+	PBIASXBox.SetWindowText(L"-0.19");
+	PIPASCFXBox.SetWindowText(L"-750");
+	PBIASYBox.SetWindowText(L"-0.07");
+	PIPASCFYBox.SetWindowText(L"-210");
+	PBIASZBox.SetWindowText(L"0.71");
+	PIPASCFZBox.SetWindowText(L"-810");
+	NBDXBox.SetWindowText(L"0.6");
+	NBDYBox.SetWindowText(L"-0.1");
+	NBDZBox.SetWindowText(L"1.2");
+	ADIAXBox.SetWindowText(L"7");
+	ADIAYBox.SetWindowText(L"13");
+	ADIAZBox.SetWindowText(L"-6");
+	ADSRAXBox.SetWindowText(L"-6");
+	ADSRAYBox.SetWindowText(L"6");
+	ADSRAZBox.SetWindowText(L"-4");
+
 	agc.BLOCKII.POLYNUM[0] = -3.7352617e-1;
 	agc.BLOCKII.POLYNUM[1] = 2.4436145e-1;
 	agc.BLOCKII.POLYNUM[2] = 6.2373017e-3;
@@ -1219,20 +1299,4 @@ void CAGCPadloadGeneratorGUIDlg::Apollo17Padload()
 	agc.BLOCKII.POLYNUM[6] = 4.9817897e-11;
 	agc.BLOCKII.RPSTART = 12.25;
 	agc.BLOCKII.POLYSTOP = 147.75;
-
-	/*agc.CMCDATA.IMUBiasCompensation.PBIASX = -0.19; // cm/sec^2
-	agc.CMCDATA.IMUBiasCompensation.PIPASCFX = -750.0; // ppm
-	agc.CMCDATA.IMUBiasCompensation.PBIASY = -0.07; // cm/sec^2
-	agc.CMCDATA.IMUBiasCompensation.PIPASCFY = -210.0; // ppm
-	agc.CMCDATA.IMUBiasCompensation.PBIASZ = 0.71; // cm/sec^2
-	agc.CMCDATA.IMUBiasCompensation.PIPASCFZ = -810.0; // ppm
-	agc.CMCDATA.IMUBiasCompensation.NBDX = 0.6; // meru
-	agc.CMCDATA.IMUBiasCompensation.NBDY = -0.1; // meru
-	agc.CMCDATA.IMUBiasCompensation.NBDZ = 1.2; // meru
-	agc.CMCDATA.IMUBiasCompensation.ADIAX = 7.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADIAY = 13.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADIAZ = -6.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADSRAX = -6.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADSRAY = 6.0; // meru/g
-	agc.CMCDATA.IMUBiasCompensation.ADSRAZ = -4.0; // meru/g*/
 }
