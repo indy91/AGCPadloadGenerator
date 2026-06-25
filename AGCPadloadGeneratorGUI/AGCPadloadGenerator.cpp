@@ -4998,6 +4998,8 @@ AGCPadloadGenerator::AGCVersions AGCPadloadGenerator::GetLGCVersion(std::string 
 
 int AGCPadloadGenerator::GetPIOSDataSet(std::string name, PIOSDataSet &data)
 {
+	// Return values: 0 = no error, 1 = file could not be found/opened, 2 = requested data set not in file
+
 	std::ifstream file;
 	std::string line, linename;
 	char Buffer[256];
@@ -5025,14 +5027,15 @@ int AGCPadloadGenerator::GetPIOSDataSet(std::string name, PIOSDataSet &data)
 				data.name.assign(Buffer);
 				data.AZ0Hardcoded = (inttemp[0] != 0);
 				data.ExtendedLimit = (inttemp[1] != 0);
-				break;
+				file.close();
+				return 0;
 			}
 		}
 	}
 
+	// Error: data set not found
 	file.close();
-
-	return 0;
+	return 2;
 }
 
 void AGCPadloadGenerator::AGCCorrectionVectors(PIOSDataSet dataset, double mjd_launchday, double dt_UNITW, double dt_504LM, bool IsCMC, bool IsSundance)

@@ -242,75 +242,158 @@ void SkylarkPadloadGenerator::OnCbnSelchangeCombo1()
 	switch (MissionBox.GetCurSel())
 	{
 	case 1: //Skylab 2
-		//LaunchMJDInput.SetWindowTextW(L"41817.70805555555556"); //Planned
-		LaunchMJDInput.SetWindowTextW(L"41827.54166667"); //Actual
-		LaunchAzimuthBox.SetWindowText(L"47.035");
-		CSMMASSBox.SetWindowText(L"30442.5");
-		LEMMASSBox.SetWindowText(L"0.0");
-		LADPADBox.SetWindowText(L"0.25");
-		LODPADBox.SetWindowText(L"0.225");
-		ALFAPADBox.SetWindowText(L"-20.49");
-		LATSPLBox.SetWindowText(L"49.2");
-		LNGSPLBox.SetWindowText(L"-7.3");
-		TTPIBox.SetWindowText(L"24578.7");
-		PACTOFFBox.SetWindowText(L"1.088");
-		YACTOFFBox.SetWindowText(L"0.441");
-
-		C12ALPHABox.SetWindowText(L"6.3454574");
-		ECPBox.SetWindowText(L"0.164185153");
-		ECYWBox.SetWindowText(L"-0.162029721");
-		ALPHAPBox.SetWindowText(L"-0.283407807");
-		ALPHAYWBox.SetWindowText(L"0.647582933");
-		KMJDCKDBox.SetWindowText(L"0.054069332");
-		KMJ1DCKDBox.SetWindowText(L"0.053174108");
-		KMJ2DCKDBox.SetWindowText(L"0.055783856");
-		JMDCKDBox.SetWindowText(L"18.86467");
-		JM1DCKDBox.SetWindowText(L"116.83315");
-		JM2DCKDBox.SetWindowText(L"112.8488");
-		CH6FAILBox.SetWindowText(L"030");
-		DKRATEBox.SetWindowText(L"0.2");
-
-		EMDOTBox.SetWindowText(L"66.27");
-		MinImp1Box.SetWindowText(L"20700.0");
-		MinImp2Box.SetWindowText(L"25692.3");
-		MinImp3Box.SetWindowText(L"20432.0");
+		Skylab2Padload();
 		break;
 	case 2: //Skylab 3
+		Skylab3Padload();
 		break;
 	case 3: //Skylab 4
+		Skylab4Padload();
 		break;
 	case 4: //ASTP
-		LaunchMJDInput.SetWindowTextW(L"42608.826389");
-		LaunchAzimuthBox.SetWindowText(L"45.159");
-		CSMMASSBox.SetWindowText(L"27885.0");
-		LEMMASSBox.SetWindowText(L"0.0");
-		LADPADBox.SetWindowText(L"0.25");
-		LODPADBox.SetWindowText(L"0.225");
-		ALFAPADBox.SetWindowText(L"-18.77");
-		LATSPLBox.SetWindowText(L"50.2");
-		LNGSPLBox.SetWindowText(L"-9.7");
-		TTPIBox.SetWindowText(L"156265.0");
-		PACTOFFBox.SetWindowText(L"0.7008");
-		YACTOFFBox.SetWindowText(L"-0.6045");
-
-		C12ALPHABox.SetWindowText(L"0.4278333333");
-		ECPBox.SetWindowText(L"0.484558");
-		ECYWBox.SetWindowText(L"-0.483093");
-		ALPHAPBox.SetWindowText(L"0.0");
-		ALPHAYWBox.SetWindowText(L"0.0");
-		KMJDCKDBox.SetWindowText(L"2.000376");
-		KMJ1DCKDBox.SetWindowText(L"0.19044");
-		KMJ2DCKDBox.SetWindowText(L"0.19044");
-		JMDCKDBox.SetWindowText(L"0.5006222222");
-		JM1DCKDBox.SetWindowText(L"11.0592");
-		JM2DCKDBox.SetWindowText(L"11.0592");
-		CH6FAILBox.SetWindowText(L"030");
-		DKRATEBox.SetWindowText(L"0.5");
-
-		EMDOTBox.SetWindowText(L"64.89");
-		MinImp1Box.SetWindowText(L"19036.0");
-		MinImp2Box.SetWindowText(L"24028.0");
-		MinImp3Box.SetWindowText(L"20324.0");
+		ASTPPadload();
 		break;
 	}
+}
+
+void SkylarkPadloadGenerator::Skylab2Padload()
+{
+	//LaunchMJDInput.SetWindowTextW(L"41817.70805555555556"); //Planned
+	LaunchMJDInput.SetWindowTextW(L"41827.54166667"); //Actual
+	LaunchAzimuthBox.SetWindowText(L"47.035");
+	CSMMASSBox.SetWindowText(L"30442.5");
+	LEMMASSBox.SetWindowText(L"0.0");
+	LADPADBox.SetWindowText(L"0.25");
+	LODPADBox.SetWindowText(L"0.225");
+	ALFAPADBox.SetWindowText(L"-20.49");
+	LATSPLBox.SetWindowText(L"49.2");
+	LNGSPLBox.SetWindowText(L"-7.3");
+	TTPIBox.SetWindowText(L"24578.7");
+	PACTOFFBox.SetWindowText(L"1.088");
+	YACTOFFBox.SetWindowText(L"0.441");
+
+	C12ALPHABox.SetWindowText(L"6.3454574");
+	ECPBox.SetWindowText(L"0.164185153");
+	ECYWBox.SetWindowText(L"-0.162029721");
+	ALPHAPBox.SetWindowText(L"-0.283407807");
+	ALPHAYWBox.SetWindowText(L"0.647582933");
+	KMJDCKDBox.SetWindowText(L"0.054069332");
+	KMJ1DCKDBox.SetWindowText(L"0.053174108");
+	KMJ2DCKDBox.SetWindowText(L"0.055783856");
+	JMDCKDBox.SetWindowText(L"18.86467");
+	JM1DCKDBox.SetWindowText(L"116.83315");
+	JM2DCKDBox.SetWindowText(L"112.8488");
+	CH6FAILBox.SetWindowText(L"030");
+	DKRATEBox.SetWindowText(L"0.2");
+
+	EMDOTBox.SetWindowText(L"66.27");
+	MinImp1Box.SetWindowText(L"20700.0");
+	MinImp2Box.SetWindowText(L"25692.3");
+	MinImp3Box.SetWindowText(L"20432.0");
+
+	PBIASXBox.SetWindowText(L"-0.82");
+	PIPASCFXBox.SetWindowText(L"-350");
+	PBIASYBox.SetWindowText(L"0.53");
+	PIPASCFYBox.SetWindowText(L"-310");
+	PBIASZBox.SetWindowText(L"0.64");
+	PIPASCFZBox.SetWindowText(L"-330");
+	NBDXBox.SetWindowText(L"-0.7");
+	NBDYBox.SetWindowText(L"1.1");
+	NBDZBox.SetWindowText(L"-1.9");
+	ADIAXBox.SetWindowText(L"-10");
+	ADIAYBox.SetWindowText(L"-34");
+	ADIAZBox.SetWindowText(L"7");
+	ADSRAXBox.SetWindowText(L"2");
+	ADSRAYBox.SetWindowText(L"1");
+	ADSRAZBox.SetWindowText(L"6");
+}
+
+void SkylarkPadloadGenerator::Skylab3Padload()
+{
+	PBIASXBox.SetWindowText(L"0.04");
+	PIPASCFXBox.SetWindowText(L"-240");
+	PBIASYBox.SetWindowText(L"-0.36");
+	PIPASCFYBox.SetWindowText(L"-930");
+	PBIASZBox.SetWindowText(L"-0.23");
+	PIPASCFZBox.SetWindowText(L"-560");
+	NBDXBox.SetWindowText(L"1.3");
+	NBDYBox.SetWindowText(L"-0.1");
+	NBDZBox.SetWindowText(L"2.7");
+	ADIAXBox.SetWindowText(L"17");
+	ADIAYBox.SetWindowText(L"-10");
+	ADIAZBox.SetWindowText(L"-8");
+	ADSRAXBox.SetWindowText(L"7");
+	ADSRAYBox.SetWindowText(L"-5");
+	ADSRAZBox.SetWindowText(L"-2");
+}
+
+
+void SkylarkPadloadGenerator::Skylab4Padload()
+{
+	PBIASXBox.SetWindowText(L"0.04");
+	PIPASCFXBox.SetWindowText(L"-240");
+	PBIASYBox.SetWindowText(L"-0.36");
+	PIPASCFYBox.SetWindowText(L"-930");
+	PBIASZBox.SetWindowText(L"-0.23");
+	PIPASCFZBox.SetWindowText(L"-560");
+	NBDXBox.SetWindowText(L"1.3");
+	NBDYBox.SetWindowText(L"-0.1");
+	NBDZBox.SetWindowText(L"2.7");
+	ADIAXBox.SetWindowText(L"17");
+	ADIAYBox.SetWindowText(L"-10");
+	ADIAZBox.SetWindowText(L"-8");
+	ADSRAXBox.SetWindowText(L"7");
+	ADSRAYBox.SetWindowText(L"-5");
+	ADSRAZBox.SetWindowText(L"-2");
+}
+
+void SkylarkPadloadGenerator::ASTPPadload()
+{
+	LaunchMJDInput.SetWindowTextW(L"42608.826389");
+	LaunchAzimuthBox.SetWindowText(L"45.159");
+	CSMMASSBox.SetWindowText(L"27885.0");
+	LEMMASSBox.SetWindowText(L"0.0");
+	LADPADBox.SetWindowText(L"0.25");
+	LODPADBox.SetWindowText(L"0.225");
+	ALFAPADBox.SetWindowText(L"-18.77");
+	LATSPLBox.SetWindowText(L"50.2");
+	LNGSPLBox.SetWindowText(L"-9.7");
+	TTPIBox.SetWindowText(L"156265.0");
+	PACTOFFBox.SetWindowText(L"0.7008");
+	YACTOFFBox.SetWindowText(L"-0.6045");
+
+	C12ALPHABox.SetWindowText(L"0.4278333333");
+	ECPBox.SetWindowText(L"0.484558");
+	ECYWBox.SetWindowText(L"-0.483093");
+	ALPHAPBox.SetWindowText(L"0.0");
+	ALPHAYWBox.SetWindowText(L"0.0");
+	KMJDCKDBox.SetWindowText(L"2.000376");
+	KMJ1DCKDBox.SetWindowText(L"0.19044");
+	KMJ2DCKDBox.SetWindowText(L"0.19044");
+	JMDCKDBox.SetWindowText(L"0.5006222222");
+	JM1DCKDBox.SetWindowText(L"11.0592");
+	JM2DCKDBox.SetWindowText(L"11.0592");
+	CH6FAILBox.SetWindowText(L"030");
+	DKRATEBox.SetWindowText(L"0.5");
+
+	EMDOTBox.SetWindowText(L"64.89");
+	MinImp1Box.SetWindowText(L"19036.0");
+	MinImp2Box.SetWindowText(L"24028.0");
+	MinImp3Box.SetWindowText(L"20324.0");
+
+	PBIASXBox.SetWindowText(L"0.04");
+	PIPASCFXBox.SetWindowText(L"-240");
+	PBIASYBox.SetWindowText(L"-0.36");
+	PIPASCFYBox.SetWindowText(L"-930");
+	PBIASZBox.SetWindowText(L"-0.23");
+	PIPASCFZBox.SetWindowText(L"-560");
+	NBDXBox.SetWindowText(L"1.3");
+	NBDYBox.SetWindowText(L"-0.1");
+	NBDZBox.SetWindowText(L"2.7");
+	ADIAXBox.SetWindowText(L"17");
+	ADIAYBox.SetWindowText(L"-10");
+	ADIAZBox.SetWindowText(L"-8");
+	ADSRAXBox.SetWindowText(L"7");
+	ADSRAYBox.SetWindowText(L"-5");
+	ADSRAZBox.SetWindowText(L"-2");
 }

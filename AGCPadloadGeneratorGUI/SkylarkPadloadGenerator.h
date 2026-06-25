@@ -24,6 +24,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	AGCPadloadGenerator agc;
+
+	void Skylab2Padload();
+	void Skylab3Padload();
+	void Skylab4Padload();
+	void ASTPPadload();
 public:
 	afx_msg void OnBnClickedOk();
 	CEdit LaunchMJDInput;
